@@ -1,6 +1,7 @@
 import { jstack } from "jstack";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { env } from "hono/adapter";
+import * as schema from "@/server/db/schema";
 
 interface Env {
   Bindings: { DATABASE_URL: string };
@@ -18,10 +19,15 @@ export const j = jstack.init<Env>();
 const databaseMiddleware = j.middleware(async ({ c, next }) => {
   const { DATABASE_URL } = env(c);
 
-  const db = drizzle(DATABASE_URL);
+  const db = drizzle(DATABASE_URL, { schema });
 
   return await next({ db });
 });
+
+// const authMiddleware = j.middleware(async ({ c, next }) => {
+//   const user =
+//   return next({});
+// });
 
 /**
  * Public (unauthenticated) procedures
