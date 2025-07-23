@@ -4,11 +4,11 @@ import { j, publicProcedure } from "../jstack";
 import { $InferInnerFunctionType } from "zod/v4/core";
 import { currentUser } from "@clerk/nextjs/server";
 import { users } from "../db/schema";
+import { db } from "../db";
 
 export const authRouter = j.router({
   getDatabaseSyncStatus: publicProcedure.query(async ({ c, ctx }) => {
     const auth = await currentUser();
-    const { db } = ctx;
 
     if (!auth) {
       return c.json({
