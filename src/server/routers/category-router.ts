@@ -4,6 +4,8 @@ import { j, privateProcedure } from "../jstack";
 import { eventCategories, events } from "../db/schema";
 import { startOfMonth } from "date-fns";
 import z from "zod";
+import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
+import { parseColor } from "@/lib/utils";
 
 export const categoryRouter = j.router({
   getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
@@ -88,4 +90,50 @@ export const categoryRouter = j.router({
 
       return c.json({ success: true });
     }),
+
+  createEventCategory: privateProcedure
+    .input(
+      z.object({
+        name: CATEGORY_NAME_VALIDATOR,
+        color: z
+          .string()
+          .min(1, "Color is required")
+          .regex(/^#[0-9A-F]{6}$/i, "Invalid color format."),
+        emoji: z.string().emoji("Invalid emoji").optional(),
+      })
+    )
+    .mutation(async ({ c, ctx, input }) => {
+      const { user } = ctx;
+      const { color, name, emoji } = input;
+
+      const eventCategory = await db
+        .insert(eventCategories)
+        .values({
+          name: name.toLowerCase(),
+          color: parseColor(color),
+          emoji,
+          userId: user.id,
+        })
+        .returning();
+
+      return c.json({ eventCategory });
+    }),
+
+  insertQuickstartCategories: privateProcedure.mutation(async ({ ctx, c }) => {
+    const categories = await db
+      .insert(eventCategories)
+      .values(
+        [
+          { name: "bug", emoji: "🐛", color: 0xff6b6b },
+          { name: "sale", emoji: "💰", color: 0xffeb3b },
+          { name: "question", emoji: "🤔", color: 0x6c5ce7 },
+        ].map((category) => ({
+          ...category,
+          userId: ctx.user.id,
+        }))
+      )
+      .returning();
+
+    return c.json({ success: true, count: categories.length });
+  }),
 });

@@ -1,4 +1,5 @@
 // import { CreateEventCategoryModal } from "@/components/create-event-category-modal";
+import { CreateEventCategoryModal } from "@/components/create-event-category-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { client } from "@/lib/client";
@@ -7,14 +8,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const DashboardEmptyState = () => {
   const queryClient = useQueryClient();
 
-  //   const { mutate: insertQuickstartCategories, isPending } = useMutation({
-  //     mutationFn: async () => {
-  //       await client.category.insertQuickstartCategories.$post();
-  //     },
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
-  //     },
-  //   });
+  const { mutate: insertQuickstartCategories, isPending } = useMutation({
+    mutationFn: async () => {
+      await client.category.insertQuickstartCategories.$post();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
+    },
+  });
 
   return (
     <Card className="flex flex-col items-center justify-center rounded-2xl flex-1 text-center p-6">
@@ -38,18 +39,18 @@ export const DashboardEmptyState = () => {
         <Button
           variant="outline"
           className="flex items-center space-x-2 w-full sm:w-auto"
-          //   onClick={() => insertQuickstartCategories()}
-          //   disabled={isPending}
+          onClick={() => insertQuickstartCategories()}
+          disabled={isPending}
         >
           <span className="size-5">🚀</span>
-          {/* <span>{isPending ? "Creating..." : "Quickstart"}</span> */}
+          <span>{isPending ? "Creating..." : "Quickstart"}</span>
         </Button>
 
-        {/* <CreateEventCategoryModal containerClassName="w-full sm:w-auto"> */}
-        <Button className="flex items-center space-x-2 w-full sm:w-auto">
-          <span>Add Category</span>
-        </Button>
-        {/* </CreateEventCategoryModal> */}
+        <CreateEventCategoryModal containerClassName="w-full sm:w-auto">
+          <Button className="flex items-center space-x-2 w-full sm:w-auto">
+            <span>Add Category</span>
+          </Button>
+        </CreateEventCategoryModal>
       </div>
     </Card>
   );
