@@ -65,10 +65,13 @@ export const eventCategories = pgTable(
       .notNull()
       .references(() => users.id),
 
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
-      .$onUpdate(() => new Date()),
+      .$onUpdate(() => new Date())
+      .notNull(),
   },
   (table) => ({
     uniqueNamePerUser: uniqueIndex("event_categories_name_userid_idx").on(
