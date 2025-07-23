@@ -3,6 +3,7 @@ import { db } from "../db";
 import { j, privateProcedure } from "../jstack";
 import { eventCategories, events } from "../db/schema";
 import { startOfMonth } from "date-fns";
+import z from "zod";
 
 export const categoryRouter = j.router({
   getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
@@ -70,4 +71,21 @@ export const categoryRouter = j.router({
 
     return c.superjson({ categories: categoriesWithCounts });
   }),
+
+  deleteCategory: privateProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ c, input, ctx }) => {
+      const { name } = input;
+
+      await db
+        .delete(eventCategories)
+        .where(
+          and(
+            eq(eventCategories.name, name),
+            eq(eventCategories.userId, ctx.user.id)
+          )
+        );
+
+      return c.json({ success: true });
+    }),
 });
