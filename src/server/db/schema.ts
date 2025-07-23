@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import cuid from "cuid";
+import { relations } from "drizzle-orm";
 
 // Enums
 export const planEnum = pgEnum("plan", ["FREE", "PRO"]);
@@ -77,6 +78,13 @@ export const eventCategories = pgTable(
   })
 );
 
+export const eventCategoriesRelations = relations(
+  eventCategories,
+  ({ many }) => ({
+    events: many(events),
+  })
+);
+
 // Tabela: events
 export const events = pgTable(
   "events",
@@ -97,15 +105,25 @@ export const events = pgTable(
       () => eventCategories.id
     ),
 
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
-      .$onUpdate(() => new Date()),
+      .$onUpdate(() => new Date())
+      .notNull(),
   },
   (table) => ({
     createdAtIdx: index("events_created_at_idx").on(table.createdAt),
   })
 );
+
+export const eventsRelations = relations(events, ({ one }) => ({
+  category: one(eventCategories, {
+    fields: [events.eventCategoryId],
+    references: [eventCategories.id],
+  }),
+}));
 
 // Tabela: quotas
 export const quotas = pgTable("quotas", {
@@ -121,5 +139,6 @@ export const quotas = pgTable("quotas", {
 
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
-    .$onUpdate(() => new Date()),
+    .$onUpdate(() => new Date())
+    .notNull(),
 });

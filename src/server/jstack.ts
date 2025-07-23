@@ -1,7 +1,11 @@
 import { jstack } from "jstack";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { env } from "hono/adapter";
-import * as schema from "@/server/db/schema";
+import { db } from "./db";
+import { users } from "./db/schema";
+import { eq } from "drizzle-orm";
+import { HTTPException } from "hono/http-exception";
+import { currentUser } from "@clerk/nextjs/server";
 
 interface Env {
   Bindings: { DATABASE_URL: string };
@@ -9,29 +13,44 @@ interface Env {
 
 export const j = jstack.init<Env>();
 
-/**
- * Type-safely injects database into all procedures
- * @see https://jstack.app/docs/backend/middleware
- *
- * For deployment to Cloudflare Workers
- * @see https://developers.cloudflare.com/workers/tutorials/postgres/
- */
-const databaseMiddleware = j.middleware(async ({ c, next }) => {
-  const { DATABASE_URL } = env(c);
+const authMiddleware = j.middleware(async ({ c, next }) => {
+  const authHeader = c.req.header("Authorization");
 
-  const db = drizzle(DATABASE_URL, { schema });
+  if (authHeader) {
+    const apiKey = authHeader.split(" ")[1]; // bearer <API_KEY>
 
-  return await next({ db });
+    if (!apiKey) {
+      throw new HTTPException(401, { message: "Unauthorized" });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.apiKey, apiKey),
+    });
+
+    if (user) return next({ user });
+  }
+
+  const auth = await currentUser();
+
+  if (!auth) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+
+  const user = await db.query.users.findFirst({
+    where: eq(users.externalId, auth.id),
+  });
+
+  if (!user) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+
+  return next({ user });
 });
-
-// const authMiddleware = j.middleware(async ({ c, next }) => {
-//   const user =
-//   return next({});
-// });
 
 /**
  * Public (unauthenticated) procedures
  *
  * This is the base piece you use to build new queries and mutations on your API.
  */
-export const publicProcedure = j.procedure.use(databaseMiddleware);
+export const publicProcedure = j.procedure;
+export const privateProcedure = publicProcedure.use(authMiddleware);
