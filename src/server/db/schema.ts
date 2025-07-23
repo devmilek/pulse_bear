@@ -9,6 +9,7 @@ import {
   index,
   text,
   uuid,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 import cuid from "cuid";
@@ -81,6 +82,8 @@ export const eventCategories = pgTable(
   })
 );
 
+export type EventCategory = typeof eventCategories.$inferSelect;
+
 export const eventCategoriesRelations = relations(
   eventCategories,
   ({ many }) => ({
@@ -96,7 +99,7 @@ export const events = pgTable(
     formattedMessage: text("formatted_message").notNull(),
     name: varchar("name", { length: 100 }).notNull(),
 
-    fields: json("fields").notNull(),
+    fields: jsonb("fields").notNull().$type<Record<string, any>>(),
     deliveryStatus: deliveryStatusEnum("delivery_status")
       .default("PENDING")
       .notNull(),
