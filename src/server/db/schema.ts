@@ -9,6 +9,7 @@ import {
   index,
   text,
   uuid,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 import cuid from "cuid";
@@ -52,6 +53,12 @@ export const users = pgTable(
   })
 );
 
+export const usersRelations = relations(users, ({ many }) => ({
+  eventCategories: many(eventCategories),
+  events: many(events),
+  quotas: many(quotas),
+}));
+
 // Tabela: event_categories
 export const eventCategories = pgTable(
   "event_categories",
@@ -81,10 +88,16 @@ export const eventCategories = pgTable(
   })
 );
 
+export type EventCategory = typeof eventCategories.$inferSelect;
+
 export const eventCategoriesRelations = relations(
   eventCategories,
-  ({ many }) => ({
+  ({ many, one }) => ({
     events: many(events),
+    user: one(users, {
+      fields: [eventCategories.userId],
+      references: [users.id],
+    }),
   })
 );
 
@@ -96,7 +109,7 @@ export const events = pgTable(
     formattedMessage: text("formatted_message").notNull(),
     name: varchar("name", { length: 100 }).notNull(),
 
-    fields: json("fields").notNull(),
+    fields: jsonb("fields").notNull().$type<Record<string, any>>(),
     deliveryStatus: deliveryStatusEnum("delivery_status")
       .default("PENDING")
       .notNull(),
@@ -121,27 +134,50 @@ export const events = pgTable(
   })
 );
 
+export type Event = typeof events.$inferSelect;
+
 export const eventsRelations = relations(events, ({ one }) => ({
   category: one(eventCategories, {
     fields: [events.eventCategoryId],
     references: [eventCategories.id],
   }),
+  user: one(users, {
+    fields: [events.userId],
+    references: [users.id],
+  }),
 }));
 
 // Tabela: quotas
-export const quotas = pgTable("quotas", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .notNull()
-    .unique()
-    .references(() => users.id),
+export const quotas = pgTable(
+  "quotas",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
 
-  year: integer("year").notNull(),
-  month: integer("month").notNull(),
-  count: integer("count").notNull().default(0),
+    year: integer("year").notNull(),
+    month: integer("month").notNull(),
+    count: integer("count").notNull().default(0),
 
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    // Unique constraint na kombinację userId, year, month
+    uniqueUserMonthYear: uniqueIndex("quotas_user_month_year_idx").on(
+      table.userId,
+      table.year,
+      table.month
+    ),
+  })
+);
+
+export const quotasRelations = relations(quotas, ({ one }) => ({
+  user: one(users, {
+    fields: [quotas.userId],
+    references: [users.id],
+  }),
+}));
