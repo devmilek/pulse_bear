@@ -60,7 +60,7 @@ export const eventCategories = pgTable(
     color: integer("color").notNull(),
     emoji: varchar("emoji", { length: 16 }),
 
-    userId: varchar("user_id", { length: 36 })
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id),
 
@@ -90,10 +90,10 @@ export const events = pgTable(
       .default("PENDING")
       .notNull(),
 
-    userId: varchar("user_id", { length: 36 })
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id),
-    eventCategoryId: varchar("event_category_id", { length: 36 }).references(
+    eventCategoryId: uuid("event_category_id").references(
       () => eventCategories.id
     ),
 
@@ -110,7 +110,7 @@ export const events = pgTable(
 // Tabela: quotas
 export const quotas = pgTable("quotas", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: varchar("user_id", { length: 36 })
+  userId: uuid("user_id")
     .notNull()
     .unique()
     .references(() => users.id),
