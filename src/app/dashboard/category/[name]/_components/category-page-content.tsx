@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EventCategory } from "@/server/db/schema";
+import { Event, EventCategory } from "@/server/db/schema";
 import { cn } from "@/lib/utils";
 import { EmptyCategoryState } from "./empty-category-state";
 
