@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { MaxWidthWrapper } from "./max-width-wrapper";
 import { ArrowRight } from "lucide-react";
+import { currentUser } from "@clerk/nextjs/server";
+import { SignOutButton } from "@clerk/nextjs";
+import { Button, buttonVariants } from "./ui/button";
 
 export const Navbar = async () => {
-  //   const user = await currentUser();
+  const user = await currentUser();
 
   return (
     <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg transition-all">
@@ -14,7 +17,7 @@ export const Navbar = async () => {
           </Link>
 
           <div className="h-full flex items-center space-x-4">
-            {/* {user ? (
+            {user ? (
               <>
                 <SignOutButton>
                   <Button size="sm" variant="ghost">
@@ -55,17 +58,11 @@ export const Navbar = async () => {
 
                 <div className="h-8 w-px bg-gray-200" />
 
-                <Link
-                  href="/sign-up"
-                  className={buttonVariants({
-                    size: "sm",
-                    className: "flex items-center gap-1.5",
-                  })}
-                >
+                <Link href="/sign-up" className={buttonVariants({})}>
                   Sign up <ArrowRight className="size-4" />
                 </Link>
               </>
-            )} */}
+            )}
           </div>
         </div>
       </MaxWidthWrapper>
