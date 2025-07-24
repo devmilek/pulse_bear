@@ -32,6 +32,11 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+  discordId: text("discord_id").unique(),
+  apiKey: text("api_key")
+    .unique()
+    .$default(() => cuid()),
+  plan: planEnum("plan").default("FREE").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),

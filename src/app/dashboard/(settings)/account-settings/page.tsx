@@ -5,17 +5,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { AccountSettings } from "./_components/setttings-page-content";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 const Page = async () => {
-  const auth = await currentUser();
-
-  if (!auth) {
-    redirect("/sign-in");
-  }
-
-  const user = await db.query.users.findFirst({
-    where: eq(users.externalId, auth.id),
-  });
+  const { user } = await getCurrentSession();
 
   if (!user) {
     redirect("/sign-in");

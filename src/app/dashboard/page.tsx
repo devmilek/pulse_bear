@@ -11,27 +11,19 @@ import { CreateEventCategoryModal } from "@/components/create-event-category-mod
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { PaymentSuccessModal } from "@/components/payment-success-modal";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { SearchParams } from "nuqs";
 
 interface PageProps {
-  searchParams: Promise<{
-    [key: string]: string | string[] | undefined;
-  }>;
+  searchParams: Promise<SearchParams>;
 }
 
 const Page = async ({ searchParams }: PageProps) => {
   const currSearchParams = await searchParams;
-  const auth = await currentUser();
-
-  if (!auth) {
-    redirect("/sign-in");
-  }
-
-  const user = await db.query.users.findFirst({
-    where: eq(users.externalId, auth.id),
-  });
+  const { user } = await getCurrentSession();
 
   if (!user) {
-    redirect("/sign-up");
+    redirect("/sign-in");
   }
 
   const intent = currSearchParams.intent;
