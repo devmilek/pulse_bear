@@ -6,6 +6,7 @@ import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import { currentUser } from "@clerk/nextjs/server";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 interface Env {
   Bindings: { DATABASE_URL: string };
@@ -30,15 +31,7 @@ const authMiddleware = j.middleware(async ({ c, next }) => {
     if (user) return next({ user });
   }
 
-  const auth = await currentUser();
-
-  if (!auth) {
-    throw new HTTPException(401, { message: "Unauthorized" });
-  }
-
-  const user = await db.query.users.findFirst({
-    where: eq(users.externalId, auth.id),
-  });
+  const { user } = await getCurrentSession();
 
   if (!user) {
     throw new HTTPException(401, { message: "Unauthorized" });

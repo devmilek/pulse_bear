@@ -37,6 +37,7 @@ export const users = pgTable("users", {
     .unique()
     .$default(() => cuid()),
   plan: planEnum("plan").default("FREE").notNull(),
+  quotaLimit: integer("quota_limit").default(100).notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),

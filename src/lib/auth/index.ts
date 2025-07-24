@@ -30,6 +30,12 @@ export const auth = betterAuth({
         input: false,
         defaultValue: () => cuid(),
       },
+      plan: {
+        type: "string",
+        required: true,
+        input: false,
+        defaultValue: "FREE",
+      },
     },
   },
 });
