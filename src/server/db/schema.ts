@@ -15,8 +15,10 @@ import {
 import cuid from "cuid";
 import { relations } from "drizzle-orm";
 
-// Enums
-export const planEnum = pgEnum("plan", ["FREE", "PRO"]);
+const plans = ["FREE", "PRO"] as const;
+export type Plan = (typeof plans)[number];
+export const planEnum = pgEnum("plan", plans);
+
 export const deliveryStatusEnum = pgEnum("deliverystatus", [
   "PENDING",
   "DELIVERED",
