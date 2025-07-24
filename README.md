@@ -1,4 +1,4 @@
-# PulseBear - Real‑Time SaaS insights
+# 🐻 PulseBear - Real‑Time SaaS insights
 
 > **Real‑Time SaaS insights — delivered straight to your Discord.**
 
