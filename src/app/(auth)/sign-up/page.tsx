@@ -1,7 +1,4 @@
-import { SignUp } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Icons } from "@/components/icons";
 import { SignUpForm } from "../_components/sign-up-form";

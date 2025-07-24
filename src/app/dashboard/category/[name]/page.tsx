@@ -1,7 +1,6 @@
 import { DashboardPage } from "@/components/dashboard-page";
 import { db } from "@/server/db";
 import { eventCategories, events, users } from "@/server/db/schema";
-import { currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import React from "react";

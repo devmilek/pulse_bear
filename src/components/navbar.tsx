@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { MaxWidthWrapper } from "./max-width-wrapper";
 import { ArrowRight } from "lucide-react";
-import { currentUser } from "@clerk/nextjs/server";
 import { Button, buttonVariants } from "./ui/button";
 import Image from "next/image";
 import { getCurrentSession } from "@/lib/auth/get-current-session";

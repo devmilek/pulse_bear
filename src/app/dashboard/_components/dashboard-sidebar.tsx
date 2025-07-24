@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Gem, Home, Key, LucideIcon, Settings } from "lucide-react";
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 
 interface SidebarItem {
@@ -103,16 +102,7 @@ export const DashboardSidebar = () => {
         ))}
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter>
-        <UserButton
-          showName
-          appearance={{
-            elements: {
-              userButtonBox: "flex-row-reverse",
-            },
-          }}
-        />
-      </SidebarFooter>
+      <SidebarFooter>{/* TODO: user button */}</SidebarFooter>
     </Sidebar>
   );
 };

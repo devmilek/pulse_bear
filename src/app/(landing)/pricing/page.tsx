@@ -3,14 +3,14 @@
 import { Heading } from "@/components/heading";
 import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth/auth-client";
 import { client } from "@/lib/client";
-import { useUser } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
 import { CheckIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const { user } = useUser();
+  const { data: user, isPending } = authClient.useSession();
   const router = useRouter();
 
   const INCLUDED_FEATURES = [
@@ -92,7 +92,11 @@ const Page = () => {
                   </span>
                 </p>
 
-                <Button onClick={handleGetAccess} className="mt-6 px-20">
+                <Button
+                  onClick={handleGetAccess}
+                  className="mt-6 px-20"
+                  disabled={isPending}
+                >
                   Get PulseBear
                 </Button>
                 <p className="mt-6 text-xs leading-5 text-gray-600">

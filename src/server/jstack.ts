@@ -1,11 +1,8 @@
 import { jstack } from "jstack";
-import { drizzle } from "drizzle-orm/postgres-js";
-import { env } from "hono/adapter";
 import { db } from "./db";
 import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
-import { currentUser } from "@clerk/nextjs/server";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 interface Env {

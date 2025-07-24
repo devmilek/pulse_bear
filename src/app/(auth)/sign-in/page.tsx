@@ -1,17 +1,12 @@
-import { useSearchParams } from "next/navigation";
 import { SocialLogin } from "../_components/social-login";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Icons } from "@/components/icons";
 import { SignInForm } from "../_components/sign-in-form";
+import { Suspense } from "react";
 
 const Page = () => {
   return (
-    // <div className="w-full flex-1 flex items-center justify-center">
-    //   <SignIn
-    //     forceRedirectUrl={intent ? `/dashboard?intent=${intent}` : "/dashboard"}
-    //   />
-    // </div>
     <div className="w-full flex-1 flex items-center justify-center">
       <div className="bg-muted m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]">
         <div className="bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6">
@@ -27,7 +22,9 @@ const Page = () => {
             </p>
           </div>
 
-          <SignInForm />
+          <Suspense>
+            <SignInForm />
+          </Suspense>
 
           <div className="my-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
             <hr className="border-dashed" />
