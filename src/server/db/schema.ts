@@ -10,6 +10,7 @@ import {
   text,
   uuid,
   jsonb,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 import cuid from "cuid";
@@ -25,35 +26,68 @@ export const deliveryStatusEnum = pgEnum("deliverystatus", [
   "FAILED",
 ]);
 
-// Tabela: users
-export const users = pgTable(
-  "users",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    externalId: varchar("external_id", { length: 64 }).unique().default(""),
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
+  image: text("image"),
+  discordId: text("discord_id").unique(),
+  apiKey: text("api_key")
+    .unique()
+    .$default(() => cuid()),
+  plan: planEnum("plan").default("FREE").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
 
-    quotaLimit: integer("quota_limit").notNull(),
-    plan: planEnum("plan").default("FREE").notNull(),
+export const sessions = pgTable("sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  expiresAt: timestamp("expires_at").notNull(),
+  token: text("token").notNull().unique(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
 
-    email: varchar("email", { length: 255 }).unique().notNull(),
-    apiKey: varchar("api_key", { length: 64 })
-      .unique()
-      .$defaultFn(() => cuid())
-      .notNull(),
-    discordId: varchar("discord_id", { length: 64 }),
+export const accounts = pgTable("accounts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  idToken: text("id_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: text("scope"),
+  password: text("password"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
 
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => ({
-    emailApiKeyIdx: index("users_email_apikey_idx").on(
-      table.email,
-      table.apiKey
-    ),
-  })
-);
+export const verifications = pgTable("verifications", {
+  id: uuid("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
+});
 
 export const usersRelations = relations(users, ({ many }) => ({
   eventCategories: many(eventCategories),
@@ -72,7 +106,9 @@ export const eventCategories = pgTable(
 
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
 
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -118,9 +154,14 @@ export const events = pgTable(
 
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
     eventCategoryId: uuid("event_category_id").references(
-      () => eventCategories.id
+      () => eventCategories.id,
+      {
+        onDelete: "cascade",
+      }
     ),
 
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -156,7 +197,9 @@ export const quotas = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
 
     year: integer("year").notNull(),
     month: integer("month").notNull(),

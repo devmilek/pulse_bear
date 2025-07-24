@@ -1,29 +1,29 @@
 import { DashboardPage } from "@/components/dashboard-page";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema";
-import { currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { UpgradePageContent } from "./_components/upgrade-page-content";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 const Page = async () => {
-  const auth = await currentUser();
-
-  if (!auth) {
-    redirect("/sign-in");
-  }
-
-  const user = await db.query.users.findFirst({
-    where: eq(users.externalId, auth.id),
-  });
+  const { user } = await getCurrentSession();
 
   if (!user) {
     redirect("/sign-in");
   }
 
+  const dbUser = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  });
+
+  if (!dbUser) {
+    redirect("/sign-in");
+  }
+
   return (
     <DashboardPage title="Pro Membership">
-      <UpgradePageContent plan={user.plan} />
+      <UpgradePageContent plan={dbUser.plan} />
     </DashboardPage>
   );
 };

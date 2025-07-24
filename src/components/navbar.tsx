@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { MaxWidthWrapper } from "./max-width-wrapper";
 import { ArrowRight } from "lucide-react";
-import { currentUser } from "@clerk/nextjs/server";
-import { SignOutButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "./ui/button";
 import Image from "next/image";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { SignOutButton } from "./sign-out-button";
 
 export const Navbar = async () => {
-  const user = await currentUser();
+  const { user } = await getCurrentSession();
 
   return (
     <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg transition-all">
@@ -26,7 +26,7 @@ export const Navbar = async () => {
           <div className="h-full flex items-center space-x-4">
             {user ? (
               <>
-                <SignOutButton>
+                <SignOutButton asChild>
                   <Button size="sm" variant="ghost">
                     Sign out
                   </Button>

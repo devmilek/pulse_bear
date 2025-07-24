@@ -1,11 +1,11 @@
 import { DashboardPage } from "@/components/dashboard-page";
 import { db } from "@/server/db";
 import { eventCategories, events, users } from "@/server/db/schema";
-import { currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import React from "react";
 import { CategoryPageContent } from "./_components/category-page-content";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 interface CategoryDetailsPageProps {
   params: Promise<{
@@ -16,18 +16,10 @@ interface CategoryDetailsPageProps {
 const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
   const { name } = await params;
 
-  const auth = await currentUser();
-
-  if (!auth) {
-    redirect("/sign-in");
-  }
-
-  const user = await db.query.users.findFirst({
-    where: eq(users.externalId, auth.id),
-  });
+  const { user } = await getCurrentSession();
 
   if (!user) {
-    redirect("/sign-up");
+    redirect("/sign-in");
   }
 
   const category = await db.query.eventCategories.findFirst({

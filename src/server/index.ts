@@ -1,5 +1,4 @@
 import { j } from "./jstack";
-import { authRouter } from "./routers/auth-router";
 import { categoryRouter } from "./routers/category-router";
 import { paymentRouter } from "./routers/payment-router";
 import { projectRouter } from "./routers/project-router";
@@ -21,7 +20,6 @@ const api = j
  * All routers in /server/routers should be added here manually.
  */
 const appRouter = j.mergeRouters(api, {
-  auth: authRouter,
   category: categoryRouter,
   payment: paymentRouter,
   project: projectRouter,
