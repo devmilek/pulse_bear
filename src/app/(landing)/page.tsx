@@ -32,7 +32,7 @@ const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
 
 const messages: DiscordMessageProps[] = [
   {
-    avatarSrc: "/brand-asset-profile-picture.png",
+    avatarSrc: "/brand-asset-profile-picture.svg",
     avatarAlt: "PulseBear Avatar",
     username: "PulseBear",
     timestamp: "Today at 12:35PM",
@@ -45,7 +45,7 @@ const messages: DiscordMessageProps[] = [
     },
   },
   {
-    avatarSrc: "/brand-asset-profile-picture.png",
+    avatarSrc: "/brand-asset-profile-picture.svg",
     avatarAlt: "PulseBear Avatar",
     username: "PulseBear",
     timestamp: "Today at 12:35PM",
@@ -59,7 +59,7 @@ const messages: DiscordMessageProps[] = [
     },
   },
   {
-    avatarSrc: "/brand-asset-profile-picture.png",
+    avatarSrc: "/brand-asset-profile-picture.svg",
     avatarAlt: "PulseBear Avatar",
     username: "PulseBear",
     timestamp: "Today at 5:11AM",

@@ -73,7 +73,7 @@ export const MockDiscordUI = ({ children }: PropsWithChildren) => {
 
             <div className="flex items-center px-2 py-1.5 rounded bg-[#393c43] text-white cursor-pointer">
               <Image
-                src="/brand-asset-profile-picture.png"
+                src="/brand-asset-profile-picture.svg"
                 alt="Pulse Bear Avatar"
                 width={32}
                 height={32}
@@ -124,7 +124,7 @@ export const MockDiscordUI = ({ children }: PropsWithChildren) => {
           <div className="flex items-center">
             <div className="relative">
               <Image
-                src="/brand-asset-profile-picture.png"
+                src="/brand-asset-profile-picture.svg"
                 alt="PulseBear Avatar"
                 width={40}
                 height={40}
