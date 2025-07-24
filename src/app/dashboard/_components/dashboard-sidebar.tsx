@@ -15,6 +15,7 @@ import {
 import { Gem, Home, Key, LucideIcon, Settings } from "lucide-react";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import Image from "next/image";
 
 interface SidebarItem {
   href: string;
@@ -53,7 +54,19 @@ export const DashboardSidebar = () => {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <SidebarMenu>
+        <Link
+          href="/"
+          className="flex z-40 px-2 pt-4 group-data-[collapsible=icon]:hidden"
+        >
+          <Image
+            src="/logo.svg"
+            width={120}
+            height={43}
+            className="h-6 w-auto"
+            alt="PulseBear Logo"
+          />
+        </Link>
+        {/* <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
@@ -66,7 +79,7 @@ export const DashboardSidebar = () => {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-        </SidebarMenu>
+        </SidebarMenu> */}
       </SidebarHeader>
       <SidebarContent>
         {SIDEBAR_ITEMS.map(({ category, items }) => (
