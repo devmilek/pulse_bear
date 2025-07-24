@@ -1,7 +1,9 @@
 import { db } from "@/server/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import cuid from "cuid";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -14,8 +16,29 @@ export const auth = betterAuth({
       generateId: false,
     },
   },
+
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }, request) => {
+      await resend.emails.send({
+        from: "Pulse Bear <pulsebear@asteriostudio.com>",
+        to: user.email,
+        subject: "Verify your email",
+        html: `<p>Click the link to verify your email:</p><a href="${url}">${url}</a>`,
+      });
+    },
+  },
+
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url, token }, request) => {
+      await resend.emails.send({
+        from: "Pulse Bear <pulsebear@asteriostudio.com>",
+        to: user.email,
+        subject: "Reset your password",
+        html: `<p>Click the link to reset your password:</p><a href="${url}">${url}</a>`,
+      });
+    },
   },
   user: {
     additionalFields: {
