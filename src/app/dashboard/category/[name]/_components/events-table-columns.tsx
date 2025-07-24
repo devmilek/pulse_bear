@@ -2,7 +2,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { Event, EventCategory } from "@/server/db/schema";
-import { cn } from "@/lib/utils";
+import { cn, humanizeKey } from "@/lib/utils";
 
 export const EventsTableColumns = (
   category: EventCategory,
@@ -33,7 +33,7 @@ export const EventsTableColumns = (
   ...(data?.events[0]
     ? Object.keys(data.events[0].fields as object).map((field) => ({
         accessorFn: (row: Event) => (row.fields as Record<string, any>)[field],
-        header: field,
+        header: humanizeKey(field),
         cell: ({ row }: { row: Row<Event> }) =>
           (row.original.fields as Record<string, any>)[field] || "-",
       }))
