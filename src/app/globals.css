@@ -112,7 +112,7 @@
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 
-    --color-brand-25: #F8F9FD;
+    /* --color-brand-25: #F8F9FD;
     --color-brand-50: #F0F4FA;
     --color-brand-100: #E1E9F6;
     --color-brand-200: #C3D3ED;
@@ -123,7 +123,19 @@
     --color-brand-700: #3659B1;
     --color-brand-800: #284189;
     --color-brand-900: #1B2A61;
-    --color-brand-950: #111A3E;
+    --color-brand-950: #111A3E; */
+    --color-brand-25: #fcfef7;
+    --color-brand-50: #f6faeb;
+    --color-brand-100: #e9f4d3;
+    --color-brand-200: #d4eaac;
+    --color-brand-300: #b8da7c;
+    --color-brand-400: #9cc952;
+    --color-brand-500: #84b737;
+    --color-brand-600: #618a26;
+    --color-brand-700: #4b6a21;
+    --color-brand-800: #3d551f;
+    --color-brand-900: #35491e;
+    --color-brand-950: #1a270c;
 
     --color-discord-background: #36393f;
     --color-discord-gray: "#36393f";
