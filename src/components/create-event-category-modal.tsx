@@ -12,6 +12,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
+import { Alert, AlertDescription } from "./ui/alert";
 
 const EVENT_CATEGORY_VALIDATOR = z.object({
   name: CATEGORY_NAME_VALIDATOR,
@@ -60,6 +61,7 @@ export const CreateEventCategoryModal = ({
 }: CreateEventCategoryModel) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [error, setError] = useState<string | null>(null);
 
   const { mutate: createEventCategory, isPending } = useMutation({
     mutationFn: async (data: EventCategoryForm) => {
@@ -68,6 +70,9 @@ export const CreateEventCategoryModal = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
       setIsOpen(false);
+    },
+    onError: (error) => {
+      setError(error.message);
     },
   });
 
@@ -85,6 +90,7 @@ export const CreateEventCategoryModal = ({
   const selectedEmoji = watch("emoji");
 
   const onSubmit = (data: EventCategoryForm) => {
+    setError(null);
     createEventCategory(data);
   };
 
@@ -181,6 +187,12 @@ export const CreateEventCategoryModal = ({
               ) : null}
             </div>
           </div>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           <div className="flex justify-end space-x-3 pt-4 border-t">
             <Button

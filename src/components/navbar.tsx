@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { currentUser } from "@clerk/nextjs/server";
 import { SignOutButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "./ui/button";
+import Image from "next/image";
 
 export const Navbar = async () => {
   const user = await currentUser();
@@ -13,7 +14,13 @@ export const Navbar = async () => {
       <MaxWidthWrapper>
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex z-40 font-semibold">
-            Ping<span className="text-brand-700">Panda</span>
+            <Image
+              src="/logo.svg"
+              width={120}
+              height={43}
+              className="h-6 w-auto"
+              alt="PulseBear Logo"
+            />
           </Link>
 
           <div className="h-full flex items-center space-x-4">

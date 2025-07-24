@@ -38,7 +38,12 @@ export const AccountSettings = ({
 
         <p className="mt-2 text-sm/6 text-gray-600">
           Don't know how to find your Discord ID?{" "}
-          <Link href="#" className="text-brand-600 hover:text-brand-500">
+          <Link
+            href="https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-600 hover:text-brand-500"
+          >
             Learn how to obtain it here
           </Link>
           .

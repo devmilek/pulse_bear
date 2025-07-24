@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { client } from "@/lib/client";
+import { getEventCodeSnippet } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -33,19 +34,7 @@ export const EmptyCategoryState = ({
     if (hasEvents) router.refresh();
   }, [hasEvents, router]);
 
-  const codeSnippet = `await fetch('http://localhost:3000/api/events', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY'
-  },
-  body: JSON.stringify({
-    category: '${categoryName}',
-    fields: {
-      field1: 'value1', // for example: user id
-      field2: 'value2' // for example: user email
-    }
-  })
-})`;
+  const codeSnippet = getEventCodeSnippet(categoryName);
 
   return (
     <Card
