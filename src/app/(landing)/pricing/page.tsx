@@ -56,7 +56,7 @@ const Page = () => {
             </h3>
 
             <p className="mt-6 text-base/7 text-gray-600">
-              Invest once in PingPanda and transform how you monitor your SaaS
+              Invest once in PulseBear and transform how you monitor your SaaS
               forever. Get instant alerts, track critical metrics and never miss
               a beat in your business growth.
             </p>
@@ -85,15 +85,15 @@ const Page = () => {
                 </p>
                 <p className="mt-6 flex items-baseline justify-center gap-x-2">
                   <span className="text-5xl font-bold tracking-tight text-gray-900">
-                    $49
+                    $25
                   </span>
                   <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-                    USD
+                    EUR
                   </span>
                 </p>
 
                 <Button onClick={handleGetAccess} className="mt-6 px-20">
-                  Get PingPanda
+                  Get PulseBear
                 </Button>
                 <p className="mt-6 text-xs leading-5 text-gray-600">
                   Secure payment. Start monitoring in minutes.
