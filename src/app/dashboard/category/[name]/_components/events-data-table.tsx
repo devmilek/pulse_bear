@@ -27,23 +27,21 @@ import {
 } from "@/components/ui/table";
 import { Event, EventCategory } from "@/server/db/schema";
 import { EventsTableColumns } from "./events-table-columns";
+import { useEventCategoryParams } from "@/hooks/use-event-category-params";
 
 interface EventsDataTableProps {
   data: any;
   isFetching: boolean;
   category: EventCategory;
-  pagination: { pageIndex: number; pageSize: number };
-  setPagination: (pagination: { pageIndex: number; pageSize: number }) => void;
 }
 
 export const EventsDataTable = ({
   data,
   isFetching,
   category,
-  pagination,
-  setPagination,
 }: EventsDataTableProps) => {
   const router = useRouter();
+  const [filters, setFilters] = useEventCategoryParams();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -59,21 +57,14 @@ export const EventsDataTable = ({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    pageCount: Math.ceil((data?.eventsCount || 0) / pagination.pageSize),
-    onPaginationChange: setPagination,
+    pageCount: Math.ceil((data?.eventsCount || 0) / filters.pageSize),
+    onPaginationChange: setFilters,
     state: {
       sorting,
       columnFilters,
-      pagination,
+      pagination: filters,
     },
   });
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set("page", (pagination.pageIndex + 1).toString());
-    searchParams.set("limit", pagination.pageSize.toString());
-    router.push(`?${searchParams.toString()}`, { scroll: false });
-  }, [pagination, router]);
 
   return (
     <div className="flex flex-col gap-4">

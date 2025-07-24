@@ -7,6 +7,9 @@ import { client } from "@/lib/client";
 import { EventCategory } from "@/server/db/schema";
 import { EmptyCategoryState } from "./empty-category-state";
 import { EventsTabsSection } from "./events-tabs-section";
+import { useEventCategoryParams } from "@/hooks/use-event-category-params";
+import { EventsStatsGrid } from "./events-stats-grid";
+import { EventsDataTable } from "./events-data-table";
 
 interface CategoryPageContentProps {
   hasEvents: boolean;
@@ -17,18 +20,7 @@ export const CategoryPageContent = ({
   hasEvents: initialHasEvents,
   category,
 }: CategoryPageContentProps) => {
-  const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<"today" | "week" | "month">(
-    "today"
-  );
-
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "30", 10);
-
-  const [pagination, setPagination] = useState({
-    pageIndex: page - 1,
-    pageSize: limit,
-  });
+  const [filters] = useEventCategoryParams();
 
   const { data: pollingData } = useQuery({
     queryKey: ["category", category.name, "hasEvents"],
@@ -39,16 +31,16 @@ export const CategoryPageContent = ({
     queryKey: [
       "events",
       category.name,
-      pagination.pageIndex,
-      pagination.pageSize,
-      activeTab,
+      filters.tab,
+      filters.pageIndex,
+      filters.pageSize,
     ],
     queryFn: async () => {
       const res = await client.category.getEventsByCategoryName.$get({
         name: category.name,
-        page: pagination.pageIndex + 1,
-        limit: pagination.pageSize,
-        timeRange: activeTab,
+        page: filters.pageIndex + 1,
+        limit: filters.pageSize,
+        timeRange: filters.tab,
       });
 
       if (!res.ok) {
@@ -72,14 +64,14 @@ export const CategoryPageContent = ({
   }
 
   return (
-    <EventsTabsSection
-      activeTab={activeTab}
-      setActiveTab={setActiveTab}
-      data={data}
-      isFetching={isFetching}
-      category={category}
-      pagination={pagination}
-      setPagination={setPagination}
-    />
+    <>
+      <EventsTabsSection />
+      <EventsStatsGrid categoryName={category.name} />
+      <EventsDataTable
+        data={data}
+        isFetching={isFetching}
+        category={category}
+      />
+    </>
   );
 };

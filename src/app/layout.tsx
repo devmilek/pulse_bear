@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Providers } from "../components/providers";
 import { EB_Garamond } from "next/font/google";
 import { Inter } from "next/font/google";
-
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -27,13 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={cn(inter.className, eb_garamond.variable)}>
-        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-brand-50 text-brand-950 antialiased">
-          <main className="relative flex-1 flex flex-col">
-            <Providers>{children}</Providers>
-          </main>
-        </body>
-      </html>
+      <NuqsAdapter>
+        <html lang="en" className={cn(inter.className, eb_garamond.variable)}>
+          <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-brand-50 text-brand-950 antialiased">
+            <main className="relative flex-1 flex flex-col">
+              <Providers>{children}</Providers>
+            </main>
+          </body>
+        </html>
+      </NuqsAdapter>
     </ClerkProvider>
   );
 }
