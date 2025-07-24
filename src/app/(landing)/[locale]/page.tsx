@@ -1,8 +1,5 @@
 import React from "react";
 import { Check, Star } from "lucide-react";
-import { MaxWidthWrapper } from "../../components/max-width-wrapper";
-import { Heading } from "../../components/heading";
-import { ShinyButton } from "../../components/shiny-button";
 import { MockDiscordUI } from "@/components/mock-discord-ui";
 import { AnimatedList } from "@/components/animated-list";
 import {
@@ -13,7 +10,13 @@ import Image from "next/image";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Icons } from "@/components/icons";
-import HeroSection from "./_components/hero-section";
+import { MaxWidthWrapper } from "@/components/max-width-wrapper";
+import { Heading } from "@/components/heading";
+import { ShinyButton } from "@/components/shiny-button";
+import { useTranslations } from "next-intl";
+
+const featureKeys = ["realtime", "lifetime", "track"] as const;
+type FeatureKey = (typeof featureKeys)[number];
 
 const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
   method: "POST",
@@ -30,50 +33,46 @@ const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
   }
 })`;
 
-const messages: DiscordMessageProps[] = [
-  {
-    avatarSrc: "/brand-asset-profile-picture.svg",
-    avatarAlt: "PulseBear Avatar",
-    username: "PulseBear",
-    timestamp: "Today at 12:35PM",
-    badgeText: "Sign Up",
-    badgeColor: "#43b581",
-    title: "👤 New user signed up",
-    content: {
-      name: "Mateo Ortiz",
-      email: "mateo@mail.com",
-    },
-  },
-  {
-    avatarSrc: "/brand-asset-profile-picture.svg",
-    avatarAlt: "PulseBear Avatar",
-    username: "PulseBear",
-    timestamp: "Today at 12:35PM",
-    badgeText: "Revenue",
-    badgeColor: "#faa61a",
-    title: "💰 Payment received",
-    content: {
-      amount: "$49.00",
-      email: "zoe.martinez2001@email.com",
-      plan: "PRO",
-    },
-  },
-  {
-    avatarSrc: "/brand-asset-profile-picture.svg",
-    avatarAlt: "PulseBear Avatar",
-    username: "PulseBear",
-    timestamp: "Today at 5:11AM",
-    badgeText: "Milestone",
-    badgeColor: "#5865f2",
-    title: "🚀 Revenue Milestone Achieved",
-    content: {
-      recurringRevenue: "$5.000 USD",
-      growth: "+8.2%",
-    },
-  },
-];
-
 const Page = () => {
+  const hero = useTranslations("Hero");
+  const bento = useTranslations("Bento");
+  const testimonial = useTranslations("Testimonials");
+  const messages = useTranslations("Discord");
+
+  const discordMessages: DiscordMessageProps[] = [
+    {
+      timestamp: messages("signUp.timestamp"),
+      badgeText: messages("signUp.badgeText"),
+      badgeColor: "#43b581",
+      title: messages("signUp.title"),
+      content: {
+        [messages("signUp.fields.name")]: "Mateo Ortiz",
+        [messages("signUp.fields.email")]: "mateo@mail.com",
+      },
+    },
+    {
+      timestamp: messages("revenue.timestamp"),
+      badgeText: messages("revenue.badgeText"),
+      badgeColor: "#faa61a",
+      title: messages("revenue.title"),
+      content: {
+        [messages("revenue.fields.amount")]: "$49.00",
+        [messages("revenue.fields.email")]: "zoe.martinez2001@email.com",
+        [messages("revenue.fields.plan")]: "PRO",
+      },
+    },
+    {
+      timestamp: messages("milestone.timestamp"),
+      badgeText: messages("milestone.badgeText"),
+      badgeColor: "#5865f2",
+      title: messages("milestone.title"),
+      content: {
+        [messages("milestone.fields.recurringRevenue")]: "$5.000 USD",
+        [messages("milestone.fields.growth")]: "+8.2%",
+      },
+    },
+  ];
+
   return (
     <>
       {/* <HeroSection /> */}
@@ -81,33 +80,27 @@ const Page = () => {
         <MaxWidthWrapper className="text-center">
           <div className="relative mx-auto text-center flex flex-col items-center gap-10">
             <div>
-              <Heading>
-                <span>Real-Time SaaS Insights,</span>
-                <br />
+              <Heading className="max-w-2xl text-balance">
+                <span>{hero("heading1")}</span>{" "}
                 <span className="relative bg-gradient-to-r from-brand-700 to-brand-800 text-transparent bg-clip-text">
-                  Delivered to Your Discord
+                  {hero("heading2")}
                 </span>
               </Heading>
             </div>
 
             <p className="text-base/7 text-gray-600 max-w-prose text-center text-pretty">
-              PulseBear is the easiest way to monitor your SaaS. Get instant
-              notifications for{" "}
-              <span className="font-semibold text-gray-700">
-                sales, new users, or any other event
-              </span>{" "}
-              sent directly to your Discord.
+              {hero.rich("paragraph", {
+                b: (chunks) => (
+                  <span className="font-semibold text-gray-700">{chunks}</span>
+                ),
+              })}
             </p>
 
-            <ul className="space-y-2 text-base/7 text-gray-600 text-left flex flex-col items-start">
-              {[
-                "Real-time Discord alerts for critical events",
-                "Buy once, use forever",
-                "Track sales, new users, or any other event",
-              ].map((item, index) => (
-                <li key={index} className="flex gap-1.5 items-center text-left">
+            <ul className="space-y-2 max-w-md text-base/7 text-gray-600 text-left flex flex-col items-start">
+              {featureKeys.map((key: FeatureKey) => (
+                <li key={key} className="flex gap-2 items-center text-left">
                   <Check className="size-5 shrink-0 text-brand-700" />
-                  {item}
+                  {hero(`features.${key}`)}
                 </li>
               ))}
             </ul>
@@ -117,7 +110,7 @@ const Page = () => {
                 href="/sign-up"
                 className="relative z-10 h-14 w-full text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
               >
-                Start For Free Today
+                {hero("button")}
               </ShinyButton>
             </div>
           </div>
@@ -131,7 +124,7 @@ const Page = () => {
             <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
               <MockDiscordUI>
                 <AnimatedList>
-                  {messages.map((message, index) => (
+                  {discordMessages.map((message, index) => (
                     <DiscordMessage key={index} {...message} />
                   ))}
                 </AnimatedList>
@@ -145,9 +138,11 @@ const Page = () => {
         <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-20">
           <div>
             <h2 className="text-center text-base/7 font-semibold text-brand-600">
-              Intuitive Monitoring
+              {bento("subheading")}
             </h2>
-            <Heading>Stay ahead with real-time insights</Heading>
+            <Heading className="text-center leading-snug">
+              {bento("heading")}
+            </Heading>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3 lg:grid-rows-2">
@@ -158,11 +153,10 @@ const Page = () => {
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
                 <div className="px-8 pb-3 pt-8 sm:px-10 sm:pb-0 sm:pt-10">
                   <p className="mt-2 text-lg/7 font-medium tracking-tight text-brand-950 max-lg:text-center">
-                    Real-time notifications
+                    {bento("realtime.title")}
                   </p>
                   <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                    Get notified about critical events the moment they happen,
-                    no matter if you're at home or on the go.
+                    {bento("realtime.desc")}
                   </p>
                 </div>
 
@@ -187,11 +181,10 @@ const Page = () => {
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
                 <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                   <p className="mt-2 text-lg/7 font-medium tracking-tight text-brand-950 max-lg:text-center">
-                    Track Any Event
+                    {bento("event.title")}
                   </p>
                   <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                    From new user signups to successful payments, PulseBear
-                    notifies you for all critical events in your SaaS.
+                    {bento("event.desc")}
                   </p>
                 </div>
                 <div className="flex flex-1 items-center justify-center px-8 max-lg:pb-12 max-lg:pt-10 sm:px-10 lg:pb-2">
@@ -214,11 +207,10 @@ const Page = () => {
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)]">
                 <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                   <p className="mt-2 text-lg/7 font-medium tracking-tight text-brand-950 max-lg:text-center">
-                    Track Any Properties
+                    {bento("properties.title")}
                   </p>
                   <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                    Add any custom data you like to an event, such as a user
-                    email, a purchase amount or an exceeded quota.
+                    {bento("properties.desc")}
                   </p>
                 </div>
 
@@ -243,11 +235,10 @@ const Page = () => {
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
                 <div className="px-8 pb-3 pt-8 sm:px-10 sm:pb-0 sm:pt-10">
                   <p className="mt-2 text-lg/7 font-medium tracking-tight text-brand-950 max-lg:text-center">
-                    Easy Integration
+                    {bento("integration.title")}
                   </p>
                   <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                    Connect PulseBear with your existing workflows in minutes
-                    and call our intuitive logging API from any language.
+                    {bento("integration.desc")}
                   </p>
                 </div>
 
@@ -296,9 +287,9 @@ const Page = () => {
         <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-20">
           <div>
             <h2 className="text-center text-base/7 font-semibold text-brand-600">
-              Real-World Experiences
+              {testimonial("subheading")}
             </h2>
-            <Heading className="text-center">What our customers say</Heading>
+            <Heading className="text-center">{testimonial("heading")}</Heading>
           </div>
 
           <div className="mx-auto grid max-w-2xl grid-cols-1 px-4 lg:mx-0 lg:max-w-none lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
@@ -313,9 +304,7 @@ const Page = () => {
               </div>
 
               <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-brand-950 text-center lg:text-left text-pretty">
-                PulseBear has been a game-changer for me. I've been using it for
-                two months now and seeing sales pop up in real-time is super
-                satisfying.
+                {testimonial("testimonial1.content")}
               </p>
 
               <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-4 mt-2">
@@ -347,9 +336,7 @@ const Page = () => {
               </div>
 
               <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-brand-950 text-center lg:text-left text-pretty">
-                PulseBear's been paying off for our SaaS. Nice to have simple
-                way to see how we're doing day-to-day. Definitely makes our
-                lives easier.
+                {testimonial("testimonial2.content")}
               </p>
 
               <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-4 mt-2">
@@ -375,7 +362,7 @@ const Page = () => {
             href="/sign-up"
             className="relative z-10 h-14 w-full max-w-xs text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
           >
-            Start For Free Today
+            {testimonial("button")}
           </ShinyButton>
         </MaxWidthWrapper>
       </section>

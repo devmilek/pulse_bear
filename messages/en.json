@@ -1,0 +1,79 @@
+{
+  "Hero": {
+    "heading1": "Real-Time SaaS Insights,",
+    "heading2": "Delivered to Your Discord",
+    "paragraph": "PulseBear is the easiest way to monitor your SaaS. Get instant notifications for <b>sales, new users, or any other event</b> sent directly to your Discord.",
+    "features": {
+      "realtime": "Real-time Discord alerts for critical events",
+      "lifetime": "Buy once, use forever",
+      "track": "Track sales, new users, or any other event"
+    },
+    "button": "Start For Free Today"
+  },
+  "Bento": {
+    "heading": "Stay ahead with real-time insights",
+    "subheading": "Intuitive Monitoring",
+    "realtime": {
+      "title": "Real-time notifications",
+      "desc": "Get notified about ritical events the moment they happen, no matter if you're at home or on the go."
+    },
+    "event": {
+      "title": "Track Any Event",
+      "desc": "From new user signups to successful payments, PulseBear notifies you for all critical events in your SaaS."
+    },
+    "properties": {
+      "title": "Track Any Properties",
+      "desc": "Add any custom data you like to an event, such as a user email, a purchase amount or an exceeded quota."
+    },
+    "integration": {
+      "title": "Easy Integration",
+      "desc": "Connect PulseBear with your existing workflows in minutes and call our intuitive logging API from any language."
+    }
+  },
+  "Testimonials": {
+    "subheading": "Real-World Experiences",
+    "heading": "What our customers say",
+    "testimonial1": {
+      "content": "PulseBear has been a game-changer for me. I've been using it for two months now and seeing sales pop up in real-time is super satisfying."
+    },
+    "testimonial2": {
+      "content": "PulseBear's been paying off for our SaaS. Nice to have simple way to see how we're doing day-to-day. Definitely makes our lives easier."
+    },
+    "button": "Start For Free Today"
+  },
+  "Discord": {
+    "friends": "Friends",
+    "directMessages": "Direct Messages",
+    "findOrStartConversation": "Find or start a conversation",
+    "messagePulseBear": "Message @PulseBear",
+    "user": "User",
+    "signUp": {
+      "timestamp": "Today at 12:35PM",
+      "badgeText": "Sign Up",
+      "title": "👤 New user signed up",
+      "fields": {
+        "name": "Name",
+        "email": "Email"
+      }
+    },
+    "revenue": {
+      "timestamp": "Today at 12:35PM",
+      "badgeText": "Revenue",
+      "title": "💰 Payment received",
+      "fields": {
+        "amount": "Amount",
+        "email": "Email",
+        "plan": "Plan"
+      }
+    },
+    "milestone": {
+      "timestamp": "Today at 5:11AM",
+      "badgeText": "Milestone",
+      "title": "🚀 Revenue Milestone Achieved",
+      "fields": {
+        "recurringRevenue": "Recurring Revenue",
+        "growth": "Growth"
+      }
+    }
+  }
+}
