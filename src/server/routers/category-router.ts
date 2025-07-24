@@ -2,11 +2,12 @@ import { desc, eq, gte, count, and } from "drizzle-orm";
 import { db } from "../db";
 import { j, privateProcedure } from "../jstack";
 import { eventCategories, events as eventSchema } from "../db/schema";
-import { startOfDay, startOfMonth, startOfWeek } from "date-fns";
+import { addMonths, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import z from "zod";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
 import { parseColor } from "@/lib/utils";
 import { HTTPException } from "hono/http-exception";
+import { FREE_QUOTA, PRO_QUOTA } from "@/config";
 
 export const categoryRouter = j.router({
   getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
@@ -106,6 +107,19 @@ export const categoryRouter = j.router({
     .mutation(async ({ c, ctx, input }) => {
       const { user } = ctx;
       const { color, name, emoji } = input;
+
+      const categoryCount = await db.$count(
+        eventCategories,
+        eq(eventCategories.userId, user.id)
+      );
+
+      const limits = user.plan === "PRO" ? PRO_QUOTA : FREE_QUOTA;
+
+      if (categoryCount >= limits.maxEventCategories) {
+        throw new HTTPException(403, {
+          message: `You have reached the maximum number of categories (${limits.maxEventCategories}). Please upgrade your plan to create more.`,
+        });
+      }
 
       const eventCategory = await db
         .insert(eventCategories)
