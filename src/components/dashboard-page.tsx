@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { ArrowLeft, MenuIcon } from "lucide-react";
 import { Heading } from "./heading";
 import { useRouter } from "next/navigation";
-import { SidebarTrigger } from "./ui/sidebar";
+import { SidebarTrigger, useSidebar } from "./ui/sidebar";
 
 interface DashboardPageProps {
   title: string;
@@ -21,6 +21,7 @@ export const DashboardPage = ({
   hideBackButton,
 }: DashboardPageProps) => {
   const router = useRouter();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <section className="flex-1 h-full w-full flex flex-col">
@@ -41,20 +42,15 @@ export const DashboardPage = ({
               )}
               <Heading>{title}</Heading>
             </div>
-            <SidebarTrigger>
-              <Button size="icon">
-                <MenuIcon />
-              </Button>
-            </SidebarTrigger>
+            <Button size="icon" onClick={toggleSidebar} variant="outline">
+              <MenuIcon />
+            </Button>
           </div>
 
-          {/* Bottom row: CTA */}
           {cta && <div className="w-full">{cta}</div>}
         </div>
 
-        {/* Desktop layout */}
         <div className="hidden sm:flex items-center justify-between">
-          {/* Left side: back button and heading */}
           <div className="flex items-center gap-8">
             {!hideBackButton && (
               <Button
@@ -68,14 +64,11 @@ export const DashboardPage = ({
             <Heading>{title}</Heading>
           </div>
 
-          {/* Right side: CTA and sidebar trigger */}
           <div className="flex items-center gap-4">
             {cta && <div>{cta}</div>}
-            <SidebarTrigger>
-              <Button size="icon">
-                <MenuIcon />
-              </Button>
-            </SidebarTrigger>
+            <Button size="icon" onClick={toggleSidebar} variant="outline">
+              <MenuIcon />
+            </Button>
           </div>
         </div>
       </div>

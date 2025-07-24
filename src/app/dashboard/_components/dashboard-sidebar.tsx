@@ -54,7 +54,7 @@ export const DashboardSidebar = () => {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center justify-between gap-2">
+          <SidebarMenuItem>
             <SidebarMenuButton
               asChild
               className="data-[slot=sidebar-menu-button]:!p-2 group-data-[collapsible=icon]:hidden"
@@ -65,7 +65,6 @@ export const DashboardSidebar = () => {
                 </p>
               </Link>
             </SidebarMenuButton>
-            <SidebarTrigger className="-ml-1" />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
