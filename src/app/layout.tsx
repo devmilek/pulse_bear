@@ -15,8 +15,9 @@ const eb_garamond = EB_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "JStack App",
-  description: "Created using JStack",
+  title: "PulseBear - Real-time SaaS Monitoring",
+  description:
+    "Monitor your SaaS applications in real-time with PulseBear. Get instant alerts, track critical metrics, and never miss an event.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
