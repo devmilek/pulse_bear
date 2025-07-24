@@ -37,7 +37,6 @@ export const users = pgTable("users", {
     .unique()
     .$default(() => cuid()),
   plan: planEnum("plan").default("FREE").notNull(),
-  quotaLimit: integer("quota_limit").default(100).notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),
@@ -107,7 +106,9 @@ export const eventCategories = pgTable(
 
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
 
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -153,9 +154,14 @@ export const events = pgTable(
 
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
     eventCategoryId: uuid("event_category_id").references(
-      () => eventCategories.id
+      () => eventCategories.id,
+      {
+        onDelete: "cascade",
+      }
     ),
 
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -191,7 +197,9 @@ export const quotas = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
 
     year: integer("year").notNull(),
     month: integer("month").notNull(),

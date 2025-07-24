@@ -26,9 +26,8 @@ export const auth = betterAuth({
       },
       apiKey: {
         type: "string",
-        required: true,
+        required: false,
         input: false,
-        defaultValue: () => cuid(),
       },
       plan: {
         type: "string",
