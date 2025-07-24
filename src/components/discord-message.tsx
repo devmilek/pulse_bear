@@ -3,9 +3,6 @@ import { Clock } from "lucide-react";
 import Image from "next/image";
 
 export interface DiscordMessageProps {
-  avatarSrc: string;
-  avatarAlt: string;
-  username: string;
   timestamp: string;
   badgeText?: string;
   badgeColor?: string;
@@ -29,12 +26,9 @@ const getBadgeStyles = (color: BadgeColor) => {
 };
 
 export const DiscordMessage = ({
-  avatarAlt,
-  avatarSrc,
   content,
   timestamp,
   title,
-  username,
   badgeColor = "#43b581",
   badgeText,
 }: DiscordMessageProps) => {
@@ -42,8 +36,8 @@ export const DiscordMessage = ({
     <div className="w-full flex items-start justify-start">
       <div className="flex items-center mb-2">
         <Image
-          src={avatarSrc}
-          alt={avatarAlt}
+          src="/brand-asset-profile-picture.svg"
+          alt="PulseBear Avatar"
           width={40}
           height={40}
           className="object-cover rounded-full mr-3"
@@ -52,7 +46,7 @@ export const DiscordMessage = ({
 
       <div className="w-full max-w-xl">
         <div className="flex items-center">
-          <p className="font-semibold text-white">{username}</p>
+          <p className="font-semibold text-white">PluseBear</p>
           <span className="ml-2 px-1.5 py-0.5 text-xs font-semibold bg-brand-600 text-white rounded">
             APP
           </span>

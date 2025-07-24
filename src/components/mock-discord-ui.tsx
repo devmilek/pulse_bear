@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Icons } from "./icons";
+import { useTranslations } from "next-intl";
 
 export const MockDiscordUI = ({ children }: PropsWithChildren) => {
+  const discord = useTranslations("Discord");
   return (
     <div className="flex min-h-[800px] w-full max-w-[1200px] bg-discord-background text-white rounded-lg overflow-hidden shadow-xl">
       {/* server list */}
@@ -49,8 +51,10 @@ export const MockDiscordUI = ({ children }: PropsWithChildren) => {
       {/* dm list */}
       <div className="hidden md:flex w-60 bg-[#2f3136] flex-col">
         <div className="px-4 h-16 border-b border-[#202225] flex items-center shadow-sm">
-          <div className="w-full bg-[#202225] text-sm rounded px-2 h-8 flex items-center justify-center text-gray-500 cursor-not-allowed">
-            Find or start a conversation
+          <div className="w-full bg-[#202225] flex-1 min-w-0 text-sm rounded px-2 h-8 flex items-center justify-center text-gray-500 cursor-not-allowed">
+            <span className="truncate">
+              {discord("findOrStartConversation")}
+            </span>
           </div>
         </div>
 
@@ -58,7 +62,7 @@ export const MockDiscordUI = ({ children }: PropsWithChildren) => {
           <div className="px-2 mb-4">
             <div className="flex items-center text-sm px-2 py-1.5 rounded hover:bg-[#393c43] text-[#dcddde] cursor-not-allowed">
               <UserCircle className="mr-4 size-8 text-[#b9bbbe]" />
-              <span className="font-medium text-sm">Friends</span>
+              <span className="font-medium text-sm">{discord("friends")}</span>
             </div>
             <div className="flex items-center text-sm px-2 py-1.5 rounded hover:bg-[#393c43] text-[#dcddde] cursor-not-allowed">
               <Inbox className="mr-4 size-8 text-[#b9bbbe]" />
@@ -68,7 +72,7 @@ export const MockDiscordUI = ({ children }: PropsWithChildren) => {
 
           <div className="px-2 mb-4">
             <h3 className="text-xs font-semibold text-[#8e9297] px-2 mb-2 uppercase">
-              Direct Messages
+              {discord("directMessages")}
             </h3>
 
             <div className="flex items-center px-2 py-1.5 rounded bg-[#393c43] text-white cursor-pointer">
@@ -89,7 +93,9 @@ export const MockDiscordUI = ({ children }: PropsWithChildren) => {
                   className="flex items-center px-2 py-1.5 rounded text-gray-600 cursor-not-allowed"
                 >
                   <div className="size-8 rounded-full bg-discord-background mr-3" />
-                  <span className="font-medium">User {i + 1}</span>
+                  <span className="font-medium">
+                    {discord("user")} {i + 1}
+                  </span>
                 </div>
               ))}
             </div>

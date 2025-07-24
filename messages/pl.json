@@ -40,5 +40,41 @@
       "content": "PulseBear naprawdę się sprawdza w naszym SaaS. Fajnie mieć prosty sposób na sprawdzanie, jak idzie każdego dnia. Zdecydowanie ułatwia nam życie."
     },
     "button": "Zacznij za darmo już dziś"
+  },
+  "Discord": {
+    "friends": "Znajomi",
+    "directMessages": "Prywatne wiadomości",
+    "findOrStartConversation": "Znajdź lub rozpocznij rozmowę",
+    "messagePulseBear": "Napisz na @PulseBear",
+    "user": "Użytkownik",
+
+    "signUp": {
+      "timestamp": "Dziś o 12:35",
+      "badgeText": "Rejestracja",
+      "title": "👤 Nowy użytkownik się zarejestrował",
+      "fields": {
+        "name": "Imię i nazwisko",
+        "email": "Email"
+      }
+    },
+    "revenue": {
+      "timestamp": "Dziś o 12:35",
+      "badgeText": "Przychód",
+      "title": "💰 Otrzymano płatność",
+      "fields": {
+        "amount": "Kwota",
+        "email": "Email",
+        "plan": "Plan"
+      }
+    },
+    "milestone": {
+      "timestamp": "Dziś o 5:11",
+      "badgeText": "Kamień milowy",
+      "title": "🚀 Osiągnięto kamień milowy przychodów",
+      "fields": {
+        "recurringRevenue": "Przychód cykliczny",
+        "growth": "Wzrost"
+      }
+    }
   }
 }

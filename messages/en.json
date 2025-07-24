@@ -37,8 +37,43 @@
       "content": "PulseBear has been a game-changer for me. I've been using it for two months now and seeing sales pop up in real-time is super satisfying."
     },
     "testimonial2": {
-    "content": "PulseBear's been paying off for our SaaS. Nice to have simple way to see how we're doing day-to-day. Definitely makes our lives easier."
+      "content": "PulseBear's been paying off for our SaaS. Nice to have simple way to see how we're doing day-to-day. Definitely makes our lives easier."
     },
-     "button": "Start For Free Today"
+    "button": "Start For Free Today"
+  },
+  "Discord": {
+    "friends": "Friends",
+    "directMessages": "Direct Messages",
+    "findOrStartConversation": "Find or start a conversation",
+    "messagePulseBear": "Message @PulseBear",
+    "user": "User",
+    "signUp": {
+      "timestamp": "Today at 12:35PM",
+      "badgeText": "Sign Up",
+      "title": "👤 New user signed up",
+      "fields": {
+        "name": "Name",
+        "email": "Email"
+      }
+    },
+    "revenue": {
+      "timestamp": "Today at 12:35PM",
+      "badgeText": "Revenue",
+      "title": "💰 Payment received",
+      "fields": {
+        "amount": "Amount",
+        "email": "Email",
+        "plan": "Plan"
+      }
+    },
+    "milestone": {
+      "timestamp": "Today at 5:11AM",
+      "badgeText": "Milestone",
+      "title": "🚀 Revenue Milestone Achieved",
+      "fields": {
+        "recurringRevenue": "Recurring Revenue",
+        "growth": "Growth"
+      }
+    }
   }
 }

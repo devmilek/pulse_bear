@@ -33,53 +33,45 @@ const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
   }
 })`;
 
-const messages: DiscordMessageProps[] = [
-  {
-    avatarSrc: "/brand-asset-profile-picture.svg",
-    avatarAlt: "PulseBear Avatar",
-    username: "PulseBear",
-    timestamp: "Today at 12:35PM",
-    badgeText: "Sign Up",
-    badgeColor: "#43b581",
-    title: "👤 New user signed up",
-    content: {
-      name: "Mateo Ortiz",
-      email: "mateo@mail.com",
-    },
-  },
-  {
-    avatarSrc: "/brand-asset-profile-picture.svg",
-    avatarAlt: "PulseBear Avatar",
-    username: "PulseBear",
-    timestamp: "Today at 12:35PM",
-    badgeText: "Revenue",
-    badgeColor: "#faa61a",
-    title: "💰 Payment received",
-    content: {
-      amount: "$49.00",
-      email: "zoe.martinez2001@email.com",
-      plan: "PRO",
-    },
-  },
-  {
-    avatarSrc: "/brand-asset-profile-picture.svg",
-    avatarAlt: "PulseBear Avatar",
-    username: "PulseBear",
-    timestamp: "Today at 5:11AM",
-    badgeText: "Milestone",
-    badgeColor: "#5865f2",
-    title: "🚀 Revenue Milestone Achieved",
-    content: {
-      recurringRevenue: "$5.000 USD",
-      growth: "+8.2%",
-    },
-  },
-];
-
 const Page = () => {
   const hero = useTranslations("Hero");
   const bento = useTranslations("Bento");
   const testimonial = useTranslations("Testimonials");
+  const messages = useTranslations("Discord");
+
+  const discordMessages: DiscordMessageProps[] = [
+    {
+      timestamp: messages("signUp.timestamp"),
+      badgeText: messages("signUp.badgeText"),
+      badgeColor: "#43b581",
+      title: messages("signUp.title"),
+      content: {
+        [messages("signUp.fields.name")]: "Mateo Ortiz",
+        [messages("signUp.fields.email")]: "mateo@mail.com",
+      },
+    },
+    {
+      timestamp: messages("revenue.timestamp"),
+      badgeText: messages("revenue.badgeText"),
+      badgeColor: "#faa61a",
+      title: messages("revenue.title"),
+      content: {
+        [messages("revenue.fields.amount")]: "$49.00",
+        [messages("revenue.fields.email")]: "zoe.martinez2001@email.com",
+        [messages("revenue.fields.plan")]: "PRO",
+      },
+    },
+    {
+      timestamp: messages("milestone.timestamp"),
+      badgeText: messages("milestone.badgeText"),
+      badgeColor: "#5865f2",
+      title: messages("milestone.title"),
+      content: {
+        [messages("milestone.fields.recurringRevenue")]: "$5.000 USD",
+        [messages("milestone.fields.growth")]: "+8.2%",
+      },
+    },
+  ];
 
   return (
     <>
@@ -132,7 +124,7 @@ const Page = () => {
             <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
               <MockDiscordUI>
                 <AnimatedList>
-                  {messages.map((message, index) => (
+                  {discordMessages.map((message, index) => (
                     <DiscordMessage key={index} {...message} />
                   ))}
                 </AnimatedList>
