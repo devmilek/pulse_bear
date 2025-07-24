@@ -37,3 +37,21 @@ export function humanizeKey(key: string) {
 
   return words.join(" ");
 }
+
+export const getEventCodeSnippet = (categoryName: string) => {
+  const codeSnippet = `await fetch('${process.env.NEXT_PUBLIC_APP_URL}/api/events', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  },
+  body: JSON.stringify({
+    category: '${categoryName}',
+    fields: {
+      field1: 'value1', // for example: user id
+      field2: 'value2' // for example: user email
+    }
+  })
+})`;
+
+  return codeSnippet;
+};

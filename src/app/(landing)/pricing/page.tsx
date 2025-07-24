@@ -45,7 +45,7 @@ const Page = () => {
           <Heading className="text-center">Simple no-tricks pricing</Heading>
           <p className="mt-6 text-base/7 text-gray-600 max-w-prose text-center text-pretty">
             We hate subscriptions. And chances are, you do too. That's why we
-            offer lifetime access to PingPanda for a one-time payment.
+            offer lifetime access to PulseBear for a one-time payment.
           </p>
         </div>
 
