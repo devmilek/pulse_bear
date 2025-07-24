@@ -1,0 +1,44 @@
+{
+  "Hero": {
+    "heading1": "Informacje o Twoim SaaS w czasie rzeczywistym,",
+    "heading2": "dostarczane na Discorda",
+    "paragraph": "PulseBear to najprostszy sposób monitorowania Twojej aplikacji SaaS. Otrzymuj natychmiastowe powiadomienia o <b>sprzedaży, nowych użytkownikach lub innych zdarzeniach</b> bezpośrednio na Discorda.",
+    "features": {
+      "realtime": "Powiadomienia na Discordzie w czasie rzeczywistym",
+      "lifetime": "Kup raz, korzystaj na zawsze",
+      "track": "Śledź sprzedaż, rejestracje lub dowolne inne zdarzenia"
+    },
+    "button": "Zacznij za darmo już dziś"
+  },
+  "Bento": {
+    "heading": "Bądź na bieżąco dzięki powiadomieniom w czasie rzeczywistym",
+    "subheading": "Intuicyjne monitorowanie",
+    "realtime": {
+      "title": "Powiadomienia w czasie rzeczywistym",
+      "desc": "Otrzymuj powiadomienia o krytycznych zdarzeniach w momencie, gdy się wydarzą — niezależnie od tego, czy jesteś w domu, czy w drodze."
+    },
+    "event": {
+      "title": "Śledź dowolne zdarzenie",
+      "desc": "Od rejestracji nowych użytkowników po udane płatności — PulseBear powiadamia Cię o wszystkich kluczowych zdarzeniach w Twojej aplikacji SaaS."
+    },
+    "properties": {
+      "title": "Śledź dowolne właściwości",
+      "desc": "Dodaj do zdarzenia dowolne dane, takie jak e-mail użytkownika, kwotę zakupu czy przekroczony limit."
+    },
+    "integration": {
+      "title": "Łatwa integracja",
+      "desc": "Połącz PulseBear z Twoimi obecnymi procesami w kilka minut i korzystaj z intuicyjnego API logowania w dowolnym języku programowania."
+    }
+  },
+  "Testimonials": {
+    "subheading": "Opinie z życia wzięte",
+    "heading": "Co mówią nasi klienci",
+    "testimonial1": {
+      "content": "PulseBear całkowicie odmienił moją pracę. Korzystam z niego od dwóch miesięcy i widzieć sprzedaże w czasie rzeczywistym to ogromna satysfakcja."
+    },
+    "testimonial2": {
+      "content": "PulseBear naprawdę się sprawdza w naszym SaaS. Fajnie mieć prosty sposób na sprawdzanie, jak idzie każdego dnia. Zdecydowanie ułatwia nam życie."
+    },
+    "button": "Zacznij za darmo już dziś"
+  }
+}
