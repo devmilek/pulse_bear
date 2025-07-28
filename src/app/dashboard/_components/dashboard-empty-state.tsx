@@ -1,21 +1,22 @@
-// import { CreateEventCategoryModal } from "@/components/create-event-category-modal";
 import { CreateEventCategoryModal } from "@/components/create-event-category-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { client } from "@/lib/client";
+import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const DashboardEmptyState = () => {
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
-  const { mutate: insertQuickstartCategories, isPending } = useMutation({
-    mutationFn: async () => {
-      await client.category.insertQuickstartCategories.$post();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
-    },
-  });
+  const { mutate: insertQuickstartCategories, isPending } = useMutation(
+    trpc.category.insertQuickstartCategories.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.category.getEventCategories.infiniteQueryOptions()
+        );
+      },
+    })
+  );
 
   return (
     <Card className="flex flex-col items-center justify-center rounded-2xl flex-1 text-center p-6">

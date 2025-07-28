@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { client } from "@/lib/client";
 import { Plan } from "@/server/db/schema";
+import { useTRPC } from "@/trpc/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { BarChart } from "lucide-react";
@@ -10,24 +11,17 @@ import { useRouter } from "next/navigation";
 
 export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
   const router = useRouter();
+  const trpc = useTRPC();
 
-  const { mutate: createCheckoutSession } = useMutation({
-    mutationFn: async () => {
-      const res = await client.payment.createCheckoutSession.$post();
-      return await res.json();
-    },
-    onSuccess: ({ url }) => {
-      if (url) router.push(url);
-    },
-  });
+  const { mutate: createCheckoutSession } = useMutation(
+    trpc.payment.createCheckoutSession.mutationOptions({
+      onSuccess: ({ url }) => {
+        if (url) router.push(url);
+      },
+    })
+  );
 
-  const { data: usageData } = useQuery({
-    queryKey: ["usage"],
-    queryFn: async () => {
-      const res = await client.project.getUsage.$get();
-      return await res.json();
-    },
-  });
+  const { data: usageData } = useQuery(trpc.project.getUsage.queryOptions());
 
   return (
     <div className="max-w-3xl flex flex-col gap-8">

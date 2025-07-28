@@ -6,21 +6,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "./ui/button";
-import { client } from "@/lib/client";
 import { Modal } from "./modal";
-import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
 import { Alert, AlertDescription } from "./ui/alert";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import {
-  EmojiPicker,
-  EmojiPickerContent,
-  EmojiPickerFooter,
-  EmojiPickerSearch,
-} from "./ui/emoji-picker";
-import { Check, PlusIcon } from "lucide-react";
+import { Check } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -29,6 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { useTRPC } from "@/trpc/client";
 
 const EVENT_CATEGORY_VALIDATOR = z.object({
   name: CATEGORY_NAME_VALIDATOR,
@@ -78,19 +70,21 @@ export const CreateEventCategoryModal = ({
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const trpc = useTRPC();
 
-  const { mutate: createEventCategory, isPending } = useMutation({
-    mutationFn: async (data: EventCategoryForm) => {
-      await client.category.createEventCategory.$post(data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
-      setIsOpen(false);
-    },
-    onError: (error) => {
-      setError(error.message);
-    },
-  });
+  const { mutate: createEventCategory, isPending } = useMutation(
+    trpc.category.createEventCategory.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.category.getEventCategories.infiniteQueryOptions()
+        );
+        setIsOpen(false);
+      },
+      onError: (error) => {
+        setError(error.message);
+      },
+    })
+  );
 
   const form = useForm<EventCategoryForm>({
     resolver: zodResolver(EVENT_CATEGORY_VALIDATOR),
@@ -192,8 +186,8 @@ export const CreateEventCategoryModal = ({
                             className={cn(
                               "size-10 flex items-center justify-center text-xl rounded-md transition-all",
                               selectedEmoji === emoji
-                                ? "bg-brand-100 ring-2 ring-brand-700 scale-110"
-                                : "bg-brand-100 hover:bg-brand-200"
+                                ? "bg-accent ring-2 ring-ring scale-110"
+                                : "bg-accent hover:bg-accent/50"
                             )}
                             onClick={() => field.onChange(emoji)}
                           >

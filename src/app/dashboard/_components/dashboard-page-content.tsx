@@ -10,30 +10,26 @@ import { ArrowRight, BarChart2, Clock, Database, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Modal } from "@/components/modal";
+import { useTRPC } from "@/trpc/client";
 
 export const DashboardPageContent = () => {
+  const trpc = useTRPC();
   const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: categories, isPending: isEventCategoriesLoading } = useQuery({
-    queryKey: ["user-event-categories"],
-    queryFn: async () => {
-      const res = await client.category.getEventCategories.$get();
-      const { categories } = await res.json();
-      return categories;
-    },
-  });
+  const { data: categories, isPending: isEventCategoriesLoading } = useQuery(
+    trpc.category.getEventCategories.queryOptions()
+  );
 
   const { mutate: deleteCategory, isPending: isDeletingCategory } = useMutation(
-    {
-      mutationFn: async (name: string) => {
-        await client.category.deleteCategory.$post({ name });
-      },
+    trpc.category.deleteCategory.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
+        queryClient.invalidateQueries(
+          trpc.category.getEventCategories.infiniteQueryOptions()
+        );
         setDeletingCategory(null);
       },
-    }
+    })
   );
 
   if (isEventCategoriesLoading) {
@@ -151,7 +147,10 @@ export const DashboardPageContent = () => {
             <Button
               variant="destructive"
               onClick={() =>
-                deletingCategory && deleteCategory(deletingCategory)
+                deletingCategory &&
+                deleteCategory({
+                  name: deletingCategory,
+                })
               }
               disabled={isDeletingCategory}
             >

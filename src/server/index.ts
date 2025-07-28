@@ -21,9 +21,6 @@ const api = j
  * All routers in /server/routers should be added here manually.
  */
 const appRouter = j.mergeRouters(api, {
-  category: categoryRouter,
-  payment: paymentRouter,
-  project: projectRouter,
   apiKeys: apiKeysRouter,
 });
 
