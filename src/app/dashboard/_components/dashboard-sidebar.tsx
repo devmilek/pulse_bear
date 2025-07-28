@@ -15,6 +15,8 @@ import {
 import { Gem, Home, Key, LucideIcon, Settings } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { DashboardUserButton } from "./dashboard-user-button";
 
 interface SidebarItem {
   href: string;
@@ -49,7 +51,8 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
   },
 ];
 
-export const DashboardSidebar = () => {
+export const DashboardSidebar = async () => {
+  const { user } = await getCurrentSession();
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -102,7 +105,9 @@ export const DashboardSidebar = () => {
         ))}
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter>{/* TODO: user button */}</SidebarFooter>
+      <SidebarFooter>
+        <DashboardUserButton user={user} />
+      </SidebarFooter>
     </Sidebar>
   );
 };
