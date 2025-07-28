@@ -1,7 +1,7 @@
-import { db } from "@/server/db";
+import { db } from "@/db";
 import { createTRPCRouter, protectedProcedure } from "../init";
 import { addMonths, startOfMonth } from "date-fns";
-import { eventCategories, quotas, users } from "@/server/db/schema";
+import { eventCategories, quotas, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { FREE_QUOTA, PRO_QUOTA } from "@/config";
 import z from "zod";

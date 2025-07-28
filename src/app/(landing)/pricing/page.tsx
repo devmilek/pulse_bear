@@ -5,6 +5,7 @@ import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/auth-client";
 import { client } from "@/lib/client";
+import { useTRPC } from "@/trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { CheckIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,7 @@ import { useRouter } from "next/navigation";
 const Page = () => {
   const { data: user, isPending } = authClient.useSession();
   const router = useRouter();
+  const trpc = useTRPC();
 
   const INCLUDED_FEATURES = [
     "10.000 real-time events per month",
@@ -20,15 +22,13 @@ const Page = () => {
     "Priority support",
   ];
 
-  const { mutate: createCheckoutSession } = useMutation({
-    mutationFn: async () => {
-      const res = await client.payment.createCheckoutSession.$post();
-      return await res.json();
-    },
-    onSuccess: ({ url }) => {
-      if (url) router.push(url);
-    },
-  });
+  const { mutate: createCheckoutSession } = useMutation(
+    trpc.payment.createCheckoutSession.mutationOptions({
+      onSuccess: ({ url }) => {
+        if (url) router.push(url);
+      },
+    })
+  );
 
   const handleGetAccess = () => {
     if (user) {

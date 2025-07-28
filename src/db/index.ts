@@ -1,4 +1,4 @@
-import * as schema from "@/server/db/schema";
+import * as schema from "./schema";
 import { drizzle } from "drizzle-orm/node-postgres";
 import "dotenv/config";
 

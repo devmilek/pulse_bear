@@ -1,12 +1,12 @@
 import { desc, eq, gte, count, and } from "drizzle-orm";
-import { eventCategories, events as eventSchema } from "@/server/db/schema";
+import { eventCategories, events as eventSchema } from "@/db/schema";
 import { addMonths, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import z from "zod";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
 import { parseColor } from "@/lib/utils";
 import { FREE_QUOTA, PRO_QUOTA } from "@/config";
 import { createTRPCRouter, protectedProcedure } from "../init";
-import { db } from "@/server/db";
+import { db } from "@/db";
 import { TRPCError } from "@trpc/server";
 
 export const categoryRouter = createTRPCRouter({
