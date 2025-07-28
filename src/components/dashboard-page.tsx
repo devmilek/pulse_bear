@@ -25,7 +25,7 @@ export const DashboardPage = ({
 
   return (
     <section className="flex-1 h-full w-full flex flex-col">
-      <div className="w-full p-6 sm:p-8 border-b border-gray-200">
+      <div className="w-full px-6 sm:px-8 py-6 border-b border-gray-200">
         {/* Mobile layout */}
         <div className="flex flex-col gap-4 sm:hidden">
           {/* Top row: back button, heading, sidebar trigger */}

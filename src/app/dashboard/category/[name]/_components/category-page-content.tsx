@@ -17,15 +17,10 @@ interface CategoryPageContentProps {
 }
 
 export const CategoryPageContent = ({
-  hasEvents: initialHasEvents,
+  hasEvents,
   category,
 }: CategoryPageContentProps) => {
   const [filters] = useEventCategoryParams();
-
-  const { data: pollingData } = useQuery({
-    queryKey: ["category", category.name, "hasEvents"],
-    initialData: { hasEvents: initialHasEvents },
-  });
 
   const { data, isFetching } = useQuery({
     queryKey: [
@@ -56,10 +51,10 @@ export const CategoryPageContent = ({
       return result;
     },
     refetchOnWindowFocus: false,
-    enabled: pollingData.hasEvents,
+    enabled: hasEvents,
   });
 
-  if (!pollingData.hasEvents) {
+  if (!hasEvents) {
     return <EmptyCategoryState categoryName={category.name} />;
   }
 

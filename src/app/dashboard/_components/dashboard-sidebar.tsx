@@ -54,7 +54,7 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
 export const DashboardSidebar = async () => {
   const { user } = await getCurrentSession();
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
         <Link
           href="/"

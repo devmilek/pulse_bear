@@ -39,7 +39,7 @@ export const EmptyCategoryState = ({
   return (
     <Card
       //   contentClassName="max-w-2xl w-full flex flex-col items-center p-6"
-      className="flex-1 flex items-center justify-center"
+      className="flex-1 flex items-center justify-center bg-primary-foreground"
     >
       <CardContent className="max-w-2xl w-full flex flex-col items-center p-6">
         <h2 className="text-xl/8 font-medium text-center tracking-tight text-gray-950">
