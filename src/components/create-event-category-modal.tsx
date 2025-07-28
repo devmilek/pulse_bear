@@ -20,7 +20,15 @@ import {
   EmojiPickerFooter,
   EmojiPickerSearch,
 } from "./ui/emoji-picker";
-import { PlusIcon } from "lucide-react";
+import { Check, PlusIcon } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 
 const EVENT_CATEGORY_VALIDATOR = z.object({
   name: CATEGORY_NAME_VALIDATOR,
@@ -84,18 +92,12 @@ export const CreateEventCategoryModal = ({
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<EventCategoryForm>({
+  const form = useForm<EventCategoryForm>({
     resolver: zodResolver(EVENT_CATEGORY_VALIDATOR),
   });
 
-  const color = watch("color");
-  const selectedEmoji = watch("emoji");
+  const color = form.watch("color");
+  const selectedEmoji = form.watch("emoji");
 
   const onSubmit = (data: EventCategoryForm) => {
     setError(null);
@@ -113,127 +115,119 @@ export const CreateEventCategoryModal = ({
         showModal={isOpen}
         setShowModal={setIsOpen}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <h2 className="text-lg/7 font-medium tracking-tight text-gray-950">
-              New Event Category
-            </h2>
-            <p className="text-sm/6 text-gray-600">
-              Create a new category to organize your events.
-            </p>
-          </div>
-
-          <div className="space-y-5">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <Label htmlFor="name" className="mb-2">
-                Name
-              </Label>
-              <Input
-                autoFocus
-                id="name"
-                {...register("name")}
-                placeholder="e.g. user-signup"
-                className="w-full"
+              <h2 className="text-lg/7 font-medium tracking-tight text-gray-950">
+                New Event Category
+              </h2>
+              <p className="text-sm/6 text-gray-600">
+                Create a new category to organize your events.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              <FormField
+                name="name"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.name ? (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.name.message}
-                </p>
-              ) : null}
+
+              <FormField
+                name="color"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Color</FormLabel>
+                    <FormControl>
+                      <div className="grid grid-cols-5 gap-2">
+                        {COLOR_OPTIONS.map((color) => (
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => field.onChange(color)}
+                            className={`relative h-10 w-full rounded-xl hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg`}
+                            style={{
+                              backgroundColor: color,
+                              boxShadow:
+                                selectedEmoji === color
+                                  ? `0 0 0 2px ${color}`
+                                  : "none",
+                            }}
+                          >
+                            {field.value === color && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <Check className="h-5 w-5 text-white drop-shadow-lg" />
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="emoji"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Emoji</FormLabel>
+                    <FormControl>
+                      <div className="flex flex-wrap gap-3">
+                        {EMOJI_OPTIONS.map(({ emoji, label }) => (
+                          <button
+                            key={emoji}
+                            type="button"
+                            className={cn(
+                              "size-10 flex items-center justify-center text-xl rounded-md transition-all",
+                              selectedEmoji === emoji
+                                ? "bg-brand-100 ring-2 ring-brand-700 scale-110"
+                                : "bg-brand-100 hover:bg-brand-200"
+                            )}
+                            onClick={() => field.onChange(emoji)}
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <div>
-              <Label className="mb-2">Color</Label>
-              <div className="flex flex-wrap gap-3">
-                {COLOR_OPTIONS.map((premadeColor) => (
-                  <button
-                    key={premadeColor}
-                    type="button"
-                    className={cn(
-                      `bg-[${premadeColor}]`,
-                      "size-10 rounded-full ring-2 ring-offset-2 transition-all",
-                      color === premadeColor
-                        ? "ring-brand-700 scale-110"
-                        : "ring-transparent hover:scale-105"
-                    )}
-                    onClick={() => setValue("color", premadeColor)}
-                  ></button>
-                ))}
-              </div>
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-              {errors.color ? (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.color.message}
-                </p>
-              ) : null}
+            <div className="flex justify-end space-x-3 pt-4 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button disabled={isPending} type="submit">
+                {isPending ? "Creating..." : "Create Category"}{" "}
+              </Button>
             </div>
-
-            <div>
-              <Label className="mb-2">Emoji</Label>
-              <div className="flex flex-wrap gap-3">
-                {EMOJI_OPTIONS.map(({ emoji, label }) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    className={cn(
-                      "size-10 flex items-center justify-center text-xl rounded-md transition-all",
-                      selectedEmoji === emoji
-                        ? "bg-brand-100 ring-2 ring-brand-700 scale-110"
-                        : "bg-brand-100 hover:bg-brand-200"
-                    )}
-                    onClick={() => setValue("emoji", emoji)}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-                <Popover modal>
-                  <PopoverTrigger asChild>
-                    <button className="size-10 ring-brand-700 bg-brand-100 flex items-center justify-center text-xl rounded-md transition-all">
-                      <PlusIcon />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-fit p-0">
-                    <EmojiPicker
-                      className="h-[342px]"
-                      onEmojiSelect={({ emoji }) => {
-                        setValue("emoji", emoji);
-                      }}
-                    >
-                      <EmojiPickerSearch />
-                      <EmojiPickerContent />
-                      <EmojiPickerFooter />
-                    </EmojiPicker>
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {errors.emoji ? (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.emoji.message}
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "Creating..." : "Create Category"}{" "}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </Modal>
     </>
   );

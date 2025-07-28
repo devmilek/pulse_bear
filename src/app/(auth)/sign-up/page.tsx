@@ -14,7 +14,7 @@ const Page = () => {
               <Icons.logotype className="size-6" />
             </Link>
             <h1 className="text-title font-heading mb-1 mt-4 text-2xl font-semibold">
-              Create a Tailark Account
+              Create a PulseBear Account
             </h1>
             <p className="text-sm text-muted-foreground">
               Welcome! Create an account to get started
