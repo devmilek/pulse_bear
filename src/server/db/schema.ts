@@ -33,9 +33,9 @@ export const users = pgTable("users", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   discordId: text("discord_id").unique(),
-  apiKey: text("api_key")
-    .unique()
-    .$default(() => cuid()),
+  // apiKey: text("api_key")
+  //   .unique()
+  //   .$default(() => cuid()),
   plan: planEnum("plan").default("FREE").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
@@ -44,6 +44,45 @@ export const users = pgTable("users", {
     .$defaultFn(() => new Date())
     .notNull(),
 });
+
+export const apiKeys = pgTable(
+  "api_keys",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    name: varchar("name", { length: 100 }).notNull(),
+
+    apiKey: text("api_key")
+      .notNull()
+      .unique()
+      .$default(() => `sk_${cuid()}`),
+
+    isActive: boolean("is_active").notNull().default(true),
+    revokedAt: timestamp("revoked_at"),
+    lastUsedAt: timestamp("last_used_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    uniqueIndex().on(t.userId, t.name),
+    uniqueIndex().on(t.apiKey),
+    index().on(t.userId, t.isActive),
+  ]
+);
+
+export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [apiKeys.userId],
+    references: [users.id],
+  }),
+}));
 
 export const sessions = pgTable("sessions", {
   id: uuid("id").primaryKey().defaultRandom(),

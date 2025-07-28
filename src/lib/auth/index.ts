@@ -58,11 +58,6 @@ export const auth = betterAuth({
         required: false,
         input: true,
       },
-      apiKey: {
-        type: "string",
-        required: false,
-        input: false,
-      },
       plan: {
         type: "string",
         required: true,
