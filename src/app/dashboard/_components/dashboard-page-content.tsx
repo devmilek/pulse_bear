@@ -83,7 +83,7 @@ export const DashboardPageContent = () => {
 
               <div className="space-y-3 mb-6">
                 <div className="flex items-center text-sm/5 text-gray-600">
-                  <Clock className="size-4 mr-2 text-brand-500" />
+                  <Clock className="size-4 mr-2 text-primary" />
                   <span className="font-medium">Last ping:</span>
                   <span className="ml-1">
                     {category.lastPing
@@ -92,12 +92,12 @@ export const DashboardPageContent = () => {
                   </span>
                 </div>
                 <div className="flex items-center text-sm/5 text-gray-600">
-                  <Database className="size-4 mr-2 text-brand-500" />
+                  <Database className="size-4 mr-2 text-primary" />
                   <span className="font-medium">Unique fields:</span>
                   <span className="ml-1">{category.uniqueFieldCount || 0}</span>
                 </div>
                 <div className="flex items-center text-sm/5 text-gray-600">
-                  <BarChart2 className="size-4 mr-2 text-brand-500" />
+                  <BarChart2 className="size-4 mr-2 text-primary" />
                   <span className="font-medium">Events this month:</span>
                   <span className="ml-1">{category.eventsCount || 0}</span>
                 </div>
@@ -109,19 +109,18 @@ export const DashboardPageContent = () => {
                   className={buttonVariants({
                     variant: "outline",
                     size: "sm",
-                    className: "flex items-center gap-2 text-sm",
                   })}
                 >
                   View all <ArrowRight className="size-4" />
                 </Link>
                 <Button
                   variant="ghost"
-                  size="sm"
-                  className="text-gray-500 hover:text-red-600 transition-colors"
+                  size="icon"
+                  className="text-muted-foreground size-7"
                   aria-label={`Delete ${category.name} category`}
                   onClick={() => setDeletingCategory(category.name)}
                 >
-                  <Trash2 className="size-5" />
+                  <Trash2 />
                 </Button>
               </div>
             </div>
