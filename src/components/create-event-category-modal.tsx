@@ -13,6 +13,14 @@ import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
 import { Alert, AlertDescription } from "./ui/alert";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  EmojiPicker,
+  EmojiPickerContent,
+  EmojiPickerFooter,
+  EmojiPickerSearch,
+} from "./ui/emoji-picker";
+import { PlusIcon } from "lucide-react";
 
 const EVENT_CATEGORY_VALIDATOR = z.object({
   name: CATEGORY_NAME_VALIDATOR,
@@ -20,7 +28,7 @@ const EVENT_CATEGORY_VALIDATOR = z.object({
     .string()
     .min(1, "Color is required")
     .regex(/^#[0-9A-F]{6}$/i, "Invalid color format."),
-  emoji: z.string().emoji("Invalid emoji").optional(),
+  emoji: z.emoji("Invalid emoji").optional(),
 });
 
 type EventCategoryForm = z.infer<typeof EVENT_CATEGORY_VALIDATOR>;
@@ -178,6 +186,25 @@ export const CreateEventCategoryModal = ({
                     {emoji}
                   </button>
                 ))}
+                <Popover modal>
+                  <PopoverTrigger asChild>
+                    <button className="size-10 ring-brand-700 bg-brand-100 flex items-center justify-center text-xl rounded-md transition-all">
+                      <PlusIcon />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-fit p-0">
+                    <EmojiPicker
+                      className="h-[342px]"
+                      onEmojiSelect={({ emoji }) => {
+                        setValue("emoji", emoji);
+                      }}
+                    >
+                      <EmojiPickerSearch />
+                      <EmojiPickerContent />
+                      <EmojiPickerFooter />
+                    </EmojiPicker>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {errors.emoji ? (

@@ -32,6 +32,11 @@ export default function RootLayout({
           <main className="relative flex-1 flex flex-col">
             <Providers>{children}</Providers>
           </main>
+          <script
+            defer
+            src="http://localhost:3000/tracker.js"
+            data-website-id="ee217593-907e-4b7b-aebf-7b7599137f5d"
+          />
         </body>
       </html>
     </NuqsAdapter>
