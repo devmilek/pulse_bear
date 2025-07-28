@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <NuqsAdapter>
       <html lang="en" className={cn(inter.className, eb_garamond.variable)}>
-        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-background text-primary antialiased">
+        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-background text-foreground antialiased">
           <main className="relative flex-1 flex flex-col">
             <Providers>{children}</Providers>
           </main>

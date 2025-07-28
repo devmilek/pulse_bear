@@ -11,7 +11,7 @@ const Page = async () => {
   }
 
   return (
-    <DashboardPage title="API Key">
+    <DashboardPage title="API Keys" cta="Create API Key">
       <ApiKeySettings />
     </DashboardPage>
   );

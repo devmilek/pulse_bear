@@ -5,6 +5,7 @@ import * as argon2 from "argon2";
 import { db } from "../db";
 import { apiKeys } from "../db/schema";
 import { HTTPException } from "hono/http-exception";
+import { desc, eq } from "drizzle-orm";
 
 export const apiKeysRouter = j.router({
   createApiKey: privateProcedure
@@ -33,4 +34,16 @@ export const apiKeysRouter = j.router({
 
       return c.superjson(apiKey);
     }),
+
+  getApiKeys: privateProcedure.query(async ({ ctx, c }) => {
+    const { user } = ctx;
+
+    const keys = await db
+      .select()
+      .from(apiKeys)
+      .where(eq(apiKeys.userId, user.id))
+      .orderBy(desc(apiKeys.createdAt));
+
+    return c.superjson(keys);
+  }),
 });

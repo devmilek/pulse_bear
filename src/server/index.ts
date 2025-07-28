@@ -1,4 +1,5 @@
 import { j } from "./jstack";
+import { apiKeysRouter } from "./routers/api-keys-router";
 import { categoryRouter } from "./routers/category-router";
 import { paymentRouter } from "./routers/payment-router";
 import { projectRouter } from "./routers/project-router";
@@ -23,6 +24,7 @@ const appRouter = j.mergeRouters(api, {
   category: categoryRouter,
   payment: paymentRouter,
   project: projectRouter,
+  apiKeys: apiKeysRouter,
 });
 
 export type AppRouter = typeof appRouter;
