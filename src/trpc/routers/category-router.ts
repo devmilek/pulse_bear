@@ -1,5 +1,10 @@
 import { desc, eq, gte, count, and } from "drizzle-orm";
-import { eventCategories, events as eventSchema } from "@/db/schema";
+import {
+  eventCategories,
+  events,
+  events as eventSchema,
+  users,
+} from "@/db/schema";
 import { addMonths, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import z from "zod";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
@@ -376,6 +381,38 @@ export const categoryRouter = createTRPCRouter({
 
       return {
         events,
+        eventsCount,
+      };
+    }),
+
+  getCategoryByName: protectedProcedure
+    .input(z.object({ name: CATEGORY_NAME_VALIDATOR }))
+    .query(async ({ ctx, input }) => {
+      const { name } = input;
+      const category = await db.query.eventCategories.findFirst({
+        where: and(
+          eq(eventCategories.userId, users.id),
+          eq(eventCategories.name, name)
+        ),
+      });
+
+      if (!category) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Category "${name}" not found`,
+        });
+      }
+
+      const eventsCount = await db.$count(
+        events,
+        eq(events.eventCategoryId, category.id)
+      );
+
+      const hasEvents = eventsCount > 0;
+
+      return {
+        category,
+        hasEvents,
         eventsCount,
       };
     }),

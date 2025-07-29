@@ -6,6 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import React from "react";
 import { CategoryPageContent } from "./_components/category-page-content";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { prefetch, trpc } from "@/trpc/server";
 
 interface CategoryDetailsPageProps {
   params: Promise<{

@@ -8,7 +8,7 @@ import { PlusIcon } from "lucide-react";
 import { PaymentSuccessModal } from "@/components/payment-success-modal";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { SearchParams } from "nuqs";
-import { prefetch, trpc } from "@/trpc/server";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { auth } from "@/lib/auth";
 
 interface PageProps {
@@ -42,20 +42,22 @@ const Page = async ({ searchParams }: PageProps) => {
   return (
     <>
       {success ? <PaymentSuccessModal /> : null}
-      <DashboardPage
-        title="Dashboard"
-        hideBackButton
-        cta={
-          <CreateEventCategoryModal>
-            <Button className="w-full sm:w-fit">
-              <PlusIcon className="size-4 mr-2" />
-              Add Category
-            </Button>
-          </CreateEventCategoryModal>
-        }
-      >
-        <DashboardPageContent />
-      </DashboardPage>
+      <HydrateClient>
+        <DashboardPage
+          title="Dashboard"
+          hideBackButton
+          cta={
+            <CreateEventCategoryModal>
+              <Button className="w-full sm:w-fit">
+                <PlusIcon className="size-4 mr-2" />
+                Add Category
+              </Button>
+            </CreateEventCategoryModal>
+          }
+        >
+          <DashboardPageContent />
+        </DashboardPage>
+      </HydrateClient>
     </>
   );
 };
