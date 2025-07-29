@@ -47,10 +47,14 @@ export const getEventCodeSnippet = (categoryName: string) => {
   },
   body: JSON.stringify({
     category: '${categoryName}',
+    action: 'Payment successfull', // for example: Payment sucessfull, User registered, etc.
+    description: '2x 1TB SSD - Overnight Shipping', // optional: description of the event
+    user_id: 'abc123', // optional: identifier of the user
     fields: {
-      field1: 'value1', // for example: user id
-      field2: 'value2' // for example: user email
-    }
+      shipping: 'overnight',
+      quantity: 2,
+      success: true
+    } // optional: additional fields
   })
 })`;
 

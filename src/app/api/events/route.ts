@@ -12,174 +12,68 @@ import {
 import { and, eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isSubscriptionActive } from "@/lib/utils";
+import { humanizeKey, isSubscriptionActive } from "@/lib/utils";
+import {
+  checkQuota,
+  createEmbed,
+  extractApiKey,
+  getCategoryByName,
+  getUserFromApiKey,
+  incrementQuota,
+} from "./utils";
+import { REQUEST_VALIDATOR } from "./schema";
 
-const REQUEST_VALIDATOR = z
-  .object({
-    category: CATEGORY_NAME_VALIDATOR,
-    fields: z
-      .record(z.string(), z.string().or(z.number()).or(z.boolean()))
-      .optional(),
-    description: z.string().optional(),
-  })
-  .strict();
+function error(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
+}
 
 export const POST = async (req: NextRequest) => {
   try {
-    const authHeader = req.headers.get("Authorization");
+    const apiKey = extractApiKey(req);
+    if (!apiKey) return error("Unauthorized", 401);
 
-    if (!authHeader) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    if (!authHeader.startsWith("Bearer ")) {
-      return NextResponse.json(
-        {
-          message: "Invalid auth header format. Expected: 'Bearer [API_KEY]'",
-        },
-        { status: 401 }
+    const user = await getUserFromApiKey(apiKey);
+    if (!user) return error("Invalid API key", 401);
+    if (!user.discordId)
+      return error(
+        "Please enter your Discord ID in your account settings",
+        403
       );
-    }
 
-    const apiKeyHeader = authHeader.split(" ")[1];
+    const rawBody = await req.json().catch(() => null);
+    if (!rawBody) return error("Invalid JSON request body", 400);
 
-    if (!apiKeyHeader || apiKeyHeader.trim() === "") {
-      return NextResponse.json({ message: "Invalid API key" }, { status: 401 });
-    }
+    const data = REQUEST_VALIDATOR.parse(rawBody);
 
-    const apiKeyExists = await db.query.apiKeys.findFirst({
-      where: eq(apiKeys.apiKey, apiKeyHeader),
-    });
-
-    if (!apiKeyExists) {
-      return NextResponse.json({ message: "Invalid API key" }, { status: 401 });
-    }
-
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, apiKeyExists?.userId),
-      with: {
-        eventCategories: true,
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json({ message: "Invalid API key" }, { status: 401 });
-    }
-
-    if (!user.discordId) {
-      return NextResponse.json(
-        {
-          message: "Please enter your discord ID in your account settings",
-        },
-        { status: 403 }
-      );
-    }
-
-    // ACTUAL LOGIC
-    const currentData = new Date();
-    const currentMonth = currentData.getMonth() + 1;
-    const currentYear = currentData.getFullYear();
-
-    const quota = await db.query.quotas.findFirst({
-      where: and(
-        eq(quotas.userId, user.id),
-        eq(quotas.month, currentMonth),
-        eq(quotas.year, currentYear)
-      ),
-    });
-
-    const dbSubscription = await db.query.subscription.findFirst({
-      where: eq(subscription.userId, user.id),
-    });
-
-    const subscriptionActive = isSubscriptionActive(dbSubscription);
-
-    const quotaLimit = subscriptionActive
-      ? PRO_QUOTA.maxEventsPerMonth
-      : FREE_QUOTA.maxEventsPerMonth;
-
-    if (quota && quota.count >= quotaLimit) {
-      return NextResponse.json(
-        {
-          message:
-            "Monthly quota reached. Please upgrade your plan for more events",
-        },
-        { status: 429 }
-      );
-    }
-
-    const discord = new DiscordClient(process.env.DISCORD_BOT_TOKEN);
-
-    const dmChannel = await discord.createDM(user.discordId);
-
-    let requestData: unknown;
-
-    try {
-      requestData = await req.json();
-    } catch (err) {
-      return NextResponse.json(
-        {
-          message: "Invalid JSON request body",
-        },
-        { status: 400 }
-      );
-    }
-
-    const validationResult = REQUEST_VALIDATOR.parse(requestData);
-
-    const category = user.eventCategories.find(
-      (cat) => cat.name === validationResult.category
-    );
+    const category = await getCategoryByName(data.category, user.id);
 
     if (!category) {
-      return NextResponse.json(
-        {
-          message: `You dont have a category named "${validationResult.category}"`,
-        },
-        { status: 404 }
-      );
+      return error(`You don't have a category named "${data.category}"`, 404);
     }
 
-    const eventData = {
-      title: `${category.emoji || "🔔"} ${
-        category.name.charAt(0).toUpperCase() + category.name.slice(1)
-      }`,
-      description:
-        validationResult.description ||
-        `A new ${category.name} event has occurred!`,
-      color: category.color,
-      timestamp: new Date().toISOString(),
-      fields: Object.entries(validationResult.fields || {}).map(
-        ([key, value]) => {
-          return {
-            name: key,
-            value: String(value),
-            inline: true,
-          };
-        }
-      ),
-    };
+    const allowed = await checkQuota(user.id);
+    if (!allowed)
+      return error("Monthly quota reached. Please upgrade your plan.", 429);
+
+    const embed = createEmbed(category, data);
+    const discord = new DiscordClient(process.env.DISCORD_BOT_TOKEN);
+    const dmChannel = await discord.createDM(user.discordId);
 
     const [event] = await db
       .insert(eventsSchema)
       .values({
         name: category.name,
-        formattedMessage: `${eventData.title}\n\n${eventData.description}`,
+        formattedMessage: `${embed.title}\n\n${embed.description}`,
         userId: user.id,
-        fields: validationResult.fields || {},
+        fields: data.fields || {},
         eventCategoryId: category.id,
       })
       .returning();
 
-    if (!event) {
-      return NextResponse.json(
-        { message: "Failed to create event" },
-        { status: 500 }
-      );
-    }
+    if (!event) return error("Failed to create event", 500);
 
     try {
-      await discord.sendEmbed(dmChannel.id, eventData);
+      await discord.sendEmbed(dmChannel.id, embed);
 
       await db
         .update(eventsSchema)
@@ -188,20 +82,7 @@ export const POST = async (req: NextRequest) => {
         })
         .where(eq(eventsSchema.id, event.id));
 
-      await db
-        .insert(quotas)
-        .values({
-          userId: user.id,
-          month: currentMonth,
-          year: currentYear,
-          count: 1,
-        })
-        .onConflictDoUpdate({
-          target: [quotas.userId, quotas.month, quotas.year],
-          set: {
-            count: sql`${quotas.count} + 1`,
-          },
-        });
+      await incrementQuota(user.id);
     } catch (err) {
       await db
         .update(eventsSchema)
@@ -210,7 +91,7 @@ export const POST = async (req: NextRequest) => {
         })
         .where(eq(eventsSchema.id, event.id));
 
-      console.log(err);
+      console.error("Discord error:", err);
 
       return NextResponse.json(
         {
@@ -229,12 +110,9 @@ export const POST = async (req: NextRequest) => {
     console.error(err);
 
     if (err instanceof z.ZodError) {
-      return NextResponse.json({ message: err.message }, { status: 422 });
+      return error(err.message, 422);
     }
 
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+    return error("Internal server error", 500);
   }
 };
