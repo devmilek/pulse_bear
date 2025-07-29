@@ -11,6 +11,20 @@ export const parseColor = (color: string) => {
   return parseInt(hex, 16);
 };
 
+export function intToHex(int: number): string {
+  const hex = int.toString(16).toUpperCase();
+  return hex.length < 6 ? hex.padStart(6, "0") : hex;
+}
+
+export function hexToRgba(hex: string, opacity: number): string {
+  const sanitized = hex.replace("#", "");
+  const bigint = parseInt(sanitized, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
 export function humanizeKey(key: string) {
   if (key == null) return "";
   const k = String(key).trim();

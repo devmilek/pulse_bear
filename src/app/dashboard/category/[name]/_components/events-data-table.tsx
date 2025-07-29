@@ -28,9 +28,10 @@ import {
 import { Event, EventCategory } from "@/db/schema";
 import { EventsTableColumns } from "./events-table-columns";
 import { useEventCategoryParams } from "@/hooks/use-event-category-params";
+import { GetEventsByCategoryName } from "../types";
 
 interface EventsDataTableProps {
-  data: any;
+  data: GetEventsByCategoryName | undefined;
   isFetching: boolean;
   category: EventCategory;
 }

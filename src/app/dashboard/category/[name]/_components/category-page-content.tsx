@@ -8,6 +8,7 @@ import { useEventCategoryParams } from "@/hooks/use-event-category-params";
 import { EventsStatsGrid } from "./events-stats-grid";
 import { EventsDataTable } from "./events-data-table";
 import { useTRPC } from "@/trpc/client";
+import { EventsList } from "./events-list";
 
 interface CategoryPageContentProps {
   hasEvents: boolean;
@@ -49,6 +50,7 @@ export const CategoryPageContent = ({
         isFetching={isFetching}
         category={category}
       />
+      <EventsList data={data} isFetching={isFetching} category={category} />
     </>
   );
 };
