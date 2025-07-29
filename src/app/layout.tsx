@@ -34,7 +34,7 @@ export default function RootLayout({
         className={cn(inter.className, eb_garamond.variable)}
         suppressHydrationWarning
       >
-        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-background text-foreground antialiased">
+        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-background antialiased">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

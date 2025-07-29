@@ -50,7 +50,7 @@ export const ApiKeySettings = () => {
   };
 
   return (
-    <div className="overflow-hidden rounded-md border bg-primary-foreground">
+    <div className="overflow-hidden rounded-md border bg-card">
       <Table>
         <TableHeader>
           <TableRow>
@@ -66,10 +66,7 @@ export const ApiKeySettings = () => {
             <TableRow key={apiKey.id}>
               <TableCell>{apiKey.name}</TableCell>
               <TableCell>
-                <Badge
-                  variant="outline"
-                  className="bg-primary-foreground font-mono"
-                >
+                <Badge variant="outline" className="font-mono">
                   <KeyIcon />
                   {apiKey.apiKey}
                 </Badge>

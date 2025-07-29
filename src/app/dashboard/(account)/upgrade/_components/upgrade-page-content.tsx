@@ -19,10 +19,10 @@ export const UpgradePageContent = () => {
   return (
     <div className="max-w-3xl flex flex-col gap-8">
       <div>
-        <h1 className="mt-2 text-xl/8 font-medium tracking-tight text-gray-900">
+        <h1 className="mt-2 text-xl/8 font-medium tracking-tight">
           {usageData.subscriptionActive ? "Plan: Pro" : "Plan: Free"}
         </h1>
-        <p className="text-sm/6 text-gray-600 max-w-prose">
+        <p className="text-sm/6 text-muted-foreground max-w-prose">
           {usageData.subscriptionActive
             ? "Thank you for supporting PulseBear. Find your increased usage limits below."
             : "Get access to more events, categories and premium support."}
@@ -30,7 +30,7 @@ export const UpgradePageContent = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="border-2 border-brand-700">
+        <Card className="border-2 border-primary">
           <CardContent>
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <p className="text-sm/6 font-medium">Total Events</p>
@@ -68,13 +68,13 @@ export const UpgradePageContent = () => {
         </Card>
       </div>
 
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted-foreground">
         Usage will reset{" "}
         {usageData.resetDate ? (
           format(usageData.resetDate, "MMM d, yyyy")
         ) : (
           <span className="animate-pulse w-8 h-4 bg-gray-200"></span>
-        )}
+        )}{" "}
         {!usageData.subscriptionActive ? (
           <span
             onClick={async () => {
@@ -83,9 +83,8 @@ export const UpgradePageContent = () => {
                 slug: "lifetime-access",
               });
             }}
-            className="inline cursor-pointer underline text-brand-600"
+            className="inline cursor-pointer underline text-primary"
           >
-            {" "}
             or upgrade now to increase your limit &rarr;
           </span>
         ) : (
@@ -93,7 +92,7 @@ export const UpgradePageContent = () => {
             onClick={async () => {
               await authClient.customer.portal();
             }}
-            className="inline cursor-pointer underline text-brand-600"
+            className="inline cursor-pointer underline text-primary"
           >
             {" "}
             Manage your subscription &rarr;

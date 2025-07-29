@@ -18,6 +18,7 @@ import Image from "next/image";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { DashboardUserButton } from "./dashboard-user-button";
 import { ThemeSwitcher } from "@/components/ui/shadcn-io/theme-switcher";
+import { Icons } from "@/components/icons";
 
 interface SidebarItem {
   href: string;
@@ -61,13 +62,7 @@ export const DashboardSidebar = async () => {
           href="/"
           className="flex z-40 px-2 pt-4 group-data-[collapsible=icon]:hidden"
         >
-          <Image
-            src="/logo.svg"
-            width={120}
-            height={43}
-            className="h-6 w-auto"
-            alt="PulseBear Logo"
-          />
+          <Icons.logo className="h-8 w-auto" />
         </Link>
         {/* <SidebarMenu>
           <SidebarMenuItem>
