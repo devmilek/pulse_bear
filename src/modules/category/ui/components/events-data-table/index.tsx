@@ -26,9 +26,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Event, EventCategory } from "@/db/schema";
-import { EventsTableColumns } from "./events-table-columns";
-import { useEventCategoryParams } from "@/hooks/use-event-category-params";
-import { GetEventsByCategoryName } from "../types";
+import { EventsTableColumns } from "./columns";
+import { useEventCategoryParams } from "@/modules/category/hooks/use-event-category-params";
+import { GetEventsByCategoryName } from "@/modules/category/types";
 
 interface EventsDataTableProps {
   data: GetEventsByCategoryName | undefined;
