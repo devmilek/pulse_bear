@@ -69,12 +69,6 @@ export const EventsDataTable = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div className="w-full flex flex-col gap-4">
-          <Heading className="sm:text-3xl">Event overview</Heading>
-        </div>
-      </div>
-
       <Card className="px-6 py-4">
         <Table>
           <TableHeader>

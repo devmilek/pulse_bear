@@ -19,7 +19,6 @@ export const metadata: Metadata = {
   title: "PulseBear - Real-time SaaS Monitoring",
   description:
     "Monitor your SaaS applications in real-time with PulseBear. Get instant alerts, track critical metrics, and never miss an event.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 export default function RootLayout({

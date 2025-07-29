@@ -9,6 +9,7 @@ import { EventsStatsGrid } from "./events-stats-grid";
 import { EventsDataTable } from "./events-data-table";
 import { useTRPC } from "@/trpc/client";
 import { EventsList } from "./events-list";
+import { EventsFeed } from "./events-feed";
 
 interface CategoryPageContentProps {
   hasEvents: boolean;
@@ -19,24 +20,6 @@ export const CategoryPageContent = ({
   hasEvents,
   category,
 }: CategoryPageContentProps) => {
-  const [filters] = useEventCategoryParams();
-  const trpc = useTRPC();
-
-  const { data, isFetching } = useQuery(
-    trpc.category.getEventsByCategoryName.queryOptions(
-      {
-        name: category.name,
-        page: filters.pageIndex + 1,
-        limit: filters.pageSize,
-        timeRange: filters.tab,
-      },
-      {
-        refetchOnWindowFocus: false,
-        enabled: hasEvents,
-      }
-    )
-  );
-
   if (!hasEvents) {
     return <EmptyCategoryState categoryName={category.name} />;
   }
@@ -45,12 +28,7 @@ export const CategoryPageContent = ({
     <>
       <EventsTabsSection />
       <EventsStatsGrid categoryName={category.name} />
-      <EventsDataTable
-        data={data}
-        isFetching={isFetching}
-        category={category}
-      />
-      <EventsList data={data} isFetching={isFetching} category={category} />
+      <EventsFeed category={category} hasEvents={hasEvents} />
     </>
   );
 };

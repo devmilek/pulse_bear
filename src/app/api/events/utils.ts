@@ -83,7 +83,7 @@ export function createEmbed(
     timestamp: new Date().toISOString(),
     fields: Object.entries(data.fields || {}).map(([key, value]) => ({
       name: humanizeKey(key),
-      value: String(value),
+      value: humanizeKey(String(value)),
       inline: false,
     })),
   };

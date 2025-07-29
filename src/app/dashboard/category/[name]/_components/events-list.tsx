@@ -14,7 +14,7 @@ interface EventsListProps {
 
 export const EventsList = ({ data, isFetching, category }: EventsListProps) => {
   return (
-    <div className="grid gap-y-4 max-w-xl w-full">
+    <div className="grid gap-y-4 w-full mx-auto">
       {data?.events.map((event) => (
         <Card key={event.id}>
           <CardContent className="flex gap-6">
@@ -43,12 +43,27 @@ export const EventsList = ({ data, isFetching, category }: EventsListProps) => {
 
               <div className="flex flex-wrap gap-1 mt-5">
                 {event.fields &&
-                  Object.entries(event.fields).map(([key, value]) => (
-                    <Badge variant="outline" key={key}>
-                      {humanizeKey(key)}:
-                      <span className="font-normal">{value}</span>
-                    </Badge>
-                  ))}
+                  Object.entries(event.fields).map(([key, value]) => {
+                    const formatValue = (val: any) => {
+                      if (typeof val === "boolean") return val ? "Yes" : "No";
+                      if (val === null || val === undefined) return "N/A";
+                      if (typeof val === "number") return val.toString();
+                      return val;
+                    };
+
+                    return (
+                      <Badge
+                        variant="outline"
+                        key={key}
+                        className="font-semibold"
+                      >
+                        {humanizeKey(key)}:
+                        <span className="font-normal">
+                          {formatValue(value)}
+                        </span>
+                      </Badge>
+                    );
+                  })}
               </div>
             </div>
           </CardContent>
