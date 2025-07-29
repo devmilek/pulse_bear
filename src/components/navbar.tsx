@@ -6,6 +6,7 @@ import Image from "next/image";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { SignOutButton } from "./sign-out-button";
 import { Icons } from "./icons";
+import { Link as I18nLink } from "@/i18n/navigation";
 
 export const Navbar = async () => {
   const { user } = await getCurrentSession();
@@ -39,7 +40,7 @@ export const Navbar = async () => {
               </>
             ) : (
               <>
-                <Link
+                <I18nLink
                   href="/pricing"
                   className={buttonVariants({
                     size: "sm",
@@ -47,7 +48,7 @@ export const Navbar = async () => {
                   })}
                 >
                   Pricing
-                </Link>
+                </I18nLink>
                 <Link
                   href="/sign-in"
                   className={buttonVariants({
@@ -58,7 +59,7 @@ export const Navbar = async () => {
                   Sign in
                 </Link>
 
-                <div className="h-8 w-px bg-gray-200" />
+                <div className="h-8 w-px bg-border" />
 
                 <Link href="/sign-up" className={buttonVariants({})}>
                   Sign up <ArrowRight className="size-4" />

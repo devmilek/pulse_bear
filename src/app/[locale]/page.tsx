@@ -285,13 +285,13 @@ const Page = () => {
         </MaxWidthWrapper>
       </section>
 
-      <section className="relative py-24 sm:py-32 bg-primary-foreground">
+      <section className="relative py-24 sm:py-32 bg-accent">
         <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-20">
           <div>
             <h2 className="text-center text-base/7 font-semibold text-primary">
               {testimonial("subheading")}
             </h2>
-            <Heading className="text-center text-background">
+            <Heading className="text-center text-foreground">
               {testimonial("heading")}
             </Heading>
           </div>
