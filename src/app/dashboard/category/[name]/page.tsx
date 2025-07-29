@@ -7,6 +7,7 @@ import React from "react";
 import { CategoryPageContent } from "./_components/category-page-content";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { prefetch, trpc } from "@/trpc/server";
+import { EventsTabsSection } from "./_components/events-tabs-section";
 
 interface CategoryDetailsPageProps {
   params: Promise<{
@@ -42,7 +43,10 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
   const hasEvents = eventsCount > 0;
 
   return (
-    <DashboardPage title={`${category.emoji} ${category.name} events`}>
+    <DashboardPage
+      title={`${category.emoji} ${category.name} events`}
+      cta={<EventsTabsSection />}
+    >
       <CategoryPageContent hasEvents={hasEvents} category={category} />
     </DashboardPage>
   );

@@ -81,6 +81,103 @@ export const categoryRouter = createTRPCRouter({
     return categoriesWithCounts;
   }),
 
+  getEventsForChart: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+        timeRange: z.enum(["today", "week", "month"]),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { eventId, timeRange } = input;
+      const now = new Date();
+      let startDate: Date;
+      let dateFormat: string;
+
+      // Determine start date and grouping based on time range
+      switch (timeRange) {
+        case "today":
+          startDate = startOfDay(now);
+          dateFormat = "hour";
+          break;
+        case "week":
+          startDate = startOfWeek(now, { weekStartsOn: 0 });
+          dateFormat = "day";
+          break;
+        case "month":
+          startDate = startOfMonth(now);
+          dateFormat = "day";
+          break;
+      }
+
+      // Get raw data from database
+      const rawData = await db
+        .select({
+          date: events.createdAt,
+          count: count(events.id),
+        })
+        .from(events)
+        .where(
+          and(
+            eq(events.userId, ctx.user.id),
+            eq(events.eventCategoryId, eventId),
+            gte(events.createdAt, startDate)
+          )
+        )
+        .groupBy(events.createdAt)
+        .orderBy(desc(events.createdAt));
+
+      // Create a map for quick lookup of existing data
+      const dataMap = new Map<string, number>();
+      rawData.forEach((item) => {
+        let key: string;
+        const date = new Date(item.date);
+
+        if (timeRange === "today") {
+          // Group by hour for today
+          key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}-${String(date.getHours()).padStart(2, "0")}`;
+        } else {
+          // Group by day for week/month
+          key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        }
+
+        dataMap.set(key, (dataMap.get(key) || 0) + item.count);
+      });
+
+      // Generate complete time series with gaps filled
+      const chartData: { date: string; count: number }[] = [];
+      const current = new Date(startDate);
+      const end = new Date(now);
+
+      if (timeRange === "today") {
+        // Fill hourly data for today
+        while (current <= end) {
+          const key = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}-${String(current.getDate()).padStart(2, "0")}-${String(current.getHours()).padStart(2, "0")}`;
+          chartData.push({
+            date: current.toISOString(),
+            count: dataMap.get(key) || 0,
+          });
+          current.setHours(current.getHours() + 1);
+        }
+      } else {
+        // Fill daily data for week/month
+        while (current <= end) {
+          const key = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}-${String(current.getDate()).padStart(2, "0")}`;
+          chartData.push({
+            date: current.toISOString(),
+            count: dataMap.get(key) || 0,
+          });
+          current.setDate(current.getDate() + 1);
+        }
+      }
+
+      return {
+        data: chartData,
+        timeRange,
+        totalEvents: chartData.reduce((sum, item) => sum + item.count, 0),
+      };
+    }),
+
   deleteCategory: protectedProcedure
     .input(z.object({ name: z.string() }))
     .mutation(async ({ input, ctx }) => {
@@ -192,12 +289,12 @@ export const categoryRouter = createTRPCRouter({
   getCategoryStats: protectedProcedure
     .input(
       z.object({
-        name: CATEGORY_NAME_VALIDATOR,
+        categoryId: z.string(),
         timeRange: z.enum(["today", "week", "month"]),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { name, timeRange } = input;
+      const { categoryId, timeRange } = input;
 
       const now = new Date();
       let startDate: Date;
@@ -220,7 +317,7 @@ export const categoryRouter = createTRPCRouter({
       // Find the category first to get its ID
       const category = await db.query.eventCategories.findFirst({
         where: and(
-          eq(eventCategories.name, name),
+          eq(eventCategories.id, categoryId),
           eq(eventCategories.userId, ctx.user.id)
         ),
         columns: { id: true },

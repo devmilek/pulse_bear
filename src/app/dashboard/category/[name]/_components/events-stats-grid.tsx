@@ -5,15 +5,16 @@ import { BarChart } from "lucide-react";
 import { useEventCategoryParams } from "@/hooks/use-event-category-params";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import { EventCategory } from "@/db/schema";
 
-export const EventsStatsGrid = ({ categoryName }: { categoryName: string }) => {
+export const EventsStatsGrid = ({ category }: { category: EventCategory }) => {
   const [filters] = useEventCategoryParams();
   const trpc = useTRPC();
 
   const { data, isFetching } = useQuery(
     trpc.category.getCategoryStats.queryOptions(
       {
-        name: categoryName,
+        categoryId: category.id,
         timeRange: filters.tab,
       },
       {

@@ -10,6 +10,8 @@ import { EventsDataTable } from "./events-data-table";
 import { useTRPC } from "@/trpc/client";
 import { EventsList } from "./events-list";
 import { EventsFeed } from "./events-feed";
+import { EventsChart } from "./events-chart";
+import { ChartAreaInteractive } from "./chart-area-interactive";
 
 interface CategoryPageContentProps {
   hasEvents: boolean;
@@ -25,10 +27,10 @@ export const CategoryPageContent = ({
   }
 
   return (
-    <>
-      <EventsTabsSection />
-      <EventsStatsGrid categoryName={category.name} />
+    <div className="space-y-8">
+      <EventsStatsGrid category={category} />
+      <EventsChart category={category} />
       <EventsFeed category={category} hasEvents={hasEvents} />
-    </>
+    </div>
   );
 };
