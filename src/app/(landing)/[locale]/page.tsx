@@ -88,15 +88,17 @@ const Page = () => {
               </Heading>
             </div>
 
-            <p className="text-base/7 text-gray-600 max-w-prose text-center text-pretty">
+            <p className="text-base/7 text-muted-foreground max-w-prose text-center text-pretty">
               {hero.rich("paragraph", {
                 b: (chunks) => (
-                  <span className="font-semibold text-gray-700">{chunks}</span>
+                  <span className="font-semibold text-muted-foreground">
+                    {chunks}
+                  </span>
                 ),
               })}
             </p>
 
-            <ul className="space-y-2 max-w-md text-base/7 text-gray-600 text-left flex flex-col items-start">
+            <ul className="space-y-2 max-w-md text-base/7 text-muted-foreground text-left flex flex-col items-start">
               {featureKeys.map((key: FeatureKey) => (
                 <li key={key} className="flex gap-2 items-center text-left">
                   <Check className="size-5 shrink-0 text-primary" />
@@ -148,14 +150,14 @@ const Page = () => {
           <div className="grid gap-4 lg:grid-cols-3 lg:grid-rows-2">
             {/* first bento grid element */}
             <div className="relative lg:row-span-2">
-              <div className="absolute inset-px rounded-lg bg-white lg:rounded-l-[2rem]" />
+              <div className="absolute inset-px rounded-lg bg-accent lg:rounded-l-[2rem]" />
 
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
                 <div className="px-8 pb-3 pt-8 sm:px-10 sm:pb-0 sm:pt-10">
-                  <p className="mt-2 text-lg/7 font-medium tracking-tight text-foreground max-lg:text-center">
+                  <p className="mt-2 text-lg/7 font-medium text-card-foreground tracking-tight max-lg:text-center">
                     {bento("realtime.title")}
                   </p>
-                  <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
+                  <p className="mt-2 max-w-lg text-sm/6 text-muted-foreground max-lg:text-center">
                     {bento("realtime.desc")}
                   </p>
                 </div>
@@ -177,13 +179,13 @@ const Page = () => {
 
             {/* second bento grid element */}
             <div className="relative max-lg:row-start-1">
-              <div className="absolute inset-px rounded-lg bg-white max-lg:rounded-t-[2rem]" />
+              <div className="absolute inset-px rounded-lg bg-accent max-lg:rounded-t-[2rem]" />
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
                 <div className="px-8 pt-8 sm:px-10 sm:pt-10">
-                  <p className="mt-2 text-lg/7 font-medium tracking-tight text-foreground max-lg:text-center">
+                  <p className="mt-2 text-lg/7 font-medium tracking-tight text-card-foreground max-lg:text-center">
                     {bento("event.title")}
                   </p>
-                  <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
+                  <p className="mt-2 max-w-lg text-sm/6 text-muted-foreground max-lg:text-center">
                     {bento("event.desc")}
                   </p>
                 </div>
@@ -203,13 +205,13 @@ const Page = () => {
 
             {/* third bento grid element */}
             <div className="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
-              <div className="absolute inset-px rounded-lg bg-white" />
+              <div className="absolute inset-px rounded-lg bg-accent" />
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)]">
                 <div className="px-8 pt-8 sm:px-10 sm:pt-10">
-                  <p className="mt-2 text-lg/7 font-medium tracking-tight text-foreground max-lg:text-center">
+                  <p className="mt-2 text-lg/7 font-medium text-card-foreground tracking-tight max-lg:text-center">
                     {bento("properties.title")}
                   </p>
-                  <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
+                  <p className="mt-2 max-w-lg text-sm/6 text-muted-foreground max-lg:text-center">
                     {bento("properties.desc")}
                   </p>
                 </div>
@@ -230,14 +232,14 @@ const Page = () => {
 
             {/* fourth bento grid element */}
             <div className="relative lg:row-span-2">
-              <div className="absolute inset-px rounded-lg bg-white max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]" />
+              <div className="absolute inset-px rounded-lg bg-accent max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]" />
 
               <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(theme(borderRadius.lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
                 <div className="px-8 pb-3 pt-8 sm:px-10 sm:pb-0 sm:pt-10">
-                  <p className="mt-2 text-lg/7 font-medium tracking-tight text-foreground max-lg:text-center">
+                  <p className="mt-2 text-lg/7 font-medium tracking-tight text-card-foreground max-lg:text-center">
                     {bento("integration.title")}
                   </p>
-                  <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
+                  <p className="mt-2 max-w-lg text-sm/6 text-muted-foreground max-lg:text-center">
                     {bento("integration.desc")}
                   </p>
                 </div>
@@ -289,7 +291,9 @@ const Page = () => {
             <h2 className="text-center text-base/7 font-semibold text-primary">
               {testimonial("subheading")}
             </h2>
-            <Heading className="text-center">{testimonial("heading")}</Heading>
+            <Heading className="text-center text-background">
+              {testimonial("heading")}
+            </Heading>
           </div>
 
           <div className="mx-auto grid max-w-2xl grid-cols-1 px-4 lg:mx-0 lg:max-w-none lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-border">

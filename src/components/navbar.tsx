@@ -5,22 +5,17 @@ import { Button, buttonVariants } from "./ui/button";
 import Image from "next/image";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { SignOutButton } from "./sign-out-button";
+import { Icons } from "./icons";
 
 export const Navbar = async () => {
   const { user } = await getCurrentSession();
 
   return (
-    <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg transition-all">
+    <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b bg-accent/80 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex z-40 font-semibold">
-            <Image
-              src="/logo.svg"
-              width={120}
-              height={43}
-              className="h-6 w-auto"
-              alt="PulseBear Logo"
-            />
+            <Icons.logo className="h-6" />
           </Link>
 
           <div className="h-full flex items-center space-x-4">

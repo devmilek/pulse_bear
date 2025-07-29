@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { hexToRgba, humanizeKey, intToHex } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 interface EventsListProps {
   data: GetEventsByCategoryName | undefined;
@@ -13,6 +14,14 @@ interface EventsListProps {
 }
 
 export const EventsList = ({ data, isFetching, category }: EventsListProps) => {
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Spinner className="animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-y-4 w-full mx-auto">
       {data?.events.map((event) => (
