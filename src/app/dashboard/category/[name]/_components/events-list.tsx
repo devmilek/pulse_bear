@@ -59,7 +59,7 @@ export const EventsList = ({ data, isFetching, category }: EventsListProps) => {
                       >
                         {humanizeKey(key)}:
                         <span className="font-normal">
-                          {formatValue(value)}
+                          {humanizeKey(formatValue(value))}
                         </span>
                       </Badge>
                     );

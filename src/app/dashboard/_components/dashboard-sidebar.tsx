@@ -17,6 +17,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { DashboardUserButton } from "./dashboard-user-button";
+import { ThemeSwitcher } from "@/components/ui/shadcn-io/theme-switcher";
 
 interface SidebarItem {
   href: string;
