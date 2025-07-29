@@ -2,6 +2,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { PropsWithChildren, useState } from "react";
 
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
+import ConfirmationDialog from "@/components/confirmation-dialog";
 
 const Layout = ({ children }: PropsWithChildren) => {
   return (
@@ -14,6 +15,7 @@ const Layout = ({ children }: PropsWithChildren) => {
               {children}
             </div>
           </div>
+          <ConfirmationDialog />
         </SidebarInset>
       </SidebarProvider>
     </>

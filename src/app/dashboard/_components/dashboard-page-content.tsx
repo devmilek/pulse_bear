@@ -1,8 +1,11 @@
 "use client";
 
-import { LoadingSpinner } from "@/components/loading-spinner";
-import { client } from "@/lib/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import React, { useState } from "react";
 import { DashboardEmptyState } from "./dashboard-empty-state";
 import { format, formatDistanceToNow } from "date-fns";
@@ -10,39 +13,27 @@ import { ArrowRight, BarChart2, Clock, Database, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Modal } from "@/components/modal";
+import { useTRPC } from "@/trpc/client";
 
 export const DashboardPageContent = () => {
+  const trpc = useTRPC();
   const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: categories, isPending: isEventCategoriesLoading } = useQuery({
-    queryKey: ["user-event-categories"],
-    queryFn: async () => {
-      const res = await client.category.getEventCategories.$get();
-      const { categories } = await res.json();
-      return categories;
-    },
-  });
-
-  const { mutate: deleteCategory, isPending: isDeletingCategory } = useMutation(
-    {
-      mutationFn: async (name: string) => {
-        await client.category.deleteCategory.$post({ name });
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
-        setDeletingCategory(null);
-      },
-    }
+  const { data: categories } = useSuspenseQuery(
+    trpc.category.getEventCategories.queryOptions()
   );
 
-  if (isEventCategoriesLoading) {
-    return (
-      <div className="flex items-center justify-center flex-1 h-full w-full">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  const { mutate: deleteCategory, isPending: isDeletingCategory } = useMutation(
+    trpc.category.deleteCategory.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.category.getEventCategories.infiniteQueryOptions()
+        );
+        setDeletingCategory(null);
+      },
+    })
+  );
 
   if (!categories || categories.length === 0) {
     return <DashboardEmptyState />;
@@ -151,7 +142,10 @@ export const DashboardPageContent = () => {
             <Button
               variant="destructive"
               onClick={() =>
-                deletingCategory && deleteCategory(deletingCategory)
+                deletingCategory &&
+                deleteCategory({
+                  name: deletingCategory,
+                })
               }
               disabled={isDeletingCategory}
             >

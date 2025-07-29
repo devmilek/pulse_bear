@@ -1,3 +1,4 @@
+import { subscription } from "@/db/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -55,3 +56,13 @@ export const getEventCodeSnippet = (categoryName: string) => {
 
   return codeSnippet;
 };
+
+export function isSubscriptionActive(
+  sub: typeof subscription.$inferSelect | undefined
+): boolean {
+  if (!sub) return false;
+  return (
+    sub.status === "active" &&
+    new Date(sub.currentPeriodEnd).getTime() > Date.now()
+  );
+}

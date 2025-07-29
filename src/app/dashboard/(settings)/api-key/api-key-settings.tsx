@@ -1,65 +1,101 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { client } from "@/lib/client";
-import { useQuery } from "@tanstack/react-query";
+import useConfirmationStore from "@/hooks/use-confirmation-store";
+import { useTRPC } from "@/trpc/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
+import { KeyIcon, TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export const ApiKeySettings = () => {
-  const { data } = useQuery({
-    queryFn: async () => {
-      const res = await client.apiKeys.getApiKeys.$get();
-      const apiKeys = await res.json();
-      return apiKeys;
-    },
-    queryKey: ["apiKeys"],
-  });
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { data } = useQuery(trpc.apiKeys.getApiKeys.queryOptions());
+
+  const { openConfirmation } = useConfirmationStore();
+  const { mutateAsync } = useMutation(
+    trpc.apiKeys.deleteApiKey.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(trpc.apiKeys.getApiKeys.queryOptions());
+      },
+    })
+  );
+
+  const handleDelete = (apiKeyId: string) => {
+    openConfirmation({
+      title: "Delete API Key",
+      description:
+        "Are you sure you want to delete this API key? This action cannot be undone.",
+      actionLabel: "Delete",
+      cancelLabel: "Cancel",
+      onAction: async () => {
+        toast.promise(mutateAsync({ apiKeyId }), {
+          loading: "Deleting API key...",
+          success: "API key deleted successfully.",
+          error: "Failed to delete API key.",
+        });
+      },
+      onCancel: () => {},
+    });
+  };
+
   return (
-    <div className="overflow-hidden rounded-md border">
-      {JSON.stringify(data)}
+    <div className="overflow-hidden rounded-md border bg-primary-foreground">
       <Table>
         <TableHeader>
-          {/* {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))} */}
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Key</TableHead>
             <TableHead>Last Used</TableHead>
             <TableHead>Created At</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data?.map((apiKey) => (
             <TableRow key={apiKey.id}>
-              <TableHead>{apiKey.name}</TableHead>
-              <TableHead>{apiKey.apiKey}</TableHead>
-              <TableHead>
+              <TableCell>{apiKey.name}</TableCell>
+              <TableCell>
+                <Badge
+                  variant="outline"
+                  className="bg-primary-foreground font-mono"
+                >
+                  <KeyIcon />
+                  {apiKey.apiKey}
+                </Badge>
+              </TableCell>
+              <TableCell>
                 {apiKey.lastUsedAt
-                  ? new Date(apiKey.lastUsedAt).toLocaleDateString()
+                  ? formatDistanceToNow(apiKey.lastUsedAt, {
+                      addSuffix: true,
+                    })
                   : "Never"}
-              </TableHead>
-              <TableHead>
-                {new Date(apiKey.createdAt).toLocaleDateString()}
-              </TableHead>
+              </TableCell>
+              <TableCell>
+                {formatDistanceToNow(apiKey.createdAt, {
+                  addSuffix: true,
+                })}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-7"
+                  onClick={() => handleDelete(apiKey.id)}
+                >
+                  <TrashIcon />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
 

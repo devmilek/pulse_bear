@@ -63,9 +63,17 @@ export const apiKeys = pgTable(
 
     isActive: boolean("is_active").notNull().default(true),
     revokedAt: timestamp("revoked_at"),
-    lastUsedAt: timestamp("last_used_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    lastUsedAt: timestamp("last_used_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
@@ -76,6 +84,32 @@ export const apiKeys = pgTable(
     index().on(t.userId, t.isActive),
   ]
 );
+
+export const subscription = pgTable("subscription", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  createdAt: timestamp("createdAt").notNull(),
+  modifiedAt: timestamp("modifiedAt"),
+  amount: integer("amount").notNull(),
+  currency: text("currency").notNull(),
+  recurringInterval: text("recurringInterval").notNull(),
+  status: text("status").notNull(),
+  currentPeriodStart: timestamp("currentPeriodStart").notNull(),
+  currentPeriodEnd: timestamp("currentPeriodEnd").notNull(),
+  cancelAtPeriodEnd: boolean("cancelAtPeriodEnd").notNull().default(false),
+  canceledAt: timestamp("canceledAt"),
+  startedAt: timestamp("startedAt").notNull(),
+  endsAt: timestamp("endsAt"),
+  endedAt: timestamp("endedAt"),
+  customerId: text("customerId").notNull(),
+  productId: text("productId").notNull(),
+  discountId: text("discountId"),
+  checkoutId: text("checkoutId").notNull(),
+  customerCancellationReason: text("customerCancellationReason"),
+  customerCancellationComment: text("customerCancellationComment"),
+  metadata: text("metadata"), // JSON string
+  customFieldData: text("customFieldData"), // JSON string
+  userId: uuid("userId").references(() => users.id),
+});
 
 export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
   user: one(users, {

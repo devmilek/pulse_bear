@@ -1,11 +1,18 @@
 import { FREE_QUOTA, PRO_QUOTA } from "@/config";
 import { DiscordClient } from "@/lib/discord-client";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
-import { db } from "@/server/db";
-import { events as eventsSchema, quotas, users } from "@/server/db/schema";
+import { db } from "@/db";
+import {
+  apiKeys,
+  events as eventsSchema,
+  quotas,
+  subscription,
+  users,
+} from "@/db/schema";
 import { and, eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { isSubscriptionActive } from "@/lib/utils";
 
 const REQUEST_VALIDATOR = z
   .object({
@@ -34,14 +41,22 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    const apiKey = authHeader.split(" ")[1];
+    const apiKeyHeader = authHeader.split(" ")[1];
 
-    if (!apiKey || apiKey.trim() === "") {
+    if (!apiKeyHeader || apiKeyHeader.trim() === "") {
+      return NextResponse.json({ message: "Invalid API key" }, { status: 401 });
+    }
+
+    const apiKeyExists = await db.query.apiKeys.findFirst({
+      where: eq(apiKeys.apiKey, apiKeyHeader),
+    });
+
+    if (!apiKeyExists) {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 });
     }
 
     const user = await db.query.users.findFirst({
-      where: eq(users.apiKey, apiKey),
+      where: eq(users.id, apiKeyExists?.userId),
       with: {
         eventCategories: true,
       },
@@ -73,10 +88,15 @@ export const POST = async (req: NextRequest) => {
       ),
     });
 
-    const quotaLimit =
-      user.plan === "FREE"
-        ? FREE_QUOTA.maxEventsPerMonth
-        : PRO_QUOTA.maxEventsPerMonth;
+    const dbSubscription = await db.query.subscription.findFirst({
+      where: eq(subscription.userId, user.id),
+    });
+
+    const subscriptionActive = isSubscriptionActive(dbSubscription);
+
+    const quotaLimit = subscriptionActive
+      ? PRO_QUOTA.maxEventsPerMonth
+      : FREE_QUOTA.maxEventsPerMonth;
 
     if (quota && quota.count >= quotaLimit) {
       return NextResponse.json(

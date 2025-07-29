@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Event, EventCategory } from "@/server/db/schema";
+import { Event, EventCategory } from "@/db/schema";
 import { EventsTableColumns } from "./events-table-columns";
 import { useEventCategoryParams } from "@/hooks/use-event-category-params";
 

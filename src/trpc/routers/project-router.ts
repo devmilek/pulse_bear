@@ -1,16 +1,23 @@
+import { db } from "@/db";
+import { createTRPCRouter, protectedProcedure } from "../init";
 import { addMonths, startOfMonth } from "date-fns";
-import { FREE_QUOTA, PRO_QUOTA } from "@/config";
-import { z } from "zod";
-import { j, privateProcedure } from "../jstack";
-import { db } from "../db";
+import { eventCategories, quotas, subscription, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { eventCategories, quotas, users } from "../db/schema";
+import { FREE_QUOTA, PRO_QUOTA } from "@/config";
+import z from "zod";
+import { isSubscriptionActive } from "@/lib/utils";
 
-export const projectRouter = j.router({
-  getUsage: privateProcedure.query(async ({ c, ctx }) => {
+export const projectRouter = createTRPCRouter({
+  getUsage: protectedProcedure.query(async ({ ctx }) => {
     const { user } = ctx;
 
     const currentDate = startOfMonth(new Date());
+
+    const userSubscription = await db.query.subscription.findFirst({
+      where: eq(subscription.userId, user.id),
+    });
+
+    const subscriptionActive = isSubscriptionActive(userSubscription);
 
     const quota = await db.query.quotas.findFirst({
       where: and(
@@ -27,22 +34,23 @@ export const projectRouter = j.router({
       eq(eventCategories.userId, user.id)
     );
 
-    const limits = user.plan === "PRO" ? PRO_QUOTA : FREE_QUOTA;
+    const limits = subscriptionActive ? PRO_QUOTA : FREE_QUOTA;
 
     const resetDate = addMonths(currentDate, 1);
 
-    return c.superjson({
+    return {
+      subscriptionActive,
       categoriesUsed: categoryCount,
       categoriesLimit: limits.maxEventCategories,
       eventsUsed: eventCount,
       eventsLimit: limits.maxEventsPerMonth,
       resetDate,
-    });
+    };
   }),
 
-  setDiscordID: privateProcedure
+  setDiscordID: protectedProcedure
     .input(z.object({ discordId: z.string().max(20) }))
-    .mutation(async ({ c, ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
       const { discordId } = input;
 
@@ -52,7 +60,5 @@ export const projectRouter = j.router({
           discordId,
         })
         .where(eq(users.id, user.id));
-
-      return c.json({ success: true });
     }),
 });

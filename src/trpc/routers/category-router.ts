@@ -1,16 +1,16 @@
 import { desc, eq, gte, count, and } from "drizzle-orm";
-import { db } from "../db";
-import { j, privateProcedure } from "../jstack";
-import { eventCategories, events as eventSchema } from "../db/schema";
+import { eventCategories, events as eventSchema } from "@/db/schema";
 import { addMonths, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import z from "zod";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
 import { parseColor } from "@/lib/utils";
-import { HTTPException } from "hono/http-exception";
 import { FREE_QUOTA, PRO_QUOTA } from "@/config";
+import { createTRPCRouter, protectedProcedure } from "../init";
+import { db } from "@/db";
+import { TRPCError } from "@trpc/server";
 
-export const categoryRouter = j.router({
-  getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
+export const categoryRouter = createTRPCRouter({
+  getEventCategories: protectedProcedure.query(async ({ ctx }) => {
     const { user } = ctx;
     const now = new Date();
     const firstDayOfMonth = startOfMonth(now);
@@ -73,12 +73,12 @@ export const categoryRouter = j.router({
       })
     );
 
-    return c.superjson({ categories: categoriesWithCounts });
+    return categoriesWithCounts;
   }),
 
-  deleteCategory: privateProcedure
+  deleteCategory: protectedProcedure
     .input(z.object({ name: z.string() }))
-    .mutation(async ({ c, input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const { name } = input;
 
       await db
@@ -89,11 +89,9 @@ export const categoryRouter = j.router({
             eq(eventCategories.userId, ctx.user.id)
           )
         );
-
-      return c.json({ success: true });
     }),
 
-  createEventCategory: privateProcedure
+  createEventCategory: protectedProcedure
     .input(
       z.object({
         name: CATEGORY_NAME_VALIDATOR,
@@ -104,7 +102,7 @@ export const categoryRouter = j.router({
         emoji: z.string().emoji("Invalid emoji").optional(),
       })
     )
-    .mutation(async ({ c, ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
       const { color, name, emoji } = input;
 
@@ -116,8 +114,9 @@ export const categoryRouter = j.router({
       const limits = user.plan === "PRO" ? PRO_QUOTA : FREE_QUOTA;
 
       if (categoryCount >= limits.maxEventCategories) {
-        throw new HTTPException(403, {
-          message: `You have reached the maximum number of categories (${limits.maxEventCategories}). Please upgrade your plan to create more.`,
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `You have reached the maximum number of event categories (${limits.maxEventCategories}) for your plan.`,
         });
       }
 
@@ -131,10 +130,10 @@ export const categoryRouter = j.router({
         })
         .returning();
 
-      return c.json({ eventCategory });
+      return { eventCategory };
     }),
 
-  insertQuickstartCategories: privateProcedure.mutation(async ({ ctx, c }) => {
+  insertQuickstartCategories: protectedProcedure.mutation(async ({ ctx }) => {
     const categories = await db
       .insert(eventCategories)
       .values(
@@ -149,12 +148,12 @@ export const categoryRouter = j.router({
       )
       .returning();
 
-    return c.json({ success: true, count: categories.length });
+    return { success: true, count: categories.length };
   }),
 
-  pollCategory: privateProcedure
+  pollCategory: protectedProcedure
     .input(z.object({ name: CATEGORY_NAME_VALIDATOR }))
-    .query(async ({ c, ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const { name } = input;
 
       const category = await db.query.eventCategories.findFirst({
@@ -165,7 +164,8 @@ export const categoryRouter = j.router({
       });
 
       if (!category) {
-        throw new HTTPException(404, {
+        throw new TRPCError({
+          code: "NOT_FOUND",
           message: `Category "${name}" not found`,
         });
       }
@@ -180,18 +180,18 @@ export const categoryRouter = j.router({
 
       const hasEvents = eventsCount > 0;
 
-      return c.json({ hasEvents });
+      return { hasEvents };
     }),
 
   // ...existing code...
-  getCategoryStats: privateProcedure
+  getCategoryStats: protectedProcedure
     .input(
       z.object({
         name: CATEGORY_NAME_VALIDATOR,
         timeRange: z.enum(["today", "week", "month"]),
       })
     )
-    .query(async ({ c, ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const { name, timeRange } = input;
 
       const now = new Date();
@@ -222,7 +222,10 @@ export const categoryRouter = j.router({
       });
 
       if (!category) {
-        return c.json({ error: "Category not found" }, 404);
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Category "${name}" not found`,
+        });
       }
 
       // Get all events for the selected time range
@@ -300,15 +303,15 @@ export const categoryRouter = j.router({
         }
       });
 
-      return c.superjson({
+      return {
         eventsCount: events.length,
         fieldStats: relevantFieldStats,
         timeRange,
-      });
+      };
     }),
   // ...existing code...
 
-  getEventsByCategoryName: privateProcedure
+  getEventsByCategoryName: protectedProcedure
     .input(
       z.object({
         name: CATEGORY_NAME_VALIDATOR,
@@ -317,7 +320,7 @@ export const categoryRouter = j.router({
         timeRange: z.enum(["today", "week", "month"]),
       })
     )
-    .query(async ({ c, ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const { name, page, limit, timeRange } = input;
 
       const now = new Date();
@@ -345,7 +348,10 @@ export const categoryRouter = j.router({
       });
 
       if (!category) {
-        return c.json({ error: "Category not found" }, 404);
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Category "${name}" not found`,
+        });
       }
 
       const [events, eventsCount] = await Promise.all([
@@ -368,9 +374,9 @@ export const categoryRouter = j.router({
         ),
       ]);
 
-      return c.superjson({
+      return {
         events,
         eventsCount,
-      });
+      };
     }),
 });

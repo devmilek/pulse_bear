@@ -1,6 +1,5 @@
 "use client";
 
-import { client } from "@/lib/client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,23 +12,23 @@ export const PaymentSuccessModal = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(true);
 
-  const { data, isPending } = useQuery({
-    queryKey: ["user-plan"],
-    queryFn: async () => {
-      const res = await client.payment.getUserPlan.$get();
-      return await res.json();
-    },
-    refetchInterval: (query) => {
-      return query.state.data?.plan === "PRO" ? false : 1000;
-    },
-  });
+  // const { data, isPending } = useQuery({
+  //   queryKey: ["user-plan"],
+  //   queryFn: async () => {
+  //     const res = await client.payment.getUserPlan.$get();
+  //     return await res.json();
+  //   },
+  //   refetchInterval: (query) => {
+  //     return query.state.data?.plan === "PRO" ? false : 1000;
+  //   },
+  // });
 
   const handleClose = () => {
     setIsOpen(false);
     router.push("/dashboard");
   };
 
-  const isPaymentSuccessful = data?.plan === "PRO";
+  // const isPaymentSuccessful = data?.plan === "PRO";
 
   return (
     <Modal
@@ -37,10 +36,10 @@ export const PaymentSuccessModal = () => {
       setShowModal={setIsOpen}
       onClose={handleClose}
       className="px-6 pt-6"
-      preventDefaultClose={!isPaymentSuccessful}
+      // preventDefaultClose={!isPaymentSuccessful}
     >
       <div className="flex flex-col items-center">
-        {isPending || !isPaymentSuccessful ? (
+        {/* {isPending || !isPaymentSuccessful ? (
           <div className="flex flex-col items-center justify-center h-64">
             <LoadingSpinner className="mb-4" />
             <p className="text-lg/7 font-medium text-gray-900">
@@ -77,7 +76,7 @@ export const PaymentSuccessModal = () => {
               </Button>
             </div>
           </>
-        )}
+        )} */}
       </div>
     </Modal>
   );

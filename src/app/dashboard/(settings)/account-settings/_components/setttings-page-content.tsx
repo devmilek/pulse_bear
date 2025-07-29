@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { client } from "@/lib/client";
+import { useTRPC } from "@/trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
@@ -14,14 +14,12 @@ export const AccountSettings = ({
 }: {
   discordId: string;
 }) => {
+  const trpc = useTRPC();
   const [discordId, setDiscordId] = useState(initialDiscordId);
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (discordId: string) => {
-      const res = await client.project.setDiscordID.$post({ discordId });
-      return await res.json();
-    },
-  });
+  const { mutate, isPending } = useMutation(
+    trpc.project.setDiscordID.mutationOptions()
+  );
 
   return (
     <Card className="max-w-xl w-full space-y-4">
@@ -50,7 +48,14 @@ export const AccountSettings = ({
         </p>
 
         <div className="pt-4">
-          <Button onClick={() => mutate(discordId)} disabled={isPending}>
+          <Button
+            onClick={() =>
+              mutate({
+                discordId,
+              })
+            }
+            disabled={isPending}
+          >
             {isPending ? "Saving..." : "Save Changes"}
           </Button>
         </div>
