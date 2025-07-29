@@ -9,6 +9,7 @@ import { PlusIcon } from "lucide-react";
 import { PaymentSuccessModal } from "@/components/payment-success-modal";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { SearchParams } from "nuqs";
+import { prefetch, trpc } from "@/trpc/server";
 
 interface PageProps {
   searchParams: Promise<SearchParams>;
@@ -34,6 +35,8 @@ const Page = async ({ searchParams }: PageProps) => {
   }
 
   const success = currSearchParams.success;
+
+  prefetch(trpc.category.getEventCategories.queryOptions());
 
   return (
     <>

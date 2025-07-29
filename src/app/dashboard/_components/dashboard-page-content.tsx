@@ -2,7 +2,12 @@
 
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { client } from "@/lib/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import React, { useState } from "react";
 import { DashboardEmptyState } from "./dashboard-empty-state";
 import { format, formatDistanceToNow } from "date-fns";
@@ -17,7 +22,7 @@ export const DashboardPageContent = () => {
   const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: categories, isPending: isEventCategoriesLoading } = useQuery(
+  const { data: categories } = useSuspenseQuery(
     trpc.category.getEventCategories.queryOptions()
   );
 
@@ -31,14 +36,6 @@ export const DashboardPageContent = () => {
       },
     })
   );
-
-  if (isEventCategoriesLoading) {
-    return (
-      <div className="flex items-center justify-center flex-1 h-full w-full">
-        <LoadingSpinner />
-      </div>
-    );
-  }
 
   if (!categories || categories.length === 0) {
     return <DashboardEmptyState />;

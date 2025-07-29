@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Providers } from "../components/providers";
 import { EB_Garamond } from "next/font/google";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
