@@ -217,8 +217,10 @@ export const events = pgTable(
   "events",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    formattedMessage: text("formatted_message").notNull(),
-    name: varchar("name", { length: 100 }).notNull(),
+
+    action: text("action").notNull(),
+    description: text("description"),
+    eventUserId: varchar("event_user_id", { length: 100 }), // user specified in the event
 
     fields: jsonb("fields").notNull().$type<Record<string, any>>(),
     deliveryStatus: deliveryStatusEnum("delivery_status")
@@ -229,7 +231,8 @@ export const events = pgTable(
       .notNull()
       .references(() => users.id, {
         onDelete: "cascade",
-      }),
+      }), // owner of the event
+
     eventCategoryId: uuid("event_category_id").references(
       () => eventCategories.id,
       {
@@ -245,9 +248,7 @@ export const events = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => ({
-    createdAtIdx: index("events_created_at_idx").on(table.createdAt),
-  })
+  (table) => [index("events_created_at_idx").on(table.createdAt)]
 );
 
 export type Event = typeof events.$inferSelect;

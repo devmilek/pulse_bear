@@ -84,7 +84,7 @@ export function createEmbed(
     fields: Object.entries(data.fields || {}).map(([key, value]) => ({
       name: humanizeKey(key),
       value: String(value),
-      inline: true,
+      inline: false,
     })),
   };
 }

@@ -62,11 +62,12 @@ export const POST = async (req: NextRequest) => {
     const [event] = await db
       .insert(eventsSchema)
       .values({
-        name: category.name,
-        formattedMessage: `${embed.title}\n\n${embed.description}`,
         userId: user.id,
         fields: data.fields || {},
         eventCategoryId: category.id,
+        action: data.action,
+        description: data.description,
+        eventUserId: data.user_id,
       })
       .returning();
 
