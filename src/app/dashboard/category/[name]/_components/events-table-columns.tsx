@@ -3,39 +3,39 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { Event, EventCategory } from "@/db/schema";
 import { cn, humanizeKey } from "@/lib/utils";
+import { formatDistance, formatDistanceToNow } from "date-fns";
 
 export const EventsTableColumns = (
   category: EventCategory,
   data: any
 ): ColumnDef<Event>[] => [
   {
-    accessorKey: "category",
-    header: "Category",
-    cell: () => <span>{category.name || "Uncategorized"}</span>,
+    accessorKey: "action",
+    header: ({ column }) => "Action",
+    cell: ({ row }) => row.getValue("action"),
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
+    header: "Date",
     cell: ({ row }) => {
-      return new Date(row.getValue("createdAt")).toLocaleString();
+      return formatDistanceToNow(row.getValue("createdAt"), {
+        addSuffix: true,
+      });
     },
   },
   ...(data?.events[0]
     ? Object.keys(data.events[0].fields as object).map((field) => ({
         accessorFn: (row: Event) => (row.fields as Record<string, any>)[field],
         header: humanizeKey(field),
-        cell: ({ row }: { row: Row<Event> }) =>
-          (row.original.fields as Record<string, any>)[field] || "-",
+        cell: ({ row }: { row: Row<Event> }) => {
+          const value = (row.original.fields as Record<string, any>)[field];
+
+          // Format different data types
+          if (typeof value === "boolean") return value ? "Yes" : "No";
+          if (value === null || value === undefined) return "-";
+          if (typeof value === "number") return value.toString();
+          return humanizeKey(value);
+        },
       }))
     : []),
   {

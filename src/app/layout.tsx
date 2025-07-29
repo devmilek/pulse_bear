@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/client";
 import { TurborepoAccessTraceResult } from "next/dist/build/turborepo-access-trace";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -19,7 +20,6 @@ export const metadata: Metadata = {
   title: "PulseBear - Real-time SaaS Monitoring",
   description:
     "Monitor your SaaS applications in real-time with PulseBear. Get instant alerts, track critical metrics, and never miss an event.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 export default function RootLayout({
@@ -29,12 +29,23 @@ export default function RootLayout({
 }>) {
   return (
     <NuqsAdapter>
-      <html lang="en" className={cn(inter.className, eb_garamond.variable)}>
-        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-background text-foreground antialiased">
-          <main className="relative flex-1 flex flex-col">
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-            <Toaster />
-          </main>
+      <html
+        lang="en"
+        className={cn(inter.className, eb_garamond.variable)}
+        suppressHydrationWarning
+      >
+        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-background antialiased">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main className="relative flex-1 flex flex-col">
+              <TRPCReactProvider>{children}</TRPCReactProvider>
+              <Toaster />
+            </main>
+          </ThemeProvider>
         </body>
       </html>
     </NuqsAdapter>

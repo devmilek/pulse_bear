@@ -28,9 +28,10 @@ import {
 import { Event, EventCategory } from "@/db/schema";
 import { EventsTableColumns } from "./events-table-columns";
 import { useEventCategoryParams } from "@/hooks/use-event-category-params";
+import { GetEventsByCategoryName } from "../types";
 
 interface EventsDataTableProps {
-  data: any;
+  data: GetEventsByCategoryName | undefined;
   isFetching: boolean;
   category: EventCategory;
 }
@@ -68,12 +69,6 @@ export const EventsDataTable = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div className="w-full flex flex-col gap-4">
-          <Heading className="sm:text-3xl">Event overview</Heading>
-        </div>
-      </div>
-
       <Card className="px-6 py-4">
         <Table>
           <TableHeader>

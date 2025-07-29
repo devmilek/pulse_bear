@@ -16,6 +16,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -27,10 +30,13 @@ import {
 import { User } from "better-auth";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
+import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export function DashboardUserButton({ user }: { user: User | null }) {
   const { isMobile } = useSidebar();
   const router = useRouter();
+  const { setTheme, theme } = useTheme();
 
   if (!user) {
     return null;
@@ -89,6 +95,39 @@ export function DashboardUserButton({ user }: { user: User | null }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="gap-2">
+                {theme === "light" && <SunIcon size={16} aria-hidden="true" />}
+                {theme === "dark" && <MoonIcon size={16} aria-hidden="true" />}
+                Theme
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  <SunIcon
+                    size={16}
+                    className="opacity-60"
+                    aria-hidden="true"
+                  />
+                  <span>Light</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  <MoonIcon
+                    size={16}
+                    className="opacity-60"
+                    aria-hidden="true"
+                  />
+                  <span>Dark</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  <MonitorIcon
+                    size={16}
+                    className="opacity-60"
+                    aria-hidden="true"
+                  />
+                  <span>System</span>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
             <DropdownMenuItem onClick={handleSignOut}>
               <IconLogout />
               Log out
