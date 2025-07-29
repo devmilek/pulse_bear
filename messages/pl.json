@@ -76,5 +76,25 @@
         "growth": "Wzrost"
       }
     }
+  },
+  "Pricing": {
+    "heading": "Prosty, przejrzysty cennik",
+    "description": "Zacznij monitorować swoje SaaS z PulseBear już dziś. Uzyskaj wgląd w czasie rzeczywistym i nigdy nie przegap ważnych zdarzeń w swoim biznesie dzięki naszemu przystępnemu miesięcznemu planowi.",
+    "plan": {
+      "title": "Subskrypcja miesięczna",
+      "description": "Rozpocznij pracę z PulseBear i monitoruj swoje SaaS dzięki powiadomieniom na Discordzie w czasie rzeczywistym. Śledź kluczowe metryki, otrzymuj natychmiastowe alerty i miej kontrolę nad rozwojem swojej firmy.",
+      "price": "25 USD",
+      "period": "/miesiąc",
+      "billing": "Rozliczenie miesięczne",
+      "button": "Zacznij monitorować",
+      "trial": "Rozpocznij 7-dniowy bezpłatny okres próbny. Anuluj w dowolnym momencie.",
+      "included": "W ramach planu otrzymujesz"
+    },
+    "features": [
+      "10 000 zdarzeń w czasie rzeczywistym miesięcznie",
+      "10 kategorii zdarzeń",
+      "Priorytetowe wsparcie",
+      "Możliwość anulowania w każdej chwili"
+    ]
   }
 }
