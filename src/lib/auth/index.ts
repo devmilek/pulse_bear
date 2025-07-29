@@ -2,8 +2,15 @@ import { db } from "@/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { Resend } from "resend";
+import { Polar } from "@polar-sh/sdk";
+import { polar, checkout } from "@polar-sh/better-auth";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const polarClient = new Polar({
+  accessToken: process.env.POLAR_ACCESS_TOKEN,
+  server: process.env.NODE_ENV === "production" ? "production" : "sandbox",
+});
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -16,6 +23,25 @@ export const auth = betterAuth({
       generateId: false,
     },
   },
+
+  plugins: [
+    polar({
+      client: polarClient,
+      createCustomerOnSignUp: true,
+      use: [
+        checkout({
+          products: [
+            {
+              productId: "200b4035-511e-43e1-a91a-867ab8979c49",
+              slug: "lifetime-access",
+            },
+          ],
+          successUrl: process.env.POLAR_SUCCESS_URL,
+          authenticatedUsersOnly: true,
+        }),
+      ],
+    }),
+  ],
 
   socialProviders: {
     google: {

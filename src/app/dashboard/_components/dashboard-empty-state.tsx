@@ -12,7 +12,7 @@ export const DashboardEmptyState = () => {
     trpc.category.insertQuickstartCategories.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(
-          trpc.category.getEventCategories.infiniteQueryOptions()
+          trpc.category.getEventCategories.queryOptions()
         );
       },
     })
