@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import { useTRPC } from "@/trpc/client";
+import ResponsiveDialog from "./responsive-dialog";
 
 const EVENT_CATEGORY_VALIDATOR = z.object({
   name: CATEGORY_NAME_VALIDATOR,
@@ -104,22 +105,14 @@ export const CreateEventCategoryModal = ({
         {children}
       </div>
 
-      <Modal
-        className="max-w-xl p-8"
-        showModal={isOpen}
-        setShowModal={setIsOpen}
+      <ResponsiveDialog
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        title="Create Event Category"
+        description="Create a new category to organize your events."
       >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <h2 className="text-lg/7 font-medium tracking-tight text-gray-950">
-                New Event Category
-              </h2>
-              <p className="text-sm/6 text-gray-600">
-                Create a new category to organize your events.
-              </p>
-            </div>
-
             <div className="space-y-5">
               <FormField
                 name="name"
@@ -222,7 +215,7 @@ export const CreateEventCategoryModal = ({
             </div>
           </form>
         </Form>
-      </Modal>
+      </ResponsiveDialog>
     </>
   );
 };
