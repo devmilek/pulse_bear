@@ -1,16 +1,23 @@
 import { db } from "@/db";
 import { createTRPCRouter, protectedProcedure } from "../init";
 import { addMonths, startOfMonth } from "date-fns";
-import { eventCategories, quotas, users } from "@/db/schema";
+import { eventCategories, quotas, subscription, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { FREE_QUOTA, PRO_QUOTA } from "@/config";
 import z from "zod";
+import { isSubscriptionActive } from "@/lib/utils";
 
 export const projectRouter = createTRPCRouter({
   getUsage: protectedProcedure.query(async ({ ctx }) => {
     const { user } = ctx;
 
     const currentDate = startOfMonth(new Date());
+
+    const userSubscription = await db.query.subscription.findFirst({
+      where: eq(subscription.userId, user.id),
+    });
+
+    const subscriptionActive = isSubscriptionActive(userSubscription);
 
     const quota = await db.query.quotas.findFirst({
       where: and(
@@ -27,11 +34,12 @@ export const projectRouter = createTRPCRouter({
       eq(eventCategories.userId, user.id)
     );
 
-    const limits = user.plan === "PRO" ? PRO_QUOTA : FREE_QUOTA;
+    const limits = subscriptionActive ? PRO_QUOTA : FREE_QUOTA;
 
     const resetDate = addMonths(currentDate, 1);
 
     return {
+      subscriptionActive,
       categoriesUsed: categoryCount,
       categoriesLimit: limits.maxEventCategories,
       eventsUsed: eventCount,

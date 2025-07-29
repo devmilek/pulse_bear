@@ -7,31 +7,23 @@ import { isAfter, isToday, startOfMonth, startOfWeek } from "date-fns";
 import { useEventCategoryParams } from "@/hooks/use-event-category-params";
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/client";
+import { useTRPC } from "@/trpc/client";
 
 export const EventsStatsGrid = ({ categoryName }: { categoryName: string }) => {
   const [filters] = useEventCategoryParams();
-  const { data, isFetching } = useQuery({
-    queryKey: ["stats", categoryName, filters.tab],
-    queryFn: async () => {
-      const res = await client.category.getCategoryStats.$get({
+  const trpc = useTRPC();
+
+  const { data, isFetching } = useQuery(
+    trpc.category.getCategoryStats.queryOptions(
+      {
         name: categoryName,
         timeRange: filters.tab,
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch events");
+      },
+      {
+        refetchOnWindowFocus: false,
       }
-
-      const result = await res.json();
-
-      if ("error" in result) {
-        throw new Error(result.error);
-      }
-
-      return result;
-    },
-    refetchOnWindowFocus: false,
-  });
+    )
+  );
 
   const NumericFieldSumCards = () => {
     if (!data?.fieldStats || Object.keys(data.fieldStats).length === 0) {
@@ -54,8 +46,8 @@ export const EventsStatsGrid = ({ categoryName }: { categoryName: string }) => {
               {filters.tab === "today"
                 ? "today"
                 : filters.tab === "week"
-                ? "this week"
-                : "this month"}
+                  ? "this week"
+                  : "this month"}
             </p>
           </div>
         </CardContent>
@@ -80,8 +72,8 @@ export const EventsStatsGrid = ({ categoryName }: { categoryName: string }) => {
                 {filters.tab === "today"
                   ? "today"
                   : filters.tab === "week"
-                  ? "this week"
-                  : "this month"}
+                    ? "this week"
+                    : "this month"}
               </p>
             </div>
           </CardContent>

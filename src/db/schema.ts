@@ -85,6 +85,32 @@ export const apiKeys = pgTable(
   ]
 );
 
+export const subscription = pgTable("subscription", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  createdAt: timestamp("createdAt").notNull(),
+  modifiedAt: timestamp("modifiedAt"),
+  amount: integer("amount").notNull(),
+  currency: text("currency").notNull(),
+  recurringInterval: text("recurringInterval").notNull(),
+  status: text("status").notNull(),
+  currentPeriodStart: timestamp("currentPeriodStart").notNull(),
+  currentPeriodEnd: timestamp("currentPeriodEnd").notNull(),
+  cancelAtPeriodEnd: boolean("cancelAtPeriodEnd").notNull().default(false),
+  canceledAt: timestamp("canceledAt"),
+  startedAt: timestamp("startedAt").notNull(),
+  endsAt: timestamp("endsAt"),
+  endedAt: timestamp("endedAt"),
+  customerId: text("customerId").notNull(),
+  productId: text("productId").notNull(),
+  discountId: text("discountId"),
+  checkoutId: text("checkoutId").notNull(),
+  customerCancellationReason: text("customerCancellationReason"),
+  customerCancellationComment: text("customerCancellationComment"),
+  metadata: text("metadata"), // JSON string
+  customFieldData: text("customFieldData"), // JSON string
+  userId: uuid("userId").references(() => users.id),
+});
+
 export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
   user: one(users, {
     fields: [apiKeys.userId],

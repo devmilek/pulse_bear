@@ -2,10 +2,17 @@ import { FREE_QUOTA, PRO_QUOTA } from "@/config";
 import { DiscordClient } from "@/lib/discord-client";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
 import { db } from "@/db";
-import { apiKeys, events as eventsSchema, quotas, users } from "@/db/schema";
+import {
+  apiKeys,
+  events as eventsSchema,
+  quotas,
+  subscription,
+  users,
+} from "@/db/schema";
 import { and, eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { isSubscriptionActive } from "@/lib/utils";
 
 const REQUEST_VALIDATOR = z
   .object({
@@ -81,10 +88,15 @@ export const POST = async (req: NextRequest) => {
       ),
     });
 
-    const quotaLimit =
-      user.plan === "FREE"
-        ? FREE_QUOTA.maxEventsPerMonth
-        : PRO_QUOTA.maxEventsPerMonth;
+    const dbSubscription = await db.query.subscription.findFirst({
+      where: eq(subscription.userId, user.id),
+    });
+
+    const subscriptionActive = isSubscriptionActive(dbSubscription);
+
+    const quotaLimit = subscriptionActive
+      ? PRO_QUOTA.maxEventsPerMonth
+      : FREE_QUOTA.maxEventsPerMonth;
 
     if (quota && quota.count >= quotaLimit) {
       return NextResponse.json(
