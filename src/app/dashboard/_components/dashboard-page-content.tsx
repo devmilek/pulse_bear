@@ -1,7 +1,5 @@
 "use client";
 
-import { LoadingSpinner } from "@/components/loading-spinner";
-import { client } from "@/lib/client";
 import {
   useMutation,
   useQuery,

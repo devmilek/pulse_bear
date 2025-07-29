@@ -1,12 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BarChart } from "lucide-react";
-import { isAfter, isToday, startOfMonth, startOfWeek } from "date-fns";
 import { useEventCategoryParams } from "@/hooks/use-event-category-params";
 import { useQuery } from "@tanstack/react-query";
-import { client } from "@/lib/client";
 import { useTRPC } from "@/trpc/client";
 
 export const EventsStatsGrid = ({ categoryName }: { categoryName: string }) => {

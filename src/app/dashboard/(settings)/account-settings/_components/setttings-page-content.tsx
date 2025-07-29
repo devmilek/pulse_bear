@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { client } from "@/lib/client";
 import { useTRPC } from "@/trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";

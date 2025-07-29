@@ -1,7 +1,7 @@
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
-import { Event, EventCategory } from "@/server/db/schema";
+import { Event, EventCategory } from "@/db/schema";
 import { cn, humanizeKey } from "@/lib/utils";
 
 export const EventsTableColumns = (

@@ -1,9 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { client } from "@/lib/client";
 import { EventCategory } from "@/db/schema";
 import { EmptyCategoryState } from "./empty-category-state";
 import { EventsTabsSection } from "./events-tabs-section";

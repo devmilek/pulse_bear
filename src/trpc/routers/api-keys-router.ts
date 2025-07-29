@@ -1,4 +1,3 @@
-import { privateProcedure } from "@/server/jstack";
 import { createTRPCRouter, protectedProcedure } from "../init";
 import z from "zod";
 import { apiKeys } from "@/db/schema";

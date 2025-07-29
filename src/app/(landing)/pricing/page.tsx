@@ -4,7 +4,6 @@ import { Heading } from "@/components/heading";
 import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/auth-client";
-import { client } from "@/lib/client";
 import { useTRPC } from "@/trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { CheckIcon } from "lucide-react";

@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { client } from "@/lib/client";
 import { getEventCodeSnippet } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -12,28 +11,6 @@ export const EmptyCategoryState = ({
 }: {
   categoryName: string;
 }) => {
-  const router = useRouter();
-
-  const { data } = useQuery({
-    queryKey: ["category", categoryName, "hasEvents"],
-    queryFn: async () => {
-      const res = await client.category.pollCategory.$get({
-        name: categoryName,
-      });
-
-      return await res.json();
-    },
-    refetchInterval(query) {
-      return query.state.data?.hasEvents ? false : 1000;
-    },
-  });
-
-  const hasEvents = data?.hasEvents;
-
-  useEffect(() => {
-    if (hasEvents) router.refresh();
-  }, [hasEvents, router]);
-
   const codeSnippet = getEventCodeSnippet(categoryName);
 
   return (
