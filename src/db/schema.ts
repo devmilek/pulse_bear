@@ -63,9 +63,17 @@ export const apiKeys = pgTable(
 
     isActive: boolean("is_active").notNull().default(true),
     revokedAt: timestamp("revoked_at"),
-    lastUsedAt: timestamp("last_used_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    lastUsedAt: timestamp("last_used_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
