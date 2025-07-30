@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "../init";
 import { projectRouter } from "./project-router";
-import { categoryRouter } from "./category-router";
+import { categoryRouter } from "../../modules/category/server/router";
 import { paymentRouter } from "./payment-router";
 import { apiKeysRouter } from "./api-keys-router";
 

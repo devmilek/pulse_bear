@@ -4,15 +4,15 @@ import { EventCategory } from "@/db/schema";
 import {
   useEventCategoryParams,
   ViewMode,
-} from "@/hooks/use-event-category-params";
+} from "@/modules/category/hooks/use-event-category-params";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { EventsDataTable } from "./events-data-table";
-import { EventsList } from "./events-list";
 import { Heading } from "@/components/heading";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ListIcon, TableIcon } from "lucide-react";
+import { EventsDataTable } from "../components/events-data-table";
+import { EventsList } from "../components/events-list";
 
 export const EventsFeed = ({
   hasEvents,

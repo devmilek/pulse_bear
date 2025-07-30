@@ -1,22 +1,22 @@
 "use client";
 
 import { EventCategory } from "@/db/schema";
-import { EmptyCategoryState } from "./empty-category-state";
-import { EventsStatsGrid } from "./events-stats-grid";
-import { EventsFeed } from "./events-feed";
-import { EventsChart } from "./events-chart";
+import { CategoryEmptyState } from "./category-empty-state";
+import { EventsStatsGrid } from "../sections/events-stats-grid";
+import { EventsChart } from "../sections/events-chart";
+import { EventsFeed } from "../sections/events-feed";
 
 interface CategoryPageContentProps {
   hasEvents: boolean;
   category: EventCategory;
 }
 
-export const CategoryPageContent = ({
+export const CategoryDetailsView = ({
   hasEvents,
   category,
 }: CategoryPageContentProps) => {
   if (!hasEvents) {
-    return <EmptyCategoryState categoryName={category.name} />;
+    return <CategoryEmptyState categoryName={category.name} />;
   }
 
   return (

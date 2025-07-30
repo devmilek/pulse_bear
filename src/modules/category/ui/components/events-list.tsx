@@ -1,11 +1,11 @@
 import { EventCategory } from "@/db/schema";
 import React from "react";
-import { GetEventsByCategoryName } from "../types";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { hexToRgba, humanizeKey, intToHex } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import { GetEventsByCategoryName } from "../../types";
 
 interface EventsListProps {
   data: GetEventsByCategoryName | undefined;

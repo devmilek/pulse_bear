@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-export const EmptyCategoryState = ({
+export const CategoryEmptyState = ({
   categoryName,
 }: {
   categoryName: string;

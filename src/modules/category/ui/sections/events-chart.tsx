@@ -19,7 +19,7 @@ import {
 import { EventCategory } from "@/db/schema";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
-import { useEventCategoryParams } from "@/hooks/use-event-category-params";
+import { useEventCategoryParams } from "@/modules/category/hooks/use-event-category-params";
 
 const chartConfig = {
   events: {

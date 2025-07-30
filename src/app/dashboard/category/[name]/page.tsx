@@ -4,10 +4,9 @@ import { eventCategories, events, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import React from "react";
-import { CategoryPageContent } from "./_components/category-page-content";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
-import { prefetch, trpc } from "@/trpc/server";
-import { EventsTabsSection } from "./_components/events-tabs-section";
+import { CategoryDetailsView } from "@/modules/category/ui/views/category-details-view";
+import { CategoryTimeRangeTabs } from "@/modules/category/ui/components/category-time-range-tabs";
 
 interface CategoryDetailsPageProps {
   params: Promise<{
@@ -45,9 +44,9 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
   return (
     <DashboardPage
       title={`${category.emoji} ${category.name} events`}
-      cta={<EventsTabsSection />}
+      cta={<CategoryTimeRangeTabs />}
     >
-      <CategoryPageContent hasEvents={hasEvents} category={category} />
+      <CategoryDetailsView hasEvents={hasEvents} category={category} />
     </DashboardPage>
   );
 };

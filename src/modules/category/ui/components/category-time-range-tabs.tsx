@@ -1,9 +1,12 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tab, useEventCategoryParams } from "@/hooks/use-event-category-params";
+import {
+  Tab,
+  useEventCategoryParams,
+} from "../../hooks/use-event-category-params";
 
-export const EventsTabsSection = () => {
+export const CategoryTimeRangeTabs = () => {
   const [filters, setFilters] = useEventCategoryParams();
   return (
     <Tabs

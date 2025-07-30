@@ -10,7 +10,7 @@ import z from "zod";
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator";
 import { parseColor } from "@/lib/utils";
 import { FREE_QUOTA, PRO_QUOTA } from "@/config";
-import { createTRPCRouter, protectedProcedure } from "../init";
+import { createTRPCRouter, protectedProcedure } from "../../../trpc/init";
 import { db } from "@/db";
 import { TRPCError } from "@trpc/server";
 
