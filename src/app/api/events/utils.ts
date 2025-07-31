@@ -12,6 +12,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { NextRequest } from "next/server";
 import { REQUEST_VALIDATOR } from "./schema";
 import z from "zod";
+import { UAParser } from "ua-parser-js";
 
 export function extractApiKey(req: NextRequest): string | null {
   const authHeader = req.headers.get("Authorization");
@@ -108,4 +109,18 @@ export async function incrementQuota(userId: string) {
         count: sql`${quotas.count} + 1`,
       },
     });
+}
+
+export function parseUserAgent(req: NextRequest) {
+  const userAgent = req.headers.get("user-agent") || "Unknown";
+  const parser = new UAParser(userAgent);
+  const result = parser.getResult();
+
+  console.log("User Agent:", result);
+
+  return {
+    os: result.os.name,
+    browser: result.browser.name,
+    device: result.device.model,
+  };
 }

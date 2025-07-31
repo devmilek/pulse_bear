@@ -240,6 +240,11 @@ export const events = pgTable(
       }
     ),
 
+    // USER AGENT
+    os: varchar("os", { length: 50 }),
+    browser: varchar("browser", { length: 50 }),
+    device: varchar("device", { length: 50 }),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

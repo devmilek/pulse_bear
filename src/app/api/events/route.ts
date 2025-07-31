@@ -20,6 +20,7 @@ import {
   getCategoryByName,
   getUserFromApiKey,
   incrementQuota,
+  parseUserAgent,
 } from "./utils";
 import { REQUEST_VALIDATOR } from "./schema";
 
@@ -59,6 +60,8 @@ export const POST = async (req: NextRequest) => {
     const discord = new DiscordClient(process.env.DISCORD_BOT_TOKEN);
     const dmChannel = await discord.createDM(user.discordId);
 
+    const ua = parseUserAgent(req);
+
     const [event] = await db
       .insert(eventsSchema)
       .values({
@@ -68,6 +71,9 @@ export const POST = async (req: NextRequest) => {
         action: data.action,
         description: data.description,
         eventUserId: data.user_id,
+        device: ua.device,
+        os: ua.os,
+        browser: ua.browser,
       })
       .returning();
 
