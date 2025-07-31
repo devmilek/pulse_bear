@@ -17,7 +17,7 @@ import { formatDistanceToNow } from "date-fns";
 import { KeyIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
-export const ApiKeySettings = () => {
+export const ApiKeysView = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { data } = useQuery(trpc.apiKeys.getApiKeys.queryOptions());

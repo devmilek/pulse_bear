@@ -1,9 +1,8 @@
 import { DashboardPage } from "@/components/dashboard-page";
 import { redirect } from "next/navigation";
-import { ApiKeySettings } from "./api-key-settings";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
-import { Button } from "@/components/ui/button";
-import { CreateApiKeyModal } from "./_components/create-api-key-modal";
+import { ApiKeysView } from "@/modules/settings/ui/views/api-keys-view";
+import { CreateApiKeyModal } from "@/modules/settings/ui/components/create-api-key-modal";
 
 const Page = async () => {
   const { user } = await getCurrentSession();
@@ -14,7 +13,7 @@ const Page = async () => {
 
   return (
     <DashboardPage title="API Keys" cta={<CreateApiKeyModal />}>
-      <ApiKeySettings />
+      <ApiKeysView />
     </DashboardPage>
   );
 };

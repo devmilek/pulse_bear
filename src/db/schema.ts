@@ -305,3 +305,42 @@ export const quotasRelations = relations(quotas, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const allowedOrigins = pgTable(
+  "allowed_origins",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    // Najprościej: globalnie dla użytkownika.
+    // Jeśli kiedyś zechcesz per-klucz, dodasz apiKeyId (nullable) i unikalność skorygujesz.
+    domain: varchar("domain", { length: 255 }).notNull(), // np. "asteriostudio.com" | "localhost"
+    includeSubdomains: boolean("include_subdomains").notNull().default(false),
+
+    isEnabled: boolean("is_enabled").notNull().default(true),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    uniqueIndex("allowed_origins_user_domain_sub_idx").on(
+      t.userId,
+      t.domain,
+      t.includeSubdomains
+    ),
+    index("allowed_origins_user_idx").on(t.userId),
+    index("allowed_origins_domain_idx").on(t.domain),
+  ]
+);
+
+export const allowedOriginsRelations = relations(allowedOrigins, ({ one }) => ({
+  user: one(users, { fields: [allowedOrigins.userId], references: [users.id] }),
+}));
