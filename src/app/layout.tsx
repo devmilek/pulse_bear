@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { EB_Garamond } from "next/font/google";
+import { EB_Garamond, Geist } from "next/font/google";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import "./globals.css";
+import "./globals-default.css";
 import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/client";
 import { TurborepoAccessTraceResult } from "next/dist/build/turborepo-access-trace";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const eb_garamond = EB_Garamond({
   subsets: ["latin"],
@@ -31,10 +31,10 @@ export default function RootLayout({
     <NuqsAdapter>
       <html
         lang="en"
-        className={cn(inter.className, eb_garamond.variable)}
+        className={cn(geist.className, eb_garamond.variable)}
         suppressHydrationWarning
       >
-        <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-background antialiased">
+        <body className="min-h-[calc(100vh-1px)] flex flex-col antialiased">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
