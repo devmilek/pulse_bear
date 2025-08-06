@@ -32,6 +32,8 @@ export const projects = pgTable(
   ]
 );
 
+export type Project = typeof projects.$inferSelect;
+
 export const apiKeys = pgTable(
   "api_keys",
   {

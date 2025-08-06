@@ -44,7 +44,7 @@ const Page = async ({ searchParams }: PageProps) => {
       {success ? <PaymentSuccessModal /> : null}
       <HydrateClient>
         <DashboardPage
-          title="Dashboard"
+          title="Events"
           hideBackButton
           cta={
             <CreateEventCategoryModal>

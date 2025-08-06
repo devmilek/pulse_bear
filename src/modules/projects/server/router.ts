@@ -73,4 +73,23 @@ export const projectsRouter = createTRPCRouter({
         });
       }
     }),
+
+  list: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx;
+
+    try {
+      const userProjects = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.userId, user.id));
+
+      return userProjects;
+    } catch (error) {
+      console.error("Error listing projects:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to list projects",
+      });
+    }
+  }),
 });

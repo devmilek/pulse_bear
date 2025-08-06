@@ -108,7 +108,7 @@ export const CreateProjectDialog = ({
       {
         onSuccess: ({ slug }) => {
           form.reset();
-          router.push(`/${slug}`);
+          router.push(`/app/${slug}`);
           onOpenChange(false);
         },
         onError: (error) => {

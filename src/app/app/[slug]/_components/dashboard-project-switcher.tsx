@@ -19,6 +19,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { CreateProjectDialog } from "@/modules/projects/ui/components/create-project-modal";
+import { Project } from "@/db/schema";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 const projects = [
   {
@@ -29,14 +33,16 @@ const projects = [
   },
 ];
 
-export function DashboardProjectSwitcher() {
+export function DashboardProjectSwitcher({
+  currentProject,
+}: {
+  currentProject: Project;
+}) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(projects[0]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-
-  if (!activeTeam) {
-    return null;
-  }
+  const trpc = useTRPC();
+  const router = useRouter();
+  const { data } = useQuery(trpc.projects.list.queryOptions());
 
   return (
     <>
@@ -53,7 +59,7 @@ export function DashboardProjectSwitcher() {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {activeTeam.name}
+                    {currentProject.name}
                   </span>
                   {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
                 </div>
@@ -69,10 +75,10 @@ export function DashboardProjectSwitcher() {
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Projects
               </DropdownMenuLabel>
-              {projects.map((project, index) => (
+              {data?.map((project, index) => (
                 <DropdownMenuItem
                   key={project.name}
-                  onClick={() => setActiveTeam(project)}
+                  onClick={() => router.push(`/app/${project.slug}`)}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">

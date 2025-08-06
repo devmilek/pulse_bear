@@ -29,8 +29,9 @@ import { DashboardUserButton } from "./dashboard-user-button";
 import { ThemeSwitcher } from "@/components/ui/shadcn-io/theme-switcher";
 import { Icons } from "@/components/icons";
 import { DashboardProjectSwitcher } from "./dashboard-project-switcher";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { User } from "better-auth";
+import { Project } from "@/db/schema";
 
 interface SidebarItem {
   href: string;
@@ -72,12 +73,23 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
   },
 ];
 
-export const DashboardSidebar = ({ user }: { user: User }) => {
+export const DashboardSidebar = ({
+  user,
+  project,
+}: {
+  user: User;
+  project: Project;
+}) => {
   const { slug } = useParams<{
     slug: string;
   }>();
 
   const projectUrl = `/app/${slug}`;
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    return pathname.startsWith(projectUrl + href);
+  };
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -88,7 +100,7 @@ export const DashboardSidebar = ({ user }: { user: User }) => {
         >
           <Icons.logo className="h-8 w-auto" />
         </Link>
-        <DashboardProjectSwitcher />
+        <DashboardProjectSwitcher currentProject={project} />
         {/* <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -112,7 +124,11 @@ export const DashboardSidebar = ({ user }: { user: User }) => {
               <SidebarMenu>
                 {items.map((item) => (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild tooltip={item.text}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.text}
+                      isActive={isActive(item.href)}
+                    >
                       <Link href={projectUrl + item.href}>
                         <item.icon />
                         <span>{item.text}</span>
