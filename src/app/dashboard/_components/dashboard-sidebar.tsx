@@ -27,6 +27,7 @@ import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { DashboardUserButton } from "./dashboard-user-button";
 import { ThemeSwitcher } from "@/components/ui/shadcn-io/theme-switcher";
 import { Icons } from "@/components/icons";
+import { DashboardProjectSwitcher } from "./dashboard-project-switcher";
 
 interface SidebarItem {
   href: string;
@@ -72,13 +73,14 @@ export const DashboardSidebar = async () => {
   const { user } = await getCurrentSession();
   return (
     <Sidebar collapsible="icon" variant="inset">
-      <SidebarHeader>
+      <SidebarHeader className="space-y-4">
         <Link
           href="/"
           className="flex z-40 px-2 pt-4 group-data-[collapsible=icon]:hidden"
         >
           <Icons.logo className="h-8 w-auto" />
         </Link>
+        <DashboardProjectSwitcher />
         {/* <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton

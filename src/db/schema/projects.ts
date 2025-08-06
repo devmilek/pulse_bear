@@ -11,18 +11,26 @@ import {
 import { users } from "./users";
 import cuid from "cuid";
 
-export const projects = pgTable("projects", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  isSpeedInsightsEnabled: boolean("is_speed_insights_enabled")
-    .default(false)
-    .notNull(),
+export const projects = pgTable(
+  "projects",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    slug: text("slug"),
+    isSpeedInsightsEnabled: boolean("is_speed_insights_enabled")
+      .default(false)
+      .notNull(),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("projects_user_slug_idx").on(table.userId, table.slug),
+    index("projects_userid_idx").on(table.userId),
+  ]
+);
 
 export const apiKeys = pgTable(
   "api_keys",
