@@ -12,7 +12,15 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Gem, Home, Key, LucideIcon, Settings } from "lucide-react";
+import {
+  GaugeIcon,
+  Gem,
+  Home,
+  Key,
+  LucideIcon,
+  Settings,
+  TextIcon,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
@@ -34,7 +42,14 @@ interface SidebarCategory {
 const SIDEBAR_ITEMS: SidebarCategory[] = [
   {
     category: "Overview",
-    items: [{ href: "/dashboard", icon: Home, text: "Dashboard" }],
+    items: [
+      { href: "/dashboard", icon: Home, text: "Dashboard" },
+      {
+        href: "/dashboard/speed-insights",
+        icon: GaugeIcon,
+        text: "Speed Insights",
+      },
+    ],
   },
   {
     category: "Account",
