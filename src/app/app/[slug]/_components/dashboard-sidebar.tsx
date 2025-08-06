@@ -57,13 +57,13 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
     ],
   },
   {
-    category: "Account",
-    items: [{ href: "/upgrade", icon: Gem, text: "Upgrade" }],
+    category: "Project Settings",
+    items: [{ href: "/api-keys", icon: Key, text: "API Keys" }],
   },
   {
-    category: "Settings",
+    category: "Account",
     items: [
-      { href: "/api-key", icon: Key, text: "API Key" },
+      { href: "/upgrade", icon: Gem, text: "Upgrade" },
       {
         href: "/account-settings",
         icon: Settings,
