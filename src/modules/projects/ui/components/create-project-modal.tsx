@@ -21,7 +21,7 @@ import { useTRPC } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 import slugify from "@sindresorhus/slugify";
 
-import { useDebounceCallback, useDebounceValue } from "usehooks-ts";
+import { useDebounceValue } from "usehooks-ts";
 import z from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

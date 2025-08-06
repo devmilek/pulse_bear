@@ -13,11 +13,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import { useProjectData } from "@/modules/projects/hooks/use-project-data";
 import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const schema = z.object({
@@ -27,6 +29,7 @@ const schema = z.object({
 export const CreateApiKeyModal = () => {
   const [open, setOpen] = React.useState(false);
   const trpc = useTRPC();
+  const project = useProjectData();
   const queryClient = useQueryClient();
 
   const form = useForm({
@@ -39,15 +42,26 @@ export const CreateApiKeyModal = () => {
   const { mutate, isPending } = useMutation(
     trpc.apiKeys.createApiKey.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries(trpc.apiKeys.getApiKeys.queryOptions());
+        queryClient.invalidateQueries(
+          trpc.apiKeys.getApiKeys.queryOptions({
+            projectId: project.id,
+          })
+        );
         setOpen(false);
         form.reset();
+      },
+      onError: (error) => {
+        console.error("Error creating API key:", error);
+        toast.error(error.message || "Failed to create API key");
       },
     })
   );
 
   const onSubmit = (data: z.infer<typeof schema>) => {
-    mutate(data);
+    mutate({
+      ...data,
+      projectId: project.id,
+    });
   };
 
   return (

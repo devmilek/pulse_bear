@@ -7,7 +7,9 @@ import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/db";
 import { and, eq } from "drizzle-orm";
-import { projects } from "@/db/schema";
+import { Project, projects } from "@/db/schema";
+import { loadProjectOrRedirect } from "@/lib/project-loader";
+import { ProjectDataProvider } from "@/modules/projects/hooks/use-project-data";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,23 +19,11 @@ interface LayoutProps {
 }
 
 const Layout = async ({ children, params }: LayoutProps) => {
-  const { user } = await getCurrentSession();
-  const { slug } = await params;
-
-  if (!user) {
-    redirect("/sign-in");
-  }
-
-  const project = await db.query.projects.findFirst({
-    where: and(eq(projects.slug, slug), eq(projects.userId, user.id)),
-  });
-
-  if (!project) {
-    notFound();
-  }
+  const slug = (await params).slug;
+  const { user, project } = await loadProjectOrRedirect(slug);
 
   return (
-    <>
+    <ProjectDataProvider project={project}>
       <SidebarProvider>
         <DashboardSidebar user={user} project={project} />
         <SidebarInset className="border">
@@ -45,7 +35,7 @@ const Layout = async ({ children, params }: LayoutProps) => {
           <ConfirmationDialog />
         </SidebarInset>
       </SidebarProvider>
-    </>
+    </ProjectDataProvider>
   );
 };
 

@@ -42,6 +42,9 @@ export const apiKeys = pgTable(
     projectId: uuid("project_id")
       .notNull()
       .references(() => projects.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
 
     name: varchar("name", { length: 100 }).notNull(),
 

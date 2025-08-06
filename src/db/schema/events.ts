@@ -13,6 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
+import { projects } from "./projects";
 
 export const deliveryStatusEnum = pgEnum("deliverystatus", [
   "PENDING",
@@ -34,6 +35,12 @@ export const eventCategories = pgTable(
         onDelete: "cascade",
       }),
 
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, {
+        onDelete: "cascade",
+      }),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -45,7 +52,7 @@ export const eventCategories = pgTable(
   (table) => [
     uniqueIndex("event_categories_name_userid_idx").on(
       table.name,
-      table.userId
+      table.projectId
     ),
   ]
 );
@@ -56,6 +63,10 @@ export const eventCategoriesRelations = relations(
   eventCategories,
   ({ many, one }) => ({
     events: many(events),
+    project: one(projects, {
+      fields: [eventCategories.projectId],
+      references: [projects.id],
+    }),
     user: one(users, {
       fields: [eventCategories.userId],
       references: [users.id],
@@ -77,6 +88,12 @@ export const events = pgTable(
     deliveryStatus: deliveryStatusEnum("delivery_status")
       .default("PENDING")
       .notNull(),
+
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, {
+        onDelete: "cascade",
+      }), // owner of the event
 
     userId: uuid("user_id")
       .notNull()
@@ -113,6 +130,10 @@ export const eventsRelations = relations(events, ({ one }) => ({
   category: one(eventCategories, {
     fields: [events.eventCategoryId],
     references: [eventCategories.id],
+  }),
+  project: one(projects, {
+    fields: [events.projectId],
+    references: [projects.id],
   }),
   user: one(users, {
     fields: [events.userId],

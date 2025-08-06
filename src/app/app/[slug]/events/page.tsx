@@ -9,39 +9,31 @@ import { PaymentSuccessModal } from "@/components/payment-success-modal";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { SearchParams } from "nuqs";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
-import { auth } from "@/lib/auth";
+import { Project } from "@/db/schema";
+import { loadProjectOrRedirect } from "@/lib/project-loader";
 
 interface PageProps {
-  searchParams: Promise<SearchParams>;
+  params: Promise<{
+    slug: string;
+  }>;
 }
 
-const Page = async ({ searchParams }: PageProps) => {
-  const currSearchParams = await searchParams;
-  const { user } = await getCurrentSession();
+const Page = async ({ params }: PageProps) => {
+  const { slug } = await params;
+  const { user, project } = await loadProjectOrRedirect(slug);
 
   if (!user) {
     redirect("/sign-in");
   }
 
-  const intent = currSearchParams.intent;
-
-  if (intent === "upgrade") {
-    const session = await auth.api.checkout({
-      body: {
-        products: [process.env.NEXT_PUBLIC_PRO_PRODUCT_ID!],
-      },
-    });
-
-    if (session.url) redirect(session.url);
-  }
-
-  const success = currSearchParams.success;
-
-  prefetch(trpc.category.getEventCategories.queryOptions());
+  prefetch(
+    trpc.category.getEventCategories.queryOptions({
+      projectId: project.id,
+    })
+  );
 
   return (
     <>
-      {success ? <PaymentSuccessModal /> : null}
       <HydrateClient>
         <DashboardPage
           title="Events"
