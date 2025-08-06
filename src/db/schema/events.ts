@@ -13,7 +13,12 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
-import { deliveryStatusEnum } from "../schema";
+
+export const deliveryStatusEnum = pgEnum("deliverystatus", [
+  "PENDING",
+  "DELIVERED",
+  "FAILED",
+]);
 
 export const eventCategories = pgTable(
   "event_categories",

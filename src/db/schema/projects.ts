@@ -1,5 +1,15 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
+import cuid from "cuid";
 
 export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -13,3 +23,43 @@ export const projects = pgTable("projects", {
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const apiKeys = pgTable(
+  "api_keys",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+
+    name: varchar("name", { length: 100 }).notNull(),
+
+    apiKey: text("api_key")
+      .notNull()
+      .unique()
+      .$default(() => `sk_${cuid()}`),
+
+    isActive: boolean("is_active").notNull().default(true),
+    revokedAt: timestamp("revoked_at"),
+    lastUsedAt: timestamp("last_used_at", {
+      withTimezone: true,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    uniqueIndex().on(t.projectId, t.name),
+    uniqueIndex().on(t.apiKey),
+    index().on(t.projectId, t.isActive),
+  ]
+);

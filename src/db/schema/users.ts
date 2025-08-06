@@ -6,9 +6,9 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { quotas } from "../schema";
 import { eventCategories, events } from "./events";
 
 const plans = ["FREE", "PRO"] as const;
@@ -108,4 +108,39 @@ export const usersRelations = relations(users, ({ many }) => ({
   eventCategories: many(eventCategories),
   events: many(events),
   quotas: many(quotas),
+}));
+
+export const quotas = pgTable(
+  "quotas",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+
+    year: integer("year").notNull(),
+    month: integer("month").notNull(),
+    count: integer("count").notNull().default(0),
+
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("quotas_user_month_year_idx").on(
+      table.userId,
+      table.year,
+      table.month
+    ),
+  ]
+);
+
+export const quotasRelations = relations(quotas, ({ one }) => ({
+  user: one(users, {
+    fields: [quotas.userId],
+    references: [users.id],
+  }),
 }));
