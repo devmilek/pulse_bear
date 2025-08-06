@@ -1,7 +1,7 @@
 import { DashboardPage } from "@/components/dashboard-page";
 import { redirect } from "next/navigation";
 import React from "react";
-import { DashboardPageContent } from "./_components/dashboard-page-content";
+import { DashboardPageContent } from "../_components/dashboard-page-content";
 import { CreateEventCategoryModal } from "@/components/create-event-category-modal";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";

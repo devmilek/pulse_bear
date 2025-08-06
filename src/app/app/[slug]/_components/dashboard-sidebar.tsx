@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Sidebar,
@@ -28,6 +29,8 @@ import { DashboardUserButton } from "./dashboard-user-button";
 import { ThemeSwitcher } from "@/components/ui/shadcn-io/theme-switcher";
 import { Icons } from "@/components/icons";
 import { DashboardProjectSwitcher } from "./dashboard-project-switcher";
+import { useParams } from "next/navigation";
+import { User } from "better-auth";
 
 interface SidebarItem {
   href: string;
@@ -44,9 +47,9 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
   {
     category: "Overview",
     items: [
-      { href: "/dashboard", icon: Home, text: "Dashboard" },
+      { href: "/events", icon: Home, text: "Events" },
       {
-        href: "/dashboard/speed-insights",
+        href: "/speed-insights",
         icon: GaugeIcon,
         text: "Speed Insights",
       },
@@ -54,14 +57,14 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
   },
   {
     category: "Account",
-    items: [{ href: "/dashboard/upgrade", icon: Gem, text: "Upgrade" }],
+    items: [{ href: "/upgrade", icon: Gem, text: "Upgrade" }],
   },
   {
     category: "Settings",
     items: [
-      { href: "/dashboard/api-key", icon: Key, text: "API Key" },
+      { href: "/api-key", icon: Key, text: "API Key" },
       {
-        href: "/dashboard/account-settings",
+        href: "/account-settings",
         icon: Settings,
         text: "Account Settings",
       },
@@ -69,8 +72,13 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
   },
 ];
 
-export const DashboardSidebar = async () => {
-  const { user } = await getCurrentSession();
+export const DashboardSidebar = ({ user }: { user: User }) => {
+  const { slug } = useParams<{
+    slug: string;
+  }>();
+
+  const projectUrl = `/app/${slug}`;
+
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader className="space-y-4">
@@ -105,7 +113,7 @@ export const DashboardSidebar = async () => {
                 {items.map((item) => (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton asChild tooltip={item.text}>
-                      <Link href={item.href}>
+                      <Link href={projectUrl + item.href}>
                         <item.icon />
                         <span>{item.text}</span>
                       </Link>
