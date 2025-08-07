@@ -26,7 +26,7 @@ export const SpeedInsightsView = () => {
   const metric = metricsInfo[filters.metric];
   const currentValue = data.stats.find(
     (stat) => stat.metric === filters.metric
-  )?.value;
+  );
 
   return (
     <div className="space-y-8">
@@ -42,7 +42,11 @@ export const SpeedInsightsView = () => {
         ))}
       </div>
       <div className="grid grid-cols-2 gap-8">
-        <MetricOverview metricInfo={metric} value={currentValue} />
+        <MetricOverview
+          metricInfo={metric}
+          value={currentValue?.value}
+          dataPoints={currentValue?.count || 0}
+        />
       </div>
     </div>
   );

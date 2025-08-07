@@ -22,6 +22,7 @@ const getPeriodDate = (period: TimeRange) => {
   }
 };
 
+// ...existing code...
 export const speedInsightsRouter = createTRPCRouter({
   getMetricsStats: protectedProcedure
     .input(
@@ -43,13 +44,17 @@ export const speedInsightsRouter = createTRPCRouter({
         };
 
         const percentileValue = percentile === "p50" ? 0.5 : 0.75;
-        const metricResults: Record<string, number | null> = {};
+        const metricResults: Record<
+          string,
+          { value: number | null; count: number }
+        > = {};
         const periodDate = getPeriodDate(period);
 
         for (const metric of metrics) {
           const [result] = await db
             .select({
               value: getPercentileSQL(percentileValue),
+              count: sql`count(*)`.as<number>("count"),
             })
             .from(webVitals)
             .where(
@@ -61,30 +66,38 @@ export const speedInsightsRouter = createTRPCRouter({
               )
             );
 
-          metricResults[metric] = result?.value || null;
+          metricResults[metric] = {
+            value: result?.value || null,
+            count: result?.count || 0,
+          };
         }
 
         return {
           stats: [
             {
               metric: "FCP" as Metric,
-              value: metricResults.FCP || null,
+              value: metricResults.FCP?.value || null,
+              count: metricResults.FCP?.count || 0,
             },
             {
               metric: "LCP" as Metric,
-              value: metricResults.LCP || null,
+              value: metricResults.LCP?.value || null,
+              count: metricResults.LCP?.count || 0,
             },
             {
               metric: "INP" as Metric,
-              value: metricResults.INP || null,
+              value: metricResults.INP?.value || null,
+              count: metricResults.INP?.count || 0,
             },
             {
               metric: "CLS" as Metric,
-              value: metricResults.CLS || null,
+              value: metricResults.CLS?.value || null,
+              count: metricResults.CLS?.count || 0,
             },
             {
               metric: "TTFB" as Metric,
-              value: metricResults.TTFB || null,
+              value: metricResults.TTFB?.value || null,
+              count: metricResults.TTFB?.count || 0,
             },
           ],
           deviceType,
@@ -96,4 +109,5 @@ export const speedInsightsRouter = createTRPCRouter({
       }
     }),
 });
+// ...existing code...
 // ...existing code...

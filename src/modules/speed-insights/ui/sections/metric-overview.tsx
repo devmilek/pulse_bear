@@ -7,13 +7,17 @@ import { useSpeedInsightsFilters } from "../../hooks/use-speed-insights-filters"
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { CategoryBar } from "@/components/tremor/category-bar";
+import { Badge } from "@/components/ui/badge";
+import { Waypoints } from "lucide-react";
 
 export const MetricOverview = ({
   metricInfo,
   value,
+  dataPoints,
 }: {
   metricInfo: MetricInfo;
   value: number | null | undefined;
+  dataPoints: number;
 }) => {
   const [filters] = useSpeedInsightsFilters();
   const thresholds = metricInfo.thresholds[filters.device];
@@ -46,7 +50,13 @@ export const MetricOverview = ({
   return (
     <div>
       <p className="capitalize text-muted-foreground">{filters.device}</p>
-      <h2 className="text-2xl font-semibold mt-2">{metricInfo.name}</h2>
+      <div className="flex items-center gap-4 mt-2">
+        <h2 className="text-2xl font-semibold">{metricInfo.name}</h2>
+        <Badge variant="outline">
+          <Waypoints />
+          {dataPoints} data points
+        </Badge>
+      </div>
       {/* check if its great, needs improvement or poor */}
       <div className="mt-4">
         <p className="text-2xl font-bold mb-2">
@@ -75,10 +85,10 @@ export const MetricOverview = ({
           colors={["emerald", "amber", "pink"]}
         />
       </div>
-      <h3 className="text-lg font-medium mt-8">{getValueRate()}</h3>
+      <h3 className="text-lg font-semibold mt-8">{getValueRate()}</h3>
       <p className="text-sm text-muted-foreground">
         More than {filters.percentile}% of visits scored a{" "}
-        {getValueRate().toLowerCase()} {metricInfo.name}
+        {getValueRate().toLowerCase()} {filters.metric}
       </p>
       <Separator className="my-5" />
       <div className="space-y-4">
