@@ -1,18 +1,35 @@
 import { db } from "@/db";
 import { deviceTypes, Metric, metrics, webVitals } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 import z from "zod";
+import { percentiles, TimeRange, timeRanges } from "../constants";
+import { subDays, subHours } from "date-fns";
 
-// ...existing code...
+const getPeriodDate = (period: TimeRange) => {
+  const now = new Date();
+  switch (period) {
+    case "24h":
+      return subHours(now, 24);
+    case "7d":
+      return subDays(now, 7);
+    case "30d":
+      return subDays(now, 30);
+    case "90d":
+      return subDays(now, 90);
+    default:
+      return subDays(now, 30);
+  }
+};
+
 export const speedInsightsRouter = createTRPCRouter({
   getMetricsStats: protectedProcedure
     .input(
       z.object({
         projectId: z.string(),
-        period: z.enum(["24h", "7d", "30d", "90d"]),
+        period: z.enum(timeRanges),
         deviceType: z.enum(deviceTypes),
-        percentile: z.enum(["p50", "p75"]),
+        percentile: z.enum(percentiles),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -27,6 +44,7 @@ export const speedInsightsRouter = createTRPCRouter({
 
         const percentileValue = percentile === "p50" ? 0.5 : 0.75;
         const metricResults: Record<string, number | null> = {};
+        const periodDate = getPeriodDate(period);
 
         for (const metric of metrics) {
           const [result] = await db
@@ -38,7 +56,8 @@ export const speedInsightsRouter = createTRPCRouter({
               and(
                 eq(webVitals.projectId, projectId),
                 eq(webVitals.metric, metric),
-                eq(webVitals.deviceType, input.deviceType)
+                eq(webVitals.deviceType, input.deviceType),
+                gte(webVitals.createdAt, periodDate)
               )
             );
 

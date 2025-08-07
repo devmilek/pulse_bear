@@ -1,4 +1,4 @@
-import { deviceTypes } from "@/db/schema";
+import { deviceTypes, metrics } from "@/db/schema";
 import { parseAsFloat, createLoader, parseAsStringLiteral } from "nuqs/server";
 import { timeRanges } from "./constants";
 
@@ -12,6 +12,9 @@ export const speedInsightsSearchParams = {
       clearOnDefault: true,
     }),
   range: parseAsStringLiteral(timeRanges).withDefault("7d").withOptions({
+    clearOnDefault: true,
+  }),
+  metric: parseAsStringLiteral(metrics).withDefault("FCP").withOptions({
     clearOnDefault: true,
   }),
 };

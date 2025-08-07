@@ -1,22 +1,26 @@
-import { Metric } from "@/db/schema/web-vitals";
+import { DeviceType, Metric } from "@/db/schema/web-vitals";
 import React from "react";
-import { DeviceType, metrics } from "../../constants";
 import { CategoryBar } from "@/components/tremor/category-bar";
 import { useSpeedInsightsFilters } from "../../hooks/use-speed-insights-filters";
+import { metricsInfo } from "../../constants";
+import { cn } from "@/lib/utils";
 
 export const MetricKpiCard = ({
   metric,
   value,
   device,
+  active,
 }: {
   metric: Metric;
   value: number | null;
   device: DeviceType;
+  active: boolean;
 }) => {
-  const metricInfo = metrics[metric];
+  const metricInfo = metricsInfo[metric];
   const thresholds = metricInfo.thresholds[device];
   const goodMax = thresholds.good.max;
   const needsImprovementMax = thresholds.needsImprovement.max;
+  const [filters, setFilters] = useSpeedInsightsFilters();
 
   // Calculate category bar values based on thresholds
   const categoryValues = [
@@ -36,7 +40,17 @@ export const MetricKpiCard = ({
   };
 
   return (
-    <div className="rounded-xl border p-6">
+    <div
+      className={cn(
+        "rounded-xl border p-6 hover:bg-accent transition-colors cursor-pointer",
+        active && "bg-accent"
+      )}
+      onClick={() => {
+        setFilters(() => ({
+          metric,
+        }));
+      }}
+    >
       <h3 className="text-sm font-medium mb-3">{metricInfo.name}</h3>
       <p className="text-2xl font-bold mb-2">
         <span className={getValueColor()}>

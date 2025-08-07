@@ -1,4 +1,11 @@
-import { pgEnum, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
+import {
+  pgEnum,
+  pgTable,
+  real,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { projects } from "./projects";
 
 export const metrics = ["CLS", "FCP", "LCP", "TTFB", "INP"] as const;
@@ -21,4 +28,8 @@ export const webVitals = pgTable("web_vitals", {
   value: real().notNull(),
   route: text().notNull(),
   url: text().notNull(),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });

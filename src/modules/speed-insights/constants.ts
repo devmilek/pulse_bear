@@ -1,30 +1,36 @@
 import { Metric } from "@/db/schema";
 
-type Metrics = {
-  [K in Metric]: {
-    name: string;
-    unit: string;
-    description: string;
-    thresholds: {
-      mobile: {
-        good: { min: number; max: number };
-        needsImprovement: { min: number; max: number };
-        poor: { min: number; max: number };
-      };
-      desktop: {
-        good: { min: number; max: number };
-        needsImprovement: { min: number; max: number };
-        poor: { min: number; max: number };
-      };
+type MetricInfo = {
+  name: string;
+  unit: string;
+  description: string;
+  whyItMatters: string;
+  thresholds: {
+    mobile: {
+      good: { min: number; max: number };
+      needsImprovement: { min: number; max: number };
+      poor: { min: number; max: number };
+    };
+    desktop: {
+      good: { min: number; max: number };
+      needsImprovement: { min: number; max: number };
+      poor: { min: number; max: number };
     };
   };
 };
 
-export const metrics: Metrics = {
+type MetricsInfo = {
+  [K in Metric]: MetricInfo;
+};
+
+export const metricsInfo: MetricsInfo = {
   LCP: {
     name: "Largest Contentful Paint",
     unit: "ms",
-    description: "Measures loading performance",
+    description:
+      "The point when the single largest element in the viewport (hero image, headline block, or video poster) finishes rendering. It answers “When is the main thing on the page visible?”",
+    whyItMatters:
+      "Users won’t interact until the core content shows up, so a low LCP tightly correlates with perceived loading speed.",
     thresholds: {
       mobile: {
         good: { min: 0, max: 2500 },
@@ -41,7 +47,10 @@ export const metrics: Metrics = {
   FCP: {
     name: "First Contentful Paint",
     unit: "ms",
-    description: "Measures loading performance (non‑Core Web Vital)",
+    description:
+      "The moment the browser draws the first text, image, or non-blank canvas from the DOM onto the screen. It’s the user’s first visual cue that “something is happening.”",
+    whyItMatters:
+      "Humans start judging speed as soon as any content appears, so a fast FCP makes the site feel alive quickly.",
     thresholds: {
       mobile: {
         good: { min: 0, max: 1800 },
@@ -58,7 +67,10 @@ export const metrics: Metrics = {
   CLS: {
     name: "Cumulative Layout Shift",
     unit: "",
-    description: "Measures visual stability",
+    description:
+      "The running total of all unexpected layout movements that occur after initial paint, scored as a dimensionless number.",
+    whyItMatters:
+      "Sudden jumps make sites feel janky—and can cause mis-taps that buy the wrong product.",
     thresholds: {
       mobile: {
         good: { min: 0, max: 0.1 },
@@ -75,7 +87,10 @@ export const metrics: Metrics = {
   INP: {
     name: "Interaction to Next Paint",
     unit: "ms",
-    description: "Measures responsiveness (Core Web Vital)",
+    description:
+      "The latency of the slowest (worst) user interaction—tap, click, or key press—between first paint and page hide, observed across a session. It times how long from input start until the next frame that reflects UI changes is painted.",
+    whyItMatters:
+      "INP replaced FID in March 2024 because it captures real “in-use” responsiveness, not just the first tap. High INP means the page feels sluggish even after it looks loaded.",
     thresholds: {
       mobile: {
         good: { min: 0, max: 200 },
@@ -92,7 +107,10 @@ export const metrics: Metrics = {
   TTFB: {
     name: "Time to First Byte",
     unit: "ms",
-    description: "Measures server response time (experimental)",
+    description:
+      "How long the browser waits after making the HTTP request before the first byte of the response arrives. It captures DNS look-up, TLS negotiation, and server processing time.",
+    whyItMatters:
+      "Slow backend or network latency delays everything that follows—rendering, scripts, images, the lot.",
     thresholds: {
       mobile: {
         good: { min: 0, max: 800 },
