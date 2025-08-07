@@ -14,6 +14,7 @@ import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import { Heading } from "@/components/heading";
 import { ShinyButton } from "@/components/shiny-button";
 import { useTranslations } from "next-intl";
+import WebVitals from "./page.client";
 
 const featureKeys = ["realtime", "lifetime", "track"] as const;
 type FeatureKey = (typeof featureKeys)[number];
@@ -75,6 +76,7 @@ const Page = () => {
 
   return (
     <>
+      <WebVitals />
       {/* <HeroSection /> */}
       <section className="relative py-24 sm:py-32 bg-background">
         <MaxWidthWrapper className="text-center">

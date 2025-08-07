@@ -10,6 +10,7 @@ import { and, eq } from "drizzle-orm";
 import { Project, projects } from "@/db/schema";
 import { loadProjectOrRedirect } from "@/lib/project-loader";
 import { ProjectDataProvider } from "@/modules/projects/hooks/use-project-data";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,19 +24,21 @@ const Layout = async ({ children, params }: LayoutProps) => {
   const { user, project } = await loadProjectOrRedirect(slug);
 
   return (
-    <ProjectDataProvider project={project}>
-      <SidebarProvider>
-        <DashboardSidebar user={user} project={project} />
-        <SidebarInset className="border">
-          <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-              {children}
+    <NuqsAdapter>
+      <ProjectDataProvider project={project}>
+        <SidebarProvider>
+          <DashboardSidebar user={user} project={project} />
+          <SidebarInset className="border">
+            <div className="flex flex-1 flex-col">
+              <div className="@container/main flex flex-1 flex-col gap-2">
+                {children}
+              </div>
             </div>
-          </div>
-          <ConfirmationDialog />
-        </SidebarInset>
-      </SidebarProvider>
-    </ProjectDataProvider>
+            <ConfirmationDialog />
+          </SidebarInset>
+        </SidebarProvider>
+      </ProjectDataProvider>
+    </NuqsAdapter>
   );
 };
 
