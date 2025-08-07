@@ -8,6 +8,7 @@ import { useSpeedInsightsFilters } from "../../hooks/use-speed-insights-filters"
 import { MetricKpiCard } from "../components/metric-kpi-card";
 import { metricsInfo } from "../../constants";
 import { MetricOverview } from "../sections/metric-overview";
+import { MetricChart } from "../sections/metric-chart";
 
 export const SpeedInsightsView = () => {
   const project = useProjectData();
@@ -47,6 +48,7 @@ export const SpeedInsightsView = () => {
           value={currentValue?.value}
           dataPoints={currentValue?.count || 0}
         />
+        <MetricChart />
       </div>
     </div>
   );
