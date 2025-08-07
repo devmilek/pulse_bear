@@ -7,6 +7,7 @@ import React from "react";
 import { useSpeedInsightsFilters } from "../../hooks/use-speed-insights-filters";
 import { MetricKpiCard } from "../components/metric-kpi-card";
 import { metricsInfo } from "../../constants";
+import { MetricOverview } from "../sections/metric-overview";
 
 export const SpeedInsightsView = () => {
   const project = useProjectData();
@@ -23,6 +24,9 @@ export const SpeedInsightsView = () => {
   );
 
   const metric = metricsInfo[filters.metric];
+  const currentValue = data.stats.find(
+    (stat) => stat.metric === filters.metric
+  )?.value;
 
   return (
     <div className="space-y-8">
@@ -38,10 +42,7 @@ export const SpeedInsightsView = () => {
         ))}
       </div>
       <div className="grid grid-cols-2 gap-8">
-        <div>
-          <p className="capitalize text-muted-foreground">{filters.device}</p>
-          <h2 className="text-2xl font-semibold">{metric.name}</h2>
-        </div>
+        <MetricOverview metricInfo={metric} value={currentValue} />
       </div>
     </div>
   );

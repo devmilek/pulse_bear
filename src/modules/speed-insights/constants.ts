@@ -1,6 +1,6 @@
 import { Metric } from "@/db/schema";
 
-type MetricInfo = {
+export type MetricInfo = {
   name: string;
   unit: string;
   description: string;
