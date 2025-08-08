@@ -23,19 +23,17 @@ const Layout = async ({ children }: LayoutProps) => {
   }
 
   return (
-    <NuqsAdapter>
-      <SidebarProvider>
-        <DashboardSidebar user={user} />
-        <SidebarInset className="border">
-          <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-              {children}
-            </div>
+    <SidebarProvider>
+      <DashboardSidebar user={user} />
+      <SidebarInset className="border">
+        <div className="flex flex-1 flex-col">
+          <div className="@container/main flex flex-1 flex-col gap-2">
+            {children}
           </div>
-          <ConfirmationDialog />
-        </SidebarInset>
-      </SidebarProvider>
-    </NuqsAdapter>
+        </div>
+        <ConfirmationDialog />
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 

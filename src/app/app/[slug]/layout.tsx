@@ -24,21 +24,19 @@ const Layout = async ({ children, params }: LayoutProps) => {
   const { user, project } = await loadProjectOrRedirect(slug);
 
   return (
-    <NuqsAdapter>
-      <ProjectDataProvider project={project}>
-        <SidebarProvider>
-          <DashboardSidebar user={user} project={project} />
-          <SidebarInset className="border">
-            <div className="flex flex-1 flex-col">
-              <div className="@container/main flex flex-1 flex-col gap-2">
-                {children}
-              </div>
+    <ProjectDataProvider project={project}>
+      <SidebarProvider>
+        <DashboardSidebar user={user} project={project} />
+        <SidebarInset className="border">
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              {children}
             </div>
-            <ConfirmationDialog />
-          </SidebarInset>
-        </SidebarProvider>
-      </ProjectDataProvider>
-    </NuqsAdapter>
+          </div>
+          <ConfirmationDialog />
+        </SidebarInset>
+      </SidebarProvider>
+    </ProjectDataProvider>
   );
 };
 

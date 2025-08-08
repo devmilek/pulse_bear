@@ -5,7 +5,6 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals-default.css";
 import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/client";
-import { TurborepoAccessTraceResult } from "next/dist/build/turborepo-access-trace";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 

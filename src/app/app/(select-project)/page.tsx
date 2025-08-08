@@ -4,8 +4,6 @@ import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import React from "react";
 
 const AppPage = async () => {
-  prefetch(trpc.projects.list.queryOptions());
-
   return (
     <DashboardPage title="Select project" hideBackButton>
       <HydrateClient>

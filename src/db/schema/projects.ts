@@ -25,6 +25,8 @@ export const projects = pgTable(
       .default(false)
       .notNull(),
 
+    isActive: boolean("is_active").default(true).notNull(),
+
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
