@@ -18,7 +18,7 @@ export const deviceTypeEnum = pgEnum("device_type", deviceTypes);
 
 export const webVitals = pgTable("web_vitals", {
   id: uuid().notNull().primaryKey().defaultRandom(),
-  projectId: uuid()
+  projectId: uuid("project_id")
     .notNull()
     .references(() => projects.id, {
       onDelete: "cascade",
