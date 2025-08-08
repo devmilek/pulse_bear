@@ -1,16 +1,16 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { PropsWithChildren, useState } from "react";
 
-import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/db";
 import { and, eq } from "drizzle-orm";
 import { Project, projects } from "@/db/schema";
-import { loadProjectOrRedirect } from "@/lib/project-loader";
 import { ProjectDataProvider } from "@/modules/projects/hooks/use-project-data";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { DashboardSidebar } from "./_components/dashboard-sidebar";
+import { loadProjectOrRedirect } from "@/lib/project-loader";
 
 interface LayoutProps {
   children: React.ReactNode;

@@ -32,6 +32,7 @@ import { DashboardProjectSwitcher } from "./dashboard-project-switcher";
 import { useParams, usePathname } from "next/navigation";
 import { User } from "better-auth";
 import { Project } from "@/db/schema";
+import { cn } from "@/lib/utils";
 
 interface SidebarItem {
   href: string;
@@ -78,7 +79,7 @@ export const DashboardSidebar = ({
   project,
 }: {
   user: User;
-  project: Project;
+  project?: Project;
 }) => {
   const { slug } = useParams<{
     slug: string;
@@ -128,8 +129,12 @@ export const DashboardSidebar = ({
                       asChild
                       tooltip={item.text}
                       isActive={isActive(item.href)}
+                      disabled={!project}
+                      className={cn(
+                        !project && "cursor-not-allowed opacity-50"
+                      )}
                     >
-                      <Link href={projectUrl + item.href}>
+                      <Link href={project ? projectUrl + item.href : "#"}>
                         <item.icon />
                         <span>{item.text}</span>
                       </Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { BoxIcon, ChevronsUpDown, Plus } from "lucide-react";
+import { ArrowUpRight, BoxIcon, ChevronsUpDown, Plus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -23,20 +23,12 @@ import { Project } from "@/db/schema";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-
-const projects = [
-  {
-    name: "Pulse Bear",
-  },
-  {
-    name: "Next.js Pulse",
-  },
-];
+import Link from "next/link";
 
 export function DashboardProjectSwitcher({
   currentProject,
 }: {
-  currentProject: Project;
+  currentProject?: Project;
 }) {
   const { isMobile } = useSidebar();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -59,7 +51,7 @@ export function DashboardProjectSwitcher({
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {currentProject.name}
+                    {currentProject?.name || "Select a project"}
                   </span>
                   {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
                 </div>
@@ -99,6 +91,16 @@ export function DashboardProjectSwitcher({
                 <div className="text-muted-foreground font-medium">
                   Create new project
                 </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2 p-2" asChild>
+                <Link href="/app">
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                    <ArrowUpRight className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground font-medium">
+                    View all projects
+                  </div>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

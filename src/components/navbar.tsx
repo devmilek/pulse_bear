@@ -29,7 +29,7 @@ export const Navbar = async () => {
                 </SignOutButton>
 
                 <Link
-                  href="/dashboard"
+                  href="/app"
                   className={buttonVariants({
                     size: "sm",
                     className: "flex items-center gap-1",

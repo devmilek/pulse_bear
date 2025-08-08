@@ -9,8 +9,6 @@ import { cache } from "react";
 export const loadProjectOrRedirect = cache(async (slug: string) => {
   const { user } = await getCurrentSession();
 
-  console.log("Loading project for slug:", slug);
-
   if (!user) {
     redirect("/sign-in");
   }
