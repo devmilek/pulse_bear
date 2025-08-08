@@ -8,7 +8,6 @@ import React from "react";
 
 export const SelectProjectView = () => {
   const trpc = useTRPC();
-
   const { data } = useSuspenseQuery(trpc.projects.list.queryOptions());
 
   return (

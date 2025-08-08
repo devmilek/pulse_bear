@@ -4,21 +4,14 @@ import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
+import { createProjectSchema } from "../schemas";
 
 export const projectsRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1, "Project name is required"),
-        slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-          message:
-            "Slug must be lowercase and can only contain letters, numbers, and hyphens",
-        }),
-      })
-    )
+    .input(createProjectSchema)
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
-      const { name, slug } = input;
+      const { name, slug, domain } = input;
 
       try {
         const [project] = await db
@@ -27,6 +20,7 @@ export const projectsRouter = createTRPCRouter({
             userId: user.id,
             name,
             slug,
+            domain,
           })
           .returning();
 

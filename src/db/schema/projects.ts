@@ -20,6 +20,7 @@ export const projects = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     slug: text("slug").notNull(),
+    domain: text("domain").notNull(),
     isSpeedInsightsEnabled: boolean("is_speed_insights_enabled")
       .default(false)
       .notNull(),

@@ -25,6 +25,7 @@ import { useDebounceValue } from "usehooks-ts";
 import z from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 interface CreateProjectModalProps {
   open: boolean;
@@ -38,11 +39,12 @@ export const CreateProjectDialog = ({
   const trpc = useTRPC();
   const router = useRouter();
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof createProjectSchema>>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
       name: "",
       slug: "",
+      domain: "",
     },
   });
 
@@ -97,13 +99,14 @@ export const CreateProjectDialog = ({
 
   const slugStatus = getSlugStatus();
 
-  const { mutate } = useMutation(trpc.projects.create.mutationOptions());
+  const { mutate, isPending } = useMutation(
+    trpc.projects.create.mutationOptions()
+  );
 
   const onSubmit = (data: z.infer<typeof createProjectSchema>) => {
     mutate(
       {
-        name: data.name,
-        slug: data.slug,
+        ...data,
       },
       {
         onSuccess: ({ slug }) => {
@@ -136,7 +139,11 @@ export const CreateProjectDialog = ({
               <FormItem>
                 <FormLabel>Project Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="My awesome project" />
+                  <Input
+                    {...field}
+                    placeholder="My awesome project"
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,7 +156,11 @@ export const CreateProjectDialog = ({
               <FormItem>
                 <FormLabel>Slug</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="my-awesome-project" />
+                  <Input
+                    {...field}
+                    placeholder="my-awesome-project"
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
                 {slugStatus && (
@@ -171,11 +182,31 @@ export const CreateProjectDialog = ({
               </FormItem>
             )}
           />
+          <FormField
+            name="domain"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Domain</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="domain.com"
+                    disabled={isPending}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="flex justify-end">
             <Button
               type="submit"
-              disabled={isCheckingSlug || isSlugAvailable === false}
+              disabled={
+                isCheckingSlug || isSlugAvailable === false || isPending
+              }
             >
+              {isPending && <Spinner className="animate-spin" />}
               Create Project
             </Button>
           </div>
