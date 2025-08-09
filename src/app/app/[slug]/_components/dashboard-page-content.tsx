@@ -14,21 +14,27 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Modal } from "@/components/modal";
 import { useTRPC } from "@/trpc/client";
+import { useProjectData } from "@/modules/projects/hooks/use-project-data";
 
 export const DashboardPageContent = () => {
   const trpc = useTRPC();
+  const project = useProjectData();
   const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: categories } = useSuspenseQuery(
-    trpc.category.getEventCategories.queryOptions()
+    trpc.category.getEventCategories.queryOptions({
+      projectId: project.id,
+    })
   );
 
   const { mutate: deleteCategory, isPending: isDeletingCategory } = useMutation(
     trpc.category.deleteCategory.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(
-          trpc.category.getEventCategories.infiniteQueryOptions()
+          trpc.category.getEventCategories.queryOptions({
+            projectId: project.id,
+          })
         );
         setDeletingCategory(null);
       },
@@ -98,7 +104,7 @@ export const DashboardPageContent = () => {
 
               <div className="flex items-center justify-between mt-4">
                 <Link
-                  href={`/dashboard/category/${category.name}`}
+                  href={`/app/${project.slug}/events/category/${category.name}`}
                   className={buttonVariants({
                     variant: "outline",
                     size: "sm",

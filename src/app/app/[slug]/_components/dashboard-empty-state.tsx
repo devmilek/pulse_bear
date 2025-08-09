@@ -1,19 +1,27 @@
 import { CreateEventCategoryModal } from "@/components/create-event-category-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useProjectData } from "@/modules/projects/hooks/use-project-data";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const DashboardEmptyState = () => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const { id } = useProjectData();
 
   const { mutate: insertQuickstartCategories, isPending } = useMutation(
     trpc.category.insertQuickstartCategories.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(
-          trpc.category.getEventCategories.queryOptions()
+          trpc.category.getEventCategories.queryOptions({
+            projectId: id,
+          })
         );
+      },
+      onError: (error) => {
+        toast.error(`Failed to create quickstart categories: ${error.message}`);
       },
     })
   );
@@ -40,7 +48,11 @@ export const DashboardEmptyState = () => {
         <Button
           variant="outline"
           className="flex items-center space-x-2 w-full sm:w-auto"
-          onClick={() => insertQuickstartCategories()}
+          onClick={() =>
+            insertQuickstartCategories({
+              projectId: id,
+            })
+          }
           disabled={isPending}
         >
           <span className="size-5">🚀</span>

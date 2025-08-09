@@ -22,6 +22,7 @@ import {
 } from "./ui/form";
 import { useTRPC } from "@/trpc/client";
 import ResponsiveDialog from "./responsive-dialog";
+import { useProjectData } from "@/modules/projects/hooks/use-project-data";
 
 const EVENT_CATEGORY_VALIDATOR = z.object({
   name: CATEGORY_NAME_VALIDATOR,
@@ -72,12 +73,15 @@ export const CreateEventCategoryModal = ({
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
   const trpc = useTRPC();
+  const project = useProjectData();
 
   const { mutate: createEventCategory, isPending } = useMutation(
     trpc.category.createEventCategory.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(
-          trpc.category.getEventCategories.infiniteQueryOptions()
+          trpc.category.getEventCategories.queryOptions({
+            projectId: project.id,
+          })
         );
         setIsOpen(false);
       },
@@ -96,7 +100,7 @@ export const CreateEventCategoryModal = ({
 
   const onSubmit = (data: EventCategoryForm) => {
     setError(null);
-    createEventCategory(data);
+    createEventCategory({ ...data, projectId: project.id });
   };
 
   return (

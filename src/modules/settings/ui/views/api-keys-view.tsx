@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useConfirmationStore from "@/hooks/use-confirmation-store";
+import { useProjectData } from "@/modules/projects/hooks/use-project-data";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
@@ -20,13 +21,22 @@ import { toast } from "sonner";
 export const ApiKeysView = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { data } = useQuery(trpc.apiKeys.getApiKeys.queryOptions());
+  const project = useProjectData();
+  const { data } = useQuery(
+    trpc.apiKeys.getApiKeys.queryOptions({
+      projectId: project.id,
+    })
+  );
 
   const { openConfirmation } = useConfirmationStore();
   const { mutateAsync } = useMutation(
     trpc.apiKeys.deleteApiKey.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries(trpc.apiKeys.getApiKeys.queryOptions());
+        queryClient.invalidateQueries(
+          trpc.apiKeys.getApiKeys.queryOptions({
+            projectId: project.id,
+          })
+        );
       },
     })
   );

@@ -15,71 +15,81 @@ import { db } from "@/db";
 import { TRPCError } from "@trpc/server";
 
 export const categoryRouter = createTRPCRouter({
-  getEventCategories: protectedProcedure.query(async ({ ctx }) => {
-    const { user } = ctx;
-    const now = new Date();
-    const firstDayOfMonth = startOfMonth(now);
+  getEventCategories: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx;
+      const { projectId } = input;
+      const now = new Date();
+      const firstDayOfMonth = startOfMonth(now);
 
-    const categories = await db.query.eventCategories.findMany({
-      where: eq(eventCategories.userId, user.id),
-      columns: {
-        id: true,
-        name: true,
-        emoji: true,
-        color: true,
-        updatedAt: true,
-        createdAt: true,
-      },
-      with: {
-        events: {
-          where: gte(eventSchema.createdAt, firstDayOfMonth),
-          columns: {
-            fields: true,
-            createdAt: true,
+      const categories = await db.query.eventCategories.findMany({
+        where: and(
+          eq(eventCategories.userId, user.id),
+          eq(eventCategories.projectId, projectId)
+        ),
+        columns: {
+          id: true,
+          name: true,
+          emoji: true,
+          color: true,
+          updatedAt: true,
+          createdAt: true,
+        },
+        with: {
+          events: {
+            where: gte(eventSchema.createdAt, firstDayOfMonth),
+            columns: {
+              fields: true,
+              createdAt: true,
+            },
           },
         },
-      },
-      orderBy: desc(eventCategories.updatedAt),
-    });
+        orderBy: desc(eventCategories.updatedAt),
+      });
 
-    const categoriesWithCounts = await Promise.all(
-      categories.map(async (category) => {
-        const eventCountResult = await db.$count(
-          eventSchema,
-          and(
-            eq(eventSchema.eventCategoryId, category.id),
-            gte(eventSchema.createdAt, firstDayOfMonth)
-          )
-        );
+      const categoriesWithCounts = await Promise.all(
+        categories.map(async (category) => {
+          const eventCountResult = await db.$count(
+            eventSchema,
+            and(
+              eq(eventSchema.eventCategoryId, category.id),
+              gte(eventSchema.createdAt, firstDayOfMonth)
+            )
+          );
 
-        const uniqueFieldNames = new Set<string>();
-        let lastPing: Date | null = null;
+          const uniqueFieldNames = new Set<string>();
+          let lastPing: Date | null = null;
 
-        category.events.forEach((event) => {
-          Object.keys(event.fields as object).forEach((fieldName) => {
-            uniqueFieldNames.add(fieldName);
+          category.events.forEach((event) => {
+            Object.keys(event.fields as object).forEach((fieldName) => {
+              uniqueFieldNames.add(fieldName);
+            });
+            if (!lastPing || event.createdAt > lastPing) {
+              lastPing = event.createdAt;
+            }
           });
-          if (!lastPing || event.createdAt > lastPing) {
-            lastPing = event.createdAt;
-          }
-        });
 
-        return {
-          id: category.id,
-          name: category.name,
-          emoji: category.emoji,
-          color: category.color,
-          updatedAt: category.updatedAt,
-          createdAt: category.createdAt,
-          uniqueFieldCount: uniqueFieldNames.size,
-          eventsCount: eventCountResult,
-          lastPing,
-        };
-      })
-    );
+          return {
+            id: category.id,
+            name: category.name,
+            emoji: category.emoji,
+            color: category.color,
+            updatedAt: category.updatedAt,
+            createdAt: category.createdAt,
+            uniqueFieldCount: uniqueFieldNames.size,
+            eventsCount: eventCountResult,
+            lastPing,
+          };
+        })
+      );
 
-    return categoriesWithCounts;
-  }),
+      return categoriesWithCounts;
+    }),
 
   getEventsForChart: protectedProcedure
     .input(
@@ -202,11 +212,12 @@ export const categoryRouter = createTRPCRouter({
           .min(1, "Color is required")
           .regex(/^#[0-9A-F]{6}$/i, "Invalid color format."),
         emoji: z.string().emoji("Invalid emoji").optional(),
+        projectId: z.string().min(1, "Project ID is required"),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
-      const { color, name, emoji } = input;
+      const { color, name, emoji, projectId } = input;
 
       const categoryCount = await db.$count(
         eventCategories,
@@ -229,29 +240,33 @@ export const categoryRouter = createTRPCRouter({
           color: parseColor(color),
           emoji,
           userId: user.id,
+          projectId,
         })
         .returning();
 
       return { eventCategory };
     }),
 
-  insertQuickstartCategories: protectedProcedure.mutation(async ({ ctx }) => {
-    const categories = await db
-      .insert(eventCategories)
-      .values(
-        [
-          { name: "bug", emoji: "🐛", color: 0xff6b6b },
-          { name: "sale", emoji: "💰", color: 0xffeb3b },
-          { name: "question", emoji: "🤔", color: 0x6c5ce7 },
-        ].map((category) => ({
-          ...category,
-          userId: ctx.user.id,
-        }))
-      )
-      .returning();
+  insertQuickstartCategories: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { projectId } = input;
+      const categories = await db
+        .insert(eventCategories)
+        .values(
+          [
+            { name: "bug", emoji: "🐛", color: 0xff6b6b, projectId },
+            { name: "sale", emoji: "💰", color: 0xffeb3b, projectId },
+            { name: "question", emoji: "🤔", color: 0x6c5ce7, projectId },
+          ].map((category) => ({
+            ...category,
+            userId: ctx.user.id,
+          }))
+        )
+        .returning();
 
-    return { success: true, count: categories.length };
-  }),
+      return { success: true, count: categories.length };
+    }),
 
   pollCategory: protectedProcedure
     .input(z.object({ name: CATEGORY_NAME_VALIDATOR }))

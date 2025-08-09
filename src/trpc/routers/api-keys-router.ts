@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "../init";
 import z from "zod";
-import { apiKeys } from "@/db/schema";
+import { apiKeys, projects } from "@/db/schema";
 import { db } from "@/db";
 import cuid from "cuid";
 import { and, eq } from "drizzle-orm";
@@ -11,39 +11,68 @@ export const apiKeysRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1, "Name is required"),
+        projectId: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { name } = input;
+      const { name, projectId } = input;
       const { user } = ctx;
 
-      const [apiKey] = await db
-        .insert(apiKeys)
-        .values({
-          name: input.name,
-          userId: user.id,
-          apiKey: `sk_${cuid()}`,
-        })
-        .returning();
+      const project = await db.query.projects.findFirst({
+        where: and(eq(projects.id, projectId), eq(projects.userId, user.id)),
+      });
 
-      return apiKey;
+      if (!project) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Project not found",
+        });
+      }
+
+      try {
+        const [apiKey] = await db
+          .insert(apiKeys)
+          .values({
+            name: input.name,
+            apiKey: `sk_${cuid()}`,
+            projectId: project.id,
+            userId: user.id,
+          })
+          .returning();
+
+        return apiKey;
+      } catch (e) {
+        console.error("Error creating API key:", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create API Key",
+        });
+      }
     }),
 
-  getApiKeys: protectedProcedure.query(async ({ ctx }) => {
-    const { user } = ctx;
+  getApiKeys: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx;
+      const { projectId } = input;
 
-    const apiKeysList = await db
-      .select()
-      .from(apiKeys)
-      .where(eq(apiKeys.userId, user.id));
-
-    return apiKeysList;
-  }),
+      const apiKeysList = await db
+        .select()
+        .from(apiKeys)
+        .where(
+          and(eq(apiKeys.projectId, projectId), eq(apiKeys.userId, user.id))
+        );
+      return apiKeysList;
+    }),
 
   deleteApiKey: protectedProcedure
     .input(
       z.object({
-        apiKeyId: z.string().uuid(),
+        apiKeyId: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {

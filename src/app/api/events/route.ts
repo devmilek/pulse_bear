@@ -74,6 +74,7 @@ export const POST = async (req: NextRequest) => {
         device: ua.device,
         os: ua.os,
         browser: ua.browser,
+        projectId: category.projectId,
       })
       .returning();
 
