@@ -73,7 +73,7 @@ export const DashboardPage = ({
         </div>
       </div>
 
-      <div className="flex-1 p-6 sm:p-8 flex flex-col overflow-y-auto">
+      <div className="flex-1 p-6 sm:p-8 flex flex-col overflow-y-auto relative">
         {children}
       </div>
     </section>

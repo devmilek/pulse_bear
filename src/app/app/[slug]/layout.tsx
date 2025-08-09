@@ -27,7 +27,7 @@ const Layout = async ({ children, params }: LayoutProps) => {
     <ProjectDataProvider project={project}>
       <SidebarProvider>
         <DashboardSidebar user={user} project={project} />
-        <SidebarInset className="border">
+        <SidebarInset className="border overflow-hidden">
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               {children}

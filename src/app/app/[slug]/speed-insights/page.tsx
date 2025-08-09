@@ -1,5 +1,8 @@
 import { DashboardPage } from "@/components/dashboard-page";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { loadProjectOrRedirect } from "@/lib/project-loader";
+import { DisabledSpeedInsights } from "@/modules/projects/ui/views/disabled-speed-insights";
 import { loadInsightsSpeedSearchParams } from "@/modules/speed-insights/params";
 import { SpeedInsightsHeader } from "@/modules/speed-insights/ui/sections/speed-insights-header";
 import { SpeedInsightsView } from "@/modules/speed-insights/ui/views/speed-insights-view";
@@ -31,12 +34,13 @@ const SpeedInsightsPage = async ({
   );
 
   return (
-    <div>
+    <div className="relative h-full">
       <DashboardPage title="Speed Insights">
         <SpeedInsightsHeader />
         <HydrateClient>
           <SpeedInsightsView />
         </HydrateClient>
+        {!project.isSpeedInsightsEnabled && <DisabledSpeedInsights />}
       </DashboardPage>
     </div>
   );

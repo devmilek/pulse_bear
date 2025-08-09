@@ -53,7 +53,9 @@ export function DashboardProjectSwitcher({
                   <span className="truncate font-medium">
                     {currentProject?.name || "Select a project"}
                   </span>
-                  {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
+                  <span className="truncate text-xs text-muted-foreground">
+                    {currentProject?.domain}
+                  </span>
                 </div>
                 <ChevronsUpDown className="ml-auto" />
               </SidebarMenuButton>

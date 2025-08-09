@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { deviceTypes, Metric, metrics, webVitals } from "@/db/schema";
+import { deviceTypes, Metric, metrics, projects, webVitals } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { and, eq, gte, sql } from "drizzle-orm";
 import z from "zod";
@@ -65,6 +65,22 @@ const getPeriodDate = (period: TimeRange) => {
 };
 
 export const speedInsightsRouter = createTRPCRouter({
+  enableSpeedInsights: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { projectId } = input;
+      const { user } = ctx;
+      try {
+        await db
+          .update(projects)
+          .set({ isSpeedInsightsEnabled: true })
+          .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)));
+        return { success: true };
+      } catch (error) {
+        console.error("Error enabling speed insights:", error);
+        throw new Error("Failed to enable speed insights");
+      }
+    }),
   getMetricsStats: protectedProcedure
     .input(
       z.object({
