@@ -3,7 +3,7 @@ import React from "react";
 import { CategoryBar } from "@/components/tremor/category-bar";
 import { useSpeedInsightsFilters } from "../../hooks/use-speed-insights-filters";
 import { metricsInfo } from "../../constants";
-import { cn } from "@/lib/utils";
+import { cn, formatSeconds } from "@/lib/utils";
 
 export const MetricKpiCard = ({
   metric,
@@ -54,9 +54,13 @@ export const MetricKpiCard = ({
       <h3 className="text-sm font-medium mb-3">{metricInfo.name}</h3>
       <p className="text-2xl font-bold mb-2">
         <span className={getValueColor()}>
-          {value !== null ? value.toFixed(2) : "-"}
+          {value !== null
+            ? metricInfo.unit !== "ms"
+              ? value.toFixed(2)
+              : formatSeconds(value)
+            : "-"}
         </span>{" "}
-        {metricInfo.unit && value && (
+        {metricInfo.unit && value && metricInfo.unit !== "ms" && (
           <span className="text-muted-foreground text-sm font-normal">
             {metricInfo.unit}
           </span>

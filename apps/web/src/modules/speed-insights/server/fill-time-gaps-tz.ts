@@ -22,7 +22,7 @@ export function fillTimeGapsTZ(
   for (const r of rows) {
     const k = keyOf(toZonedTime(new Date(r.date), tz)); // new Date(...) jeśli r.date bywa stringiem
     map.set(k, {
-      value: r.value === null ? 0 : Number(r.value),
+      value: r.value === null ? null : Number(r.value),
       count: Number(r.count),
     });
   }
@@ -37,8 +37,8 @@ export function fillTimeGapsTZ(
     const found = map.get(k);
     return {
       date: new Date(d), // zawsze początek bucketa w UTC (kanonicznie)
-      value: found ? found.value : 0,
-      count: found ? found.count : 0,
+      value: found ? found.value : null,
+      count: found ? found.count : null,
     };
   });
 }

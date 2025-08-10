@@ -31,7 +31,7 @@ export const SpeedInsightsView = () => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <div className="grid grid-cols-5 gap-4 mt-5">
         {data.stats.map((stat) => (
           <MetricKpiCard

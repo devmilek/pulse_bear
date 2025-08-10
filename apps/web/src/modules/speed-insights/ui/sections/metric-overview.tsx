@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { CategoryBar } from "@/components/tremor/category-bar";
 import { Badge } from "@/components/ui/badge";
 import { Waypoints } from "lucide-react";
+import { formatSeconds } from "@/lib/utils";
 
 export const MetricOverview = ({
   metricInfo,
@@ -16,7 +17,7 @@ export const MetricOverview = ({
   dataPoints,
 }: {
   metricInfo: MetricInfo;
-  value: number | null | undefined;
+  value: number | null | undefined; // Allow null or undefined for value
   dataPoints: number;
 }) => {
   const [filters] = useSpeedInsightsFilters();
@@ -47,6 +48,9 @@ export const MetricOverview = ({
     ) - needsImprovementMax, // Poor range (extend beyond current value or reasonable max)
   ];
 
+  const realValue =
+    value !== null ? (value !== undefined ? value : null) : null; // Use 0 if value is null
+
   return (
     <div>
       <p className="capitalize text-muted-foreground">{filters.device}</p>
@@ -61,9 +65,13 @@ export const MetricOverview = ({
       <div className="mt-4">
         <p className="text-2xl font-bold mb-2">
           <span className={getValueColor()}>
-            {value !== null ? value?.toFixed(2) : "-"}
+            {realValue !== null
+              ? metricInfo.unit !== "ms"
+                ? realValue.toFixed(2)
+                : formatSeconds(realValue)
+              : "-"}
           </span>{" "}
-          {metricInfo.unit && value && (
+          {metricInfo.unit && value && metricInfo.unit !== "ms" && (
             <span className="text-muted-foreground text-sm font-normal">
               {metricInfo.unit}
             </span>

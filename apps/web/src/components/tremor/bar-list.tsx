@@ -146,10 +146,7 @@ function BarListInner<T>(
           >
             <p
               className={cn(
-                // base
-                "truncate whitespace-nowrap text-sm leading-none",
-                // text color
-                "text-gray-900 dark:text-gray-50"
+                "truncate whitespace-nowrap text-sm leading-none font-medium"
               )}
             >
               {valueFormatter(item.value)}

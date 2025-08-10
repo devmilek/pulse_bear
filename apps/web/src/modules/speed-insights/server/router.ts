@@ -240,7 +240,7 @@ export const speedInsightsRouter = createTRPCRouter({
         const filled = fillTimeGapsTZ(
           rows.map((r) => ({
             date: r.date,
-            value: r.value ?? 0,
+            value: r.value ?? null,
             count: Number(r.count),
           })),
           start,
