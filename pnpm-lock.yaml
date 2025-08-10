@@ -69,6 +69,9 @@ importers:
       '@polar-sh/sdk':
         specifier: ^0.34.8
         version: 0.34.9
+      '@pulsebear/speed-insights':
+        specifier: workspace:^
+        version: link:../../packages/speed-insights
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.14
         version: 1.1.14(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

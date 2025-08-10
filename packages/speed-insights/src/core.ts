@@ -66,7 +66,7 @@ type InternalState = {
   listenersBound: boolean;
 };
 
-const DEFAULT_ENDPOINT = "http://localhost:3000/speed/report";
+const DEFAULT_ENDPOINT = "http://localhost:3000/api/speed/report";
 const DEFAULT_BATCH_SIZE = 20;
 const DEFAULT_BATCH_INTERVAL = 5000;
 const MAX_QUEUE_SIZE = 1000;

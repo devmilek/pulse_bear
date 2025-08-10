@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/client";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SpeedInsights } from "@pulsebear/speed-insights/next";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -45,6 +46,7 @@ export default function RootLayout({
               <Toaster />
             </main>
           </ThemeProvider>
+          <SpeedInsights projectId="asd" />
         </body>
       </html>
     </NuqsAdapter>
