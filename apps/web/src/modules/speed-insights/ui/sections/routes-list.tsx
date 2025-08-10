@@ -103,7 +103,7 @@ export const RoutesList = () => {
   const sections: Category[] = ["poor", "needsImprovement", "good"];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 @4xl:grid-cols-3 gap-6">
       {sections.map((cat) => {
         const cfg = categoryConfigs[cat];
         const list = items.filter((i) => i.category === cat).sort(cfg.sort);

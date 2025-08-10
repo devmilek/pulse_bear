@@ -32,7 +32,7 @@ export const SpeedInsightsView = () => {
 
   return (
     <div className="space-y-12">
-      <div className="grid grid-cols-5 gap-4 mt-5">
+      <div className="grid grid-cols-1 @md:grid-cols-2 @3xl:grid-cols-3 @5xl:grid-cols-5 gap-4 mt-5">
         {data.stats.map((stat) => (
           <MetricKpiCard
             key={stat.metric}
@@ -43,7 +43,7 @@ export const SpeedInsightsView = () => {
           />
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 @4xl:grid-cols-2 gap-8">
         <MetricOverview
           metricInfo={metric}
           value={currentValue?.value}

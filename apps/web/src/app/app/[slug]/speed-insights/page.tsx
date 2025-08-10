@@ -35,7 +35,17 @@ const SpeedInsightsPage = async ({
 
   return (
     <div className="relative h-full">
-      <DashboardPage title="Speed Insights">
+      <DashboardPage
+        items={[
+          {
+            label: "Project",
+            href: `/app/${slug}`,
+          },
+          {
+            label: "Speed Insights",
+          },
+        ]}
+      >
         <SpeedInsightsHeader />
         <HydrateClient>
           <SpeedInsightsView />
