@@ -1,177 +1,135 @@
-# 🐻 PulseBear - Real‑Time SaaS insights
+# Turborepo starter
 
-> **Real‑Time SaaS insights — delivered straight to your Discord.**
+This Turborepo starter is maintained by the Turborepo core team.
 
-Short, focused, and fast. PulseBear lets you log any event (sales, sign‑ups, milestones, …) and get instant alerts in Discord while you watch a clean dashboard update in real time.
+## Using this example
 
-![Project Image](https://github.com/devmilek/pulse_bear/blob/main/public/thumbnail.png)
+Run the following command:
 
----
-
-## ✨ Features
-
-- ✉️ **Real-time event messages via Discord** (webhooks/bot)
-- 🖥️ **Clean & intuitive monitoring dashboard**
-- 💳 **Secure payments with Stripe** (subscriptions / one‑time)
-- 🔐 **Auth with Better Auth** (sessions, email/password or OAuth-ready)
-- 🗄️ **Typed DB layer with Drizzle ORM + PostgreSQL**
-- ⚡ **Modern Next.js SaaS** (App Router, RSC-ready)
-- 🔁 **TanStack Query for data fetching & caching**
-- 🧩 **shadcn/ui components** (tuned to PulseBear branding)
-- 🧪 **Easy local setup with Bun**
-- 🧵 **Event payloads accept any custom fields you need**
-- 📈 **Revenue milestones & growth pings** straight to Discord
-
-> Have more ideas? Open an issue/PR — suggestions welcome!
-
----
-
-## 🧰 Tech Stack
-
-- **Framework:** Next.js
-- **Runtime & tooling:** Bun
-- **DB & ORM:** PostgreSQL + Drizzle ORM
-- **Auth:** Better Auth
-- **Payments:** Stripe
-- **UI:** shadcn/ui
-- **Data fetching:** TanStack Query
-- **Language:** TypeScript
-
----
-
-## 🚀 Quick Start
-
-```bash
-# 1) Clone the repo
-git clone <your-repo-url> pulsebear
-cd pulsebear
-
-# 2) Copy environment file
-cp .env.example .env
-
-# 3) Install deps
-bun install
-
-# 4) Push the schema to DB
-bun run db:push
-
-# 5) Start dev server
-bun run dev
+```sh
+npx create-turbo@latest
 ```
 
-Open **[http://localhost:3000](http://localhost:3000)** and you’re in.
+## What's inside?
 
----
+This Turborepo includes the following packages/apps:
 
-## 🔐 Environment Variables
+### Apps and Packages
 
-Rename `.env.example` → `.env` and fill in:
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-```bash
-# Database
-DATABASE_URL="postgres://user:password@host:5432/pulsebear"
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-# Auth
-BETTER_AUTH_SECRET="..."
+### Utilities
 
-# Stripe
-STRIPE_SECRET_KEY="sk_live_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_..."
+This Turborepo has some additional tools already setup for you:
 
-# Discord
-DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
-# or
-DISCORD_BOT_TOKEN="..."
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
 
-# App
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-PULSEBEAR_API_KEY="dev_..."
-```
+### Build
 
----
-
-## 🔭 Log an Event (API example)
-
-```ts
-await fetch("/api/v1/events", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.PULSEBEAR_API_KEY}`,
-  },
-  body: JSON.stringify({
-    category: "sale",
-    fields: {
-      plan: "PRO",
-      email: "zoe.martinez2001@email.com",
-      amount: 49.0,
-    },
-  }),
-});
-```
-
-**What you’ll see in Discord**
+To build all apps and packages, run the following command:
 
 ```
-💰 Payment received
-Amount: $49.00
-Email: zoe.martinez2001@email.com
-Plan: PRO
+cd my-turborepo
+
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo build
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo build
+yarn dlx turbo build
+pnpm exec turbo build
 ```
 
----
+You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
 
-## 🧱 Database
+```
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo build --filter=docs
 
-- **Migrations / schema** are managed with **Drizzle ORM**.
-- Apply schema to your DB:
-
-```bash
-bun run db:push
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo build --filter=docs
+yarn exec turbo build --filter=docs
+pnpm exec turbo build --filter=docs
 ```
 
----
+### Develop
 
-## 🧾 Scripts
+To develop all apps and packages, run the following command:
 
-```bash
-bun run dev        # start dev server
-bun run build      # build for production
-bun run start      # start production server
-bun run db:push    # push Drizzle schema to DB
+```
+cd my-turborepo
+
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo dev
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo dev
+yarn exec turbo dev
+pnpm exec turbo dev
 ```
 
----
+You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
 
-## 📦 Deployment
+```
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo dev --filter=web
 
-You can deploy anywhere Next.js runs (Vercel, Fly.io, Railway, …). Make sure to set all env vars and Stripe/Discord webhooks in your hosting provider.
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo dev --filter=web
+yarn exec turbo dev --filter=web
+pnpm exec turbo dev --filter=web
+```
 
----
+### Remote Caching
 
-## 🗺️ Roadmap
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
 
-- [ ] Team & roles (orgs, multi-tenant)
-- [ ] Fine-grained rate limiting / quotas
-- [ ] In-app notifications center
-- [ ] Web (and maybe Slack) integrations
-- [ ] Audit log UI
+Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
 
----
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
 
-## 🤝 Contributing
+```
+cd my-turborepo
 
-Issues and PRs are welcome. Keep PRs small, focused, and with a clear description.
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo login
 
----
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo login
+yarn exec turbo login
+pnpm exec turbo login
+```
 
-## 📄 License
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
 
-MIT — do whatever you want, just don’t remove the license.
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
 
----
+```
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo link
 
-## 📬 Support
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo link
+yarn exec turbo link
+pnpm exec turbo link
+```
 
-Spotted a bug, have a question, or want a feature? Open an issue — we read everything.
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
+- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
+- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
+- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
+- [Configuration Options](https://turborepo.com/docs/reference/configuration)
+- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
