@@ -25,7 +25,13 @@ const Layout = async ({ children, params }: LayoutProps) => {
 
   return (
     <ProjectDataProvider project={project}>
-      <SidebarProvider>
+      <SidebarProvider
+        style={
+          {
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
         <DashboardSidebar user={user} project={project} />
         <SidebarInset className="border overflow-hidden">
           <div className="flex flex-1 flex-col">
