@@ -46,7 +46,12 @@ export default function RootLayout({
               <Toaster />
             </main>
           </ThemeProvider>
-          <SpeedInsights projectId="asd" />
+          <SpeedInsights
+            projectId="4b84503f-706d-4c8d-9ca4-b09ac8305589"
+            vitals={{
+              reportAllChanges: true,
+            }}
+          />
         </body>
       </html>
     </NuqsAdapter>

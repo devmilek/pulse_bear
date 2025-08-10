@@ -19,15 +19,26 @@ export const projectRouter = createTRPCRouter({
 
     const subscriptionActive = isSubscriptionActive(userSubscription);
 
-    const quota = await db.query.quotas.findFirst({
+    const eventsQuota = await db.query.quotas.findFirst({
       where: and(
         eq(quotas.userId, user.id),
         eq(quotas.year, currentDate.getFullYear()),
-        eq(quotas.month, currentDate.getMonth() + 1)
+        eq(quotas.month, currentDate.getMonth() + 1),
+        eq(quotas.kind, "EVENTS")
       ),
     });
 
-    const eventCount = quota?.count ?? 0;
+    const speedInsightsQuota = await db.query.quotas.findFirst({
+      where: and(
+        eq(quotas.userId, user.id),
+        eq(quotas.year, currentDate.getFullYear()),
+        eq(quotas.month, currentDate.getMonth() + 1),
+        eq(quotas.kind, "SPEED_INSIGHTS")
+      ),
+    });
+
+    const eventCount = eventsQuota?.count ?? 0;
+    const speedInsightsCount = speedInsightsQuota?.count ?? 0;
 
     const categoryCount = await db.$count(
       eventCategories,
@@ -44,6 +55,8 @@ export const projectRouter = createTRPCRouter({
       categoriesLimit: limits.maxEventCategories,
       eventsUsed: eventCount,
       eventsLimit: limits.maxEventsPerMonth,
+      speedInsightsUsed: speedInsightsCount,
+      speedInsightsLimit: limits.maxSpeedInsightsDataPoints,
       resetDate,
     };
   }),

@@ -55,7 +55,8 @@ export async function checkQuota(userId: string): Promise<boolean> {
     where: and(
       eq(quotas.userId, userId),
       eq(quotas.month, currentMonth),
-      eq(quotas.year, currentYear)
+      eq(quotas.year, currentYear),
+      eq(quotas.kind, "EVENTS")
     ),
   });
 
@@ -102,6 +103,7 @@ export async function incrementQuota(userId: string) {
       month: currentMonth,
       year: currentYear,
       count: 1,
+      kind: "EVENTS",
     })
     .onConflictDoUpdate({
       target: [quotas.userId, quotas.month, quotas.year],

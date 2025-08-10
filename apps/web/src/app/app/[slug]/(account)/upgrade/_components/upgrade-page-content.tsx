@@ -33,6 +33,26 @@ export const UpgradePageContent = () => {
         <Card className="border-2 border-primary">
           <CardContent>
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <p className="text-sm/6 font-medium">
+                Speed Insights Data Points
+              </p>
+              <BarChart className="size-4 text-muted-foreground" />
+            </div>
+
+            <div>
+              <p className="text-2xl font-bold">
+                {usageData?.speedInsightsUsed || 0} of{" "}
+                {usageData?.speedInsightsLimit.toLocaleString() || 100}
+              </p>
+              <p className="text-xs/5 text-muted-foreground">
+                Speed insights this period
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <p className="text-sm/6 font-medium">Total Events</p>
               <BarChart className="size-4 text-muted-foreground" />
             </div>

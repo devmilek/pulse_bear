@@ -1,13 +1,13 @@
 import { db } from "@/db";
-import { apiKeys, projects } from "@/db/schema";
+import { apiKeys, projects, quotas, subscription } from "@/db/schema";
 import { deviceTypes, metrics, webVitals } from "@/db/schema/web-vitals";
-import { eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 import { batchSchema } from "./schema";
+import { isSubscriptionActive } from "@/lib/utils";
+import { FREE_QUOTA, PRO_QUOTA } from "@/config";
 
-const normalizeDomain = (d: string) =>
-  d.trim().toLowerCase().replace(/^\.+/, "");
 const getHost = (u?: string | null) => {
   if (!u) return null;
   try {
@@ -27,9 +27,76 @@ const toRootDomain = (host: string | null) => {
 const isHostAllowed = (host: string | null, root: string) =>
   !!host && (host === root || host.endsWith(`.${root}`));
 
-// ...existing code...
+export async function checkQuota(userId: string): Promise<boolean> {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  const quota = await db.query.quotas.findFirst({
+    where: and(
+      eq(quotas.userId, userId),
+      eq(quotas.month, currentMonth),
+      eq(quotas.year, currentYear),
+      eq(quotas.kind, "SPEED_INSIGHTS")
+    ),
+  });
+
+  const sub = await db.query.subscription.findFirst({
+    where: eq(subscription.userId, userId),
+  });
+
+  const limit = isSubscriptionActive(sub)
+    ? PRO_QUOTA.maxSpeedInsightsDataPoints
+    : FREE_QUOTA.maxSpeedInsightsDataPoints;
+
+  return !quota || quota.count < limit;
+}
+
+export async function incrementQuota(userId: string) {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  await db
+    .insert(quotas)
+    .values({
+      userId,
+      month: currentMonth,
+      year: currentYear,
+      count: 1,
+      kind: "SPEED_INSIGHTS",
+    })
+    .onConflictDoUpdate({
+      target: [quotas.userId, quotas.month, quotas.year, quotas.kind],
+      set: {
+        count: sql`${quotas.count} + 1`,
+      },
+    });
+}
+
 export const POST = async (req: NextRequest) => {
   try {
+    const body = await req.json();
+    // console.log("Received Web Vital data:", JSON.stringify(body, null, 2));
+    const data = batchSchema.parse(body);
+    const { events, projectId } = data;
+
+    const project = await db.query.projects.findFirst({
+      where: eq(projects.id, projectId),
+    });
+
+    if (!project) {
+      return new Response("Project not found", { status: 404 });
+    }
+
+    const allowed = await checkQuota(project.userId);
+
+    if (!allowed) {
+      return new Response("Monthly quota reached. Please upgrade your plan.", {
+        status: 429,
+      });
+    }
+
     const originHeader = req.headers.get("origin") ?? undefined;
     const refererHeader = req.headers.get("referer") ?? undefined;
     const requestHost = getHost(originHeader) ?? getHost(refererHeader);
@@ -41,26 +108,15 @@ export const POST = async (req: NextRequest) => {
       });
     }
 
-    const project = await db.query.projects.findFirst({
-      where: eq(projects.domain, normalizeDomain(requestRoot)),
-    });
-
-    if (!project) {
-      console.log("Blocked vitals: no project for domain", { requestRoot });
-      return new Response("Forbidden: domain not allowed", { status: 403 });
-    }
-
     if (!project.isSpeedInsightsEnabled) {
       return new Response("Speed insights are not enabled for this project", {
         status: 403,
       });
     }
 
-    const body = await req.json();
-
-    const data = batchSchema.parse(body);
-
-    const { events, projectId } = data;
+    if (projectId !== project.id) {
+      return new Response("Forbidden: project ID mismatch", { status: 403 });
+    }
 
     // Validate request origin/host against project's domain (e.g., "example.com")
     const projectDomain = project.domain
@@ -96,6 +152,15 @@ export const POST = async (req: NextRequest) => {
         url: attribution?.page.url || "",
         route: attribution?.page.path || "",
       });
+
+      // console.log("Inserted Web Vital event:", {
+      //   projectId: project.id,
+      //   metric: metric.name,
+      //   value: metric.value,
+      // });
+
+      await incrementQuota(project.userId);
+
       inserted++;
     }
 

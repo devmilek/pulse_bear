@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { deviceTypes, Metric, metrics, projects, webVitals } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, count, eq, gte, sql } from "drizzle-orm";
 import z from "zod";
 import { percentiles, TimeRange, timeRanges } from "../constants";
 import { subDays, subHours } from "date-fns";
@@ -123,9 +123,13 @@ export const speedInsightsRouter = createTRPCRouter({
               )
             );
 
+          console.log(metric, result);
+
+          const count = Number(result?.count ?? 0);
+
           metricResults[metric] = {
-            value: result?.value || null,
-            count: result?.count || 0,
+            value: count === 0 ? null : (result?.value ?? 0),
+            count,
           };
         }
 
@@ -133,27 +137,42 @@ export const speedInsightsRouter = createTRPCRouter({
           stats: [
             {
               metric: "FCP" as Metric,
-              value: metricResults.FCP?.value || null,
+              value:
+                metricResults.FCP?.value === undefined
+                  ? null
+                  : metricResults.FCP.value,
               count: metricResults.FCP?.count || 0,
             },
             {
               metric: "LCP" as Metric,
-              value: metricResults.LCP?.value || null,
+              value:
+                metricResults.LCP?.value === undefined
+                  ? null
+                  : metricResults.LCP.value,
               count: metricResults.LCP?.count || 0,
             },
             {
               metric: "INP" as Metric,
-              value: metricResults.INP?.value || null,
+              value:
+                metricResults.INP?.value === undefined
+                  ? null
+                  : metricResults.INP.value,
               count: metricResults.INP?.count || 0,
             },
             {
               metric: "CLS" as Metric,
-              value: metricResults.CLS?.value || null,
+              value:
+                metricResults.CLS?.value === undefined
+                  ? null
+                  : metricResults.CLS.value,
               count: metricResults.CLS?.count || 0,
             },
             {
               metric: "TTFB" as Metric,
-              value: metricResults.TTFB?.value || null,
+              value:
+                metricResults.TTFB?.value === undefined
+                  ? null
+                  : metricResults.TTFB.value,
               count: metricResults.TTFB?.count || 0,
             },
           ],
@@ -235,5 +254,39 @@ export const speedInsightsRouter = createTRPCRouter({
         console.error("Error fetching metric chart data:", error);
         throw new Error("Failed to fetch metric chart data");
       }
+    }),
+  getRoutesData: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        period: z.enum(timeRanges),
+        deviceType: z.enum(deviceTypes),
+        percentile: z.enum(percentiles),
+        metric: z.enum(metrics),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { projectId, period, deviceType, percentile, metric } = input;
+      const percentileValue = percentileToValue[percentile];
+      const rows = await db
+        .select({
+          route: webVitals.route,
+          value:
+            sql`percentile_cont(${percentileValue}) WITHIN GROUP (ORDER BY value)`.as<number>(),
+          count: count(),
+        })
+        .from(webVitals)
+        .where(
+          and(
+            eq(webVitals.projectId, projectId),
+            eq(webVitals.deviceType, deviceType),
+            eq(webVitals.metric, metric),
+            gte(webVitals.createdAt, getPeriodDate(period))
+          )
+        )
+        .groupBy(webVitals.route)
+        .limit(10);
+
+      return rows;
     }),
 });

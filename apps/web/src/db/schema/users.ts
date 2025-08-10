@@ -15,6 +15,11 @@ const plans = ["FREE", "PRO"] as const;
 export type Plan = (typeof plans)[number];
 export const planEnum = pgEnum("plan", plans);
 
+// Nowe: enum dla rodzaju quota
+const quotaKinds = ["EVENTS", "SPEED_INSIGHTS"] as const;
+export type QuotaKind = (typeof quotaKinds)[number];
+export const quotaKindEnum = pgEnum("quota_kind", quotaKinds);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -120,6 +125,8 @@ export const quotas = pgTable(
         onDelete: "cascade",
       }),
 
+    kind: quotaKindEnum("kind").notNull(),
+
     year: integer("year").notNull(),
     month: integer("month").notNull(),
     count: integer("count").notNull().default(0),
@@ -133,7 +140,8 @@ export const quotas = pgTable(
     uniqueIndex("quotas_user_month_year_idx").on(
       table.userId,
       table.year,
-      table.month
+      table.month,
+      table.kind
     ),
   ]
 );
