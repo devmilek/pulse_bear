@@ -6,62 +6,67 @@ import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 import { batchSchema } from "./schema";
 
+const normalizeDomain = (d: string) =>
+  d.trim().toLowerCase().replace(/^\.+/, "");
+const getHost = (u?: string | null) => {
+  if (!u) return null;
+  try {
+    return new URL(u).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+};
+
+const toRootDomain = (host: string | null) => {
+  if (!host) return null;
+  if (host === "localhost" || /^[\d.]+$/.test(host)) return host; // localhost/IP
+  const parts = host.split(".").filter(Boolean);
+  if (parts.length <= 2) return host;
+  return parts.slice(-2).join("."); // prosty fallback; dla złożonych TLD rozważ PSL
+};
+const isHostAllowed = (host: string | null, root: string) =>
+  !!host && (host === root || host.endsWith(`.${root}`));
+
 // ...existing code...
 export const POST = async (req: NextRequest) => {
   try {
+    const originHeader = req.headers.get("origin") ?? undefined;
+    const refererHeader = req.headers.get("referer") ?? undefined;
+    const requestHost = getHost(originHeader) ?? getHost(refererHeader);
+    const requestRoot = toRootDomain(requestHost);
+
+    if (!requestRoot) {
+      return new Response("Forbidden: missing or invalid origin", {
+        status: 403,
+      });
+    }
+
+    const project = await db.query.projects.findFirst({
+      where: eq(projects.domain, normalizeDomain(requestRoot)),
+    });
+
+    if (!project) {
+      console.log("Blocked vitals: no project for domain", { requestRoot });
+      return new Response("Forbidden: domain not allowed", { status: 403 });
+    }
+
+    if (!project.isSpeedInsightsEnabled) {
+      return new Response("Speed insights are not enabled for this project", {
+        status: 403,
+      });
+    }
+
     const body = await req.json();
 
     const data = batchSchema.parse(body);
 
     const { events, projectId } = data;
 
-    const project = await db.query.projects.findFirst({
-      where: eq(projects.id, projectId),
-    });
-
-    if (!project) {
-      console.log("Project not found:", projectId);
-      return new Response("Project not found", { status: 404 });
-    }
-
-    if (!project.isSpeedInsightsEnabled) {
-      console.log("Speed insights not enabled for project:", projectId);
-      return new Response("Speed insights are not enabled for this project", {
-        status: 403,
-      });
-    }
-
     // Validate request origin/host against project's domain (e.g., "example.com")
     const projectDomain = project.domain
       .trim()
       .toLowerCase()
       .replace(/^\.+/, "");
-    const originHeader = req.headers.get("origin") ?? undefined;
-    const refererHeader = req.headers.get("referer") ?? undefined;
-
-    const getHost = (u?: string | null) => {
-      if (!u) return null;
-      try {
-        return new URL(u).hostname.toLowerCase();
-      } catch {
-        return null;
-      }
-    };
-
-    const requestHost = getHost(originHeader) ?? getHost(refererHeader);
-
-    const isHostAllowed = (host: string | null, root: string) =>
-      !!host && (host === root || host.endsWith(`.${root}`));
-
-    if (!isHostAllowed(requestHost, projectDomain)) {
-      console.log("Blocked vitals: invalid origin", {
-        requestHost,
-        originHeader,
-        refererHeader,
-        expectedDomain: projectDomain,
-      });
-      return new Response("Forbidden: invalid origin", { status: 403 });
-    }
 
     // ...existing code...
     // check if its valid project domain

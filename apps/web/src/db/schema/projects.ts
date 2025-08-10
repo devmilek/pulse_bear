@@ -32,6 +32,8 @@ export const projects = pgTable(
   (table) => [
     uniqueIndex("projects_user_slug_idx").on(table.userId, table.slug),
     index("projects_userid_idx").on(table.userId),
+    index("projects_slug_idx").on(table.slug),
+    index("projects_domain_idx").on(table.domain),
   ]
 );
 
