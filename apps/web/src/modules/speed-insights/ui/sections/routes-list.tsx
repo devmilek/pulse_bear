@@ -6,7 +6,7 @@ import { useSpeedInsightsFilters } from "../../hooks/use-speed-insights-filters"
 import { BarList } from "@/components/tremor/bar-list";
 import { metricsInfo } from "../../constants";
 import { DeviceType } from "@/db/schema";
-import { AlertCircle, ChartBarIcon } from "lucide-react";
+import { AlertCircleIcon, ChartBarIcon } from "lucide-react";
 import {
   Card,
   CardAction,
@@ -114,7 +114,7 @@ export const RoutesList = () => {
               <CardTitle
                 className={`flex items-center gap-2 font-medium ${cfg.titleClass}`}
               >
-                <AlertCircle className="size-4" /> {cfg.title}
+                <AlertCircleIcon className="size-4" /> {cfg.title}
               </CardTitle>
               <CardAction className="text-muted-foreground text-sm">
                 {cfg.caption}
