@@ -1,0 +1,39 @@
+{
+  "name": "@pulsebear/events",
+  "version": "0.1.0",
+  "description": "PulseBear events SDK for the web (React provider & core)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist",
+    "prepublishOnly": "pnpm run clean && pnpm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.4.0"
+  },
+  "keywords": [
+    "analytics",
+    "events",
+    "react",
+    "sdk"
+  ],
+  "author": "",
+  "license": "MIT"
+}
