@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+.shiki {
+    @apply p-6
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
