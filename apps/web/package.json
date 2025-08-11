@@ -16,6 +16,7 @@
     "@discordjs/rest": "^2.5.1",
     "@hookform/resolvers": "^5.1.1",
     "@icons-pack/react-simple-icons": "^13.7.0",
+    "@neondatabase/serverless": "^1.0.1",
     "@polar-sh/better-auth": "^1.0.8",
     "@polar-sh/sdk": "^0.34.8",
     "@pulsebear/events": "workspace:*",
