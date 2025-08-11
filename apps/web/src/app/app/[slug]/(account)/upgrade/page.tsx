@@ -17,7 +17,8 @@ const Page = async () => {
   prefetch(trpc.project.getUsage.queryOptions());
 
   return (
-    <DashboardPage title="Pro Membership">
+    <DashboardPage>
+      <h1 className="text-2xl font-semibold mb-4">Upgrade your plan</h1>
       <HydrateClient>
         <UpgradePageContent />
       </HydrateClient>

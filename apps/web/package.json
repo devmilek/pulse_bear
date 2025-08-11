@@ -12,6 +12,9 @@
     "lint": "next lint",
     "start": "next start"
   },
+  "overrides": {
+    "react-is": "^19.0.0-rc-69d4b800-20241021"
+  },
   "dependencies": {
     "@discordjs/rest": "^2.5.1",
     "@hookform/resolvers": "^5.1.1",
@@ -71,7 +74,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.60.0",
     "react-syntax-highlighter": "^15.6.1",
-    "recharts": "^3.1.2",
+    "recharts": "^2.15.4",
     "resend": "^4.7.0",
     "server-only": "^0.0.1",
     "shiki": "^3.9.2",
@@ -92,6 +95,7 @@
     "@types/pg": "^8.15.4",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
+    "discord-api-types": "^0.38.18",
     "dotenv": "^17.2.0",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9.18.0",

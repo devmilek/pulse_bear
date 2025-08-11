@@ -1,54 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { getEventCodeSnippet } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import type { BundledLanguage } from "@/components/ui/shadcn-io/code-block";
-import {
-  CodeBlock,
-  CodeBlockBody,
-  CodeBlockContent,
-  CodeBlockCopyButton,
-  CodeBlockFilename,
-  CodeBlockFiles,
-  CodeBlockHeader,
-  CodeBlockItem,
-  CodeBlockSelect,
-  CodeBlockSelectContent,
-  CodeBlockSelectItem,
-  CodeBlockSelectTrigger,
-  CodeBlockSelectValue,
-} from "@/components/ui/shadcn-io/code-block";
 import { EventsCodeBlock } from "../components/events-code-block";
-
-const code = [
-  {
-    language: "jsx",
-    filename: "MyComponent.jsx",
-    code: `function MyComponent(props) {
-  return (
-    <div>
-      <h1>Hello, {props.name}!</h1>
-      <p>This is an example React component.</p>
-    </div>
-  );
-}`,
-  },
-  {
-    language: "tsx",
-    filename: "MyComponent.tsx",
-    code: `function MyComponent(props: { name: string }) {
-  return (
-    <div>
-      <h1>Hello, {props.name}!</h1>
-      <p>This is an example React component.</p>
-    </div>
-  );
-}`,
-  },
-];
 
 export const CategoryEmptyState = ({
   categoryName,

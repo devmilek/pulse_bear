@@ -5,7 +5,7 @@ import React from "react";
 
 const AppPage = async () => {
   return (
-    <DashboardPage title="Select project" hideBackButton>
+    <DashboardPage>
       <HydrateClient>
         <SelectProjectView />
       </HydrateClient>

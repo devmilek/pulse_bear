@@ -27,7 +27,7 @@ const toRootDomain = (host: string | null) => {
 const isHostAllowed = (host: string | null, root: string) =>
   !!host && (host === root || host.endsWith(`.${root}`));
 
-export async function checkQuota(userId: string): Promise<boolean> {
+async function checkQuota(userId: string): Promise<boolean> {
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -52,7 +52,7 @@ export async function checkQuota(userId: string): Promise<boolean> {
   return !quota || quota.count < limit;
 }
 
-export async function incrementQuota(userId: string) {
+async function incrementQuota(userId: string) {
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
