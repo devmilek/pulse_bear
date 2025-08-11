@@ -130,7 +130,7 @@ export const RoutesList = () => {
               {list.length === 0 && (
                 <div className="mt-4 flex h-44 items-center justify-center text-muted-foreground">
                   <div className="text-center">
-                    <ChartBarBigIcon
+                    <ChartBarIcon
                       className="mx-auto size-5"
                       aria-hidden={true}
                     />
