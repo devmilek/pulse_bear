@@ -9,12 +9,20 @@ import {
 import React, { useState } from "react";
 import { DashboardEmptyState } from "./dashboard-empty-state";
 import { format, formatDistanceToNow } from "date-fns";
-import { ArrowRight, BarChart2, Clock, Database, Trash2 } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart2,
+  Clock,
+  Database,
+  PlusIcon,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Modal } from "@/components/modal";
 import { useTRPC } from "@/trpc/client";
 import { useProjectData } from "@/modules/projects/hooks/use-project-data";
+import { CreateEventCategoryModal } from "@/components/create-event-category-modal";
 
 export const DashboardPageContent = () => {
   const trpc = useTRPC();
@@ -47,7 +55,16 @@ export const DashboardPageContent = () => {
 
   return (
     <>
-      <ul className="grid max-w-6xl grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <header className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-semibold">Events</h1>
+        <CreateEventCategoryModal>
+          <Button>
+            <PlusIcon />
+            Add Category
+          </Button>
+        </CreateEventCategoryModal>
+      </header>
+      <ul className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {categories.map((category) => (
           <li
             key={category.id}

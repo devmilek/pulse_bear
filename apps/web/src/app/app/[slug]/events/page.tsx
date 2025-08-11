@@ -35,18 +35,7 @@ const Page = async ({ params }: PageProps) => {
   return (
     <>
       <HydrateClient>
-        <DashboardPage
-          title="Events"
-          hideBackButton
-          // cta={
-          //   <CreateEventCategoryModal>
-          //     <Button className="w-full sm:w-fit">
-          //       <PlusIcon className="size-4 mr-2" />
-          //       Add Category
-          //     </Button>
-          //   </CreateEventCategoryModal>
-          // }
-        >
+        <DashboardPage>
           <DashboardPageContent />
         </DashboardPage>
       </HydrateClient>

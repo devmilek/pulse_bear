@@ -76,7 +76,6 @@ const Page = () => {
   return (
     <>
       {/* <HeroSection /> */}
-      <img src="https://images.pexels.com/photos/33323358/pexels-photo-33323358.jpeg?_gl=1*mib30d*_ga*MjIwMDI5OTAwLjE3NTQxMzM0OTM.*_ga_8JE65Q40S6*czE3NTQ4MzE2NTEkbzMkZzEkdDE3NTQ4MzE2NzkkajMyJGwwJGgw" />
       <section className="relative py-24 sm:py-32 bg-background">
         <MaxWidthWrapper className="text-center">
           <div className="relative mx-auto text-center flex flex-col items-center gap-10">
