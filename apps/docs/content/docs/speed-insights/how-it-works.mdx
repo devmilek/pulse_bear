@@ -1,0 +1,33 @@
+---
+title: How it works
+description: PulseBear Speed Insights architecture and data flow
+---
+
+## Real‑user monitoring vs. lab tests
+
+Lab tools (e.g., synthetic Lighthouse runs) estimate performance on controlled hardware and networks. Useful for debugging, but they don’t necessarily reflect how your users experience your site.
+
+**Speed Insights uses RUM**—metrics measured directly in real browsers. This shows the experience your users actually have, accounting for their network, device, and content.
+
+## What is a data point?
+
+A **data point** is a single measurement reported from a browser for one metric on one page load (e.g., a single **LCP** value for `/pricing`). Dashboard “Data points” show how many raw measurements a percentile/score is based on.
+
+## Percentiles
+
+Percentiles summarize distributions:
+
+- **P50**: Median (typical user).
+- **P75**: The fastest **75%** of experiences (commonly used for Core Web Vitals).
+- **P90**: Includes more of the long tail; good for spotting edge‑case slowness.
+
+> The dashboard defaults to **p75**. You can switch to **p50** or **p90** when supported in the view you’re using.
+
+## Device types
+
+Metrics are split by **device type**:
+
+- **Desktop**
+- **Mobile**
+
+This helps you compare experiences and prioritize fixes for the right platform.

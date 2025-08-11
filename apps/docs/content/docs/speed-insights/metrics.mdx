@@ -1,0 +1,149 @@
+---
+title: Metrics
+description: How PulseBear measures, scores, and visualizes Web Vitals
+icon: gauge
+---
+
+Below is an expanded guide to the five metrics PulseBear collects. It explains how values are measured, how statuses are assigned, what the colors mean, and how to read the charts in your dashboard.
+
+> **Units:** Milliseconds (**ms**) unless noted. **CLS** is unitless.
+
+---
+
+## How PulseBear measures performance
+
+PulseBear uses **real‑user monitoring (RUM)** via the `<SpeedInsights />` snippet to gather data **from actual browsers**—not synthetic lab runs. Measurements are captured during the page lifecycle:
+
+- **Initial load:** early network and render milestones (e.g., **TTFB**, **FCP**)
+- **While content appears:** the moment the largest element settles (**LCP**)
+- **As users interact:** end‑to‑end interaction latency (**INP**)
+- **Throughout the visit:** unexpected visual shifts accumulated over time (**CLS**)
+
+Each measurement is a **data point** tied to a visit. You will often see multiple data points per visit, depending on how the page loads and how the user interacts.
+
+---
+
+## Percentiles: picking the story you want
+
+Performance varies across users and conditions. PulseBear lets you choose a percentile to summarize those experiences:
+
+- **P50 (median):** the middle experience—half of users are faster, half are slower.
+- **P75 (default):** a pragmatic target that reflects most users while excluding the slowest tail.
+
+Example: **FCP P75 = 1000 ms** means **75%** of visits show FCP **≤ 1000 ms**.
+
+> Status colors (Good / Needs improvement / Poor) are computed **against the currently selected percentile**.
+
+---
+
+## Status colors
+
+PulseBear uses three bands across the app:
+
+- **Good** (green): meeting or beating recommended targets
+- **Needs improvement** (yellow/orange): close, but work remains
+- **Poor** (red): likely felt as slow or janky by users
+
+---
+
+## Quick reference: targets & thresholds (Mobile & Desktop)
+
+| Metric | Good | Needs improvement | Poor |
+|---|---:|---:|---:|
+| **LCP** | 0–2500 ms | 2501–4000 ms | ≥ 4001 ms |
+| **FCP** | 0–1800 ms | 1801–3000 ms | ≥ 3001 ms |
+| **INP** | 0–200 ms | 201–500 ms | ≥ 501 ms |
+| **CLS** | 0–0.10 | 0.11–0.25 | ≥ 0.26 |
+| **TTFB** | 0–800 ms | 801–1800 ms | ≥ 1801 ms |
+
+> Thresholds are the same for Mobile and Desktop in PulseBear today.
+
+---
+
+## Metric deep‑dive
+
+### Largest Contentful Paint (LCP)
+**What it measures**: Time until the **largest, above‑the‑fold element** (image, text block, video poster) finishes rendering.
+
+**Why it matters**: Users tend to wait for core content before engaging. Lower LCP = page feels ready sooner.
+
+**Targets**: Good 0–2500 ms · Needs improvement 2501–4000 ms · Poor ≥ 4001 ms
+
+**Common culprits**: heavy hero images, late font swaps, render‑blocking CSS/JS, slow third‑party media.
+
+---
+
+### First Contentful Paint (FCP)
+**What it measures**: Time to the **first non‑blank paint** (text, image, canvas, etc.).
+
+**Why it matters**: Signals that the page is alive. Faster FCP boosts perceived responsiveness early.
+
+**Targets**: Good 0–1800 ms · Needs improvement 1801–3000 ms · Poor ≥ 3001 ms
+
+**Common culprits**: slow server responses, large CSS, render‑blocking scripts, no font preloads.
+
+---
+
+### Interaction to Next Paint (INP)
+**What it measures**: The **slowest interaction** latency—from user input (click/tap/key) to the next frame that shows the UI update.
+
+**Why it matters**: Captures responsiveness across the whole session, not just the first input.
+
+**Targets**: Good 0–200 ms · Needs improvement 201–500 ms · Poor ≥ 501 ms
+
+**Common culprits**: long tasks on the main thread, expensive React renders, synchronous network calls, oversized bundles.
+
+---
+
+### Cumulative Layout Shift (CLS)
+**What it measures**: The **sum of unexpected layout shifts** while the page is visible.
+
+**Why it matters**: Jumps and jitters cause mis‑taps and lost context.
+
+**Targets**: Good 0–0.10 · Needs improvement 0.11–0.25 · Poor ≥ 0.26
+
+**Common culprits**: images without dimensions, late‑loading ads/embeds, dynamic content injected above existing content.
+
+---
+
+### Time to First Byte (TTFB)
+**What it measures**: Time from the request start until the **first response byte** arrives (DNS + TLS + server processing).
+
+**Why it matters**: Everything else waits on TTFB; poor backend/network performance bottlenecks the entire load.
+
+**Targets**: Good 0–800 ms · Needs improvement 801–1800 ms · Poor ≥ 1801 ms
+
+**Common culprits**: cold backends, slow databases, heavy server‑side rendering, no caching/edge.
+
+---
+
+## Breakdowns & filters in the dashboard
+
+Use these controls to analyze your data:
+
+- **Metric & percentile**: switch the metric and select **P50** or **P75**; statuses update accordingly.
+- **Device type**: filter by **Desktop** or **Mobile** to isolate experiences.
+- **Route breakdown**: compare pages/paths to find slow outliers.
+- **Data points**: the count shown with each aggregate tells you **how many measurements** back a number—use it to gauge confidence.
+
+---
+
+## How timestamps work
+
+All charts and tables in Speed Insights display timestamps in **UTC** to keep comparisons consistent across regions and teams.
+
+---
+
+## Tips for improving scores
+
+- **Boost LCP/FCP/TTFB**: cache at the edge, compress images, inline critical CSS, defer non‑critical JS, preconnect/preload key resources.
+- **Reduce INP**: break up long tasks, batch state updates, lazy‑load heavy code, move work off the main thread (Web Workers), debounce/throttle wisely.
+- **Stabilize CLS**: always set width/height (or aspect‑ratio) for media, reserve space for ads/embeds, avoid inserting content above the fold after render.
+
+---
+
+## Glossary
+
+- **Data point**: a single metric measurement from a visit.
+- **Percentile (Pn)**: a value that **n% of visits are at or faster** (for time‑based metrics) or **at or lower** (for CLS).
+- **Status**: the color‑coded quality band for the selected percentile of a metric.

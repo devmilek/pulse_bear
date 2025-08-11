@@ -1,0 +1,44 @@
+---
+title: Using the Dashboard
+description: How to use the PulseBear Speed Insights dashboard
+---
+
+## Metric cards
+
+Selecting a metric shows a **score card** with:
+
+- The current **percentile** value (default **p75**)
+- **Data points** used for that value
+- A **time series chart** of the selected percentile over the chosen **time range**
+
+## Route breakdown
+
+Below the chart are three sections: **Poor**, **Needs improvement**, and **Good**. Each section aggregates metrics **by route**, showing:
+
+- The route path (e.g., `/`, `/pricing`, `/blog/[slug]`)
+- The percentile value for the selected metric
+- **Data points** for that route
+
+Use this to prioritize which routes to fix first.
+
+## Filters
+
+- **Device type:** `Desktop` or `Mobile`
+- **Percentile:** `p50`, `p75` (default), and where supported `p90`
+- **Time range:** `24h`, `7d`, `30d`, `90d`
+
+> Filters apply to the chart and the route breakdown simultaneously.
+
+## Device type
+
+Switch between **Desktop** and **Mobile** to isolate platform‑specific regressions.
+
+## Percentile
+
+- **P50** reflects the typical user.
+- **P75** (default) aligns with Core Web Vitals guidance and balances typical users with some long‑tail variance.
+- **P90** widens the view to capture more long‑tail slowness.
+
+## Time range
+
+Choose the analysis window: **24h**, **7d**, **30d**, or **90d**. Short windows reveal fresh regressions; longer windows show trends.

@@ -1,0 +1,61 @@
+---
+title: Overview
+description: Real-user monitoring for front-end performance with per-route insights
+---
+
+## What is Speed Insights?
+
+PulseBear Speed Insights is real‑user monitoring (RUM) for front‑end performance. Instead of running a single synthetic test, it collects metrics directly from your users’ browsers — on their devices, networks, and real conditions — and visualizes them in your PulseBear dashboard.
+
+You get the actual experience your visitors have in production, not a lab estimate.
+
+## Why PulseBear over Lighthouse?
+
+- Data source
+  - PulseBear (RUM): field data from real users, 24/7.
+  - Lighthouse: lab/synthetic test run on demand (local or CI).
+- Coverage
+  - PulseBear: continuous collection across your entire app.
+  - Lighthouse: one URL per run.
+- Context
+  - PulseBear: real devices, browsers, extensions, cache state, and networks (3G/4G/Wi‑Fi).
+  - Lighthouse: controlled, emulated environment.
+- Aggregation
+  - PulseBear: percentiles (p50/p75/p90), trends over time, segmentation.
+  - Lighthouse: single snapshot score per run.
+- Actionability
+  - PulseBear: pinpoints which routes degrade user experience.
+  - Lighthouse: great audits and recommendations, but not representative of production usage.
+
+Note: Lighthouse is still valuable for local debugging and prevention in CI. PulseBear complements it with field data that reflects what users actually feel.
+
+## Per‑route visibility
+
+PulseBear maps metrics to concrete routes in your app so you can:
+- See which routes are Good, Needs improvement, or Poor at a glance.
+- Prioritize the paths that impact users the most (e.g., /checkout vs /blog).
+- Understand layout/code differences across pages.
+- Aggregate dynamic routes (e.g., `/product/[id]`) into a single pattern for cleaner analysis.
+
+## Metrics collected
+
+- LCP (Largest Contentful Paint): how quickly the main content appears.
+- FCP (First Contentful Paint): first pixel of content on screen.
+- INP (Interaction to Next Paint): responsiveness to user interactions.
+- CLS (Cumulative Layout Shift): visual stability of the page.
+- TTFB (Time to First Byte): server response latency.
+
+Each metric is available with p50/p75/p90 percentiles and filters by route, device, and browser.
+
+## What you gain
+
+- Representative, trustworthy data about real UX in production.
+- Clear prioritization based on which routes and segments are slow.
+- Trend tracking and quick regression detection after deployments.
+- Better decisions than relying on a single Lighthouse score.
+
+## How it fits your workflow
+
+- Use PulseBear to monitor production continuously and spot regressions early.
+- Use Lighthouse locally/CI to investigate and apply specific audit recommendations.
+- Iterate: fix, deploy, and verify improvements in PulseBear’s

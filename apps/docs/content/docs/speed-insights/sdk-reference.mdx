@@ -1,0 +1,33 @@
+---
+title: SDK Reference
+description: PulseBear Speed Insights SDK reference
+---
+
+### Package
+
+`@pulsebear/speed-insights`
+
+### Component
+
+`<SpeedInsights />` — add once at the bottom of your root layout to enable global collection.
+
+```tsx
+import { SpeedInsights } from "@pulsebear/speed-insights";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}
+```
+
+**Props:** None (the component auto‑discovers the project based on the configured domain).
+
+**Frameworks:** The example shows Next.js. Other frameworks can mount the component or SDK script globally; ensure it runs on every page.
+
+**Environments:** Only data from the project’s configured domain(s) will be accepted.

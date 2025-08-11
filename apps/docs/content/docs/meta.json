@@ -1,0 +1,15 @@
+{
+  "title": "Speed Insights",
+  "icon": "gauge",
+  "pages": [
+    "---Speed Insights---",
+    "speed-insights/overview",
+    "speed-insights/quickstart",
+    "speed-insights/how-it-works",
+    "speed-insights/metrics",
+    "speed-insights/using-the-dashboard",
+    "speed-insights/plans-and-limits",
+    "speed-insights/sdk-reference"
+  ],
+  "defaultOpen": true
+}

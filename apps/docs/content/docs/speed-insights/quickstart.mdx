@@ -1,0 +1,79 @@
+---
+title: Quickstart
+description: Get started with PulseBear Speed Insights
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+## Prerequisites
+
+- A PulseBear account.
+- Access to your project’s domain configuration.
+- A Next.js app (for the example below). Other frameworks can integrate via the JS SDK as well.
+
+<Steps>
+    <Step>
+        ### Create a project
+
+        - In the **PulseBear Dashboard**, click **New Project**.
+        - Enter your project name.
+        - Set the **Primary Domain** (must match the site where you’ll install the SDK).
+    </Step>
+    <Step>
+        ### Enable Speed Insights
+
+        - Open your project and navigate to the **Speed Insights** tab.
+        - Toggle **Enable Speed Insights**.
+    </Step>
+    <Step>
+        ### Install the SDK
+
+        <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+            <Tab value="npm">
+                ```bash
+                npm install @pulsebear/speed-insights
+                ```
+            </Tab>
+            <Tab value="pnpm">
+                ```bash
+                pnpm add @pulsebear/speed-insights
+                ```
+            </Tab>
+            <Tab value="yarn">
+                ```bash
+                yarn add @pulsebear/speed-insights
+                ```
+            </Tab>
+            <Tab value="bun">
+                ```bash
+                bun add @pulsebear/speed-insights
+                ```
+            </Tab>
+        </Tabs>
+    </Step>
+
+    <Step>
+    ###  Add the component in your root layout
+
+Add the component to your app’s top‑level layout so metrics are captured on each page view.
+
+```tsx
+// app/layout.tsx (Next.js)
+import "./globals.css";
+import { SpeedInsights } from "@pulsebear/speed-insights";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}
+```
+    </Step>
+</Steps>
+
+> That’s it. Once deployed to the configured domain, data will start appearing in your dashboard within minutes.
