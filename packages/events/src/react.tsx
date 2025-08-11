@@ -6,7 +6,7 @@ import { sendEvent } from "./core";
 
 export type PulseBearConfig = {
   apiUrl?: string; // defaults to 'https://pulsebear.com/api/events'
-  appKey?: string;
+  apiKey?: string;
   defaultCategory?: string;
 };
 
@@ -26,13 +26,13 @@ export type PulseBearProviderProps<Categories extends string = string> =
   React.PropsWithChildren<
     | {
         config: PulseBearConfig;
-        appKey?: never;
+        apiKey?: never;
         apiUrl?: never;
         defaultCategory?: never;
       }
     | {
         config?: never;
-        appKey?: string;
+        apiKey?: string;
         apiUrl?: string;
         defaultCategory?: string;
       }
@@ -40,7 +40,7 @@ export type PulseBearProviderProps<Categories extends string = string> =
 
 export function PulseBearProvider<Categories extends string = string>({
   config: cfg,
-  appKey,
+  apiKey,
   apiUrl,
   defaultCategory,
   children,
@@ -48,24 +48,24 @@ export function PulseBearProvider<Categories extends string = string>({
   const config = useMemo<PulseBearConfig>(
     () =>
       cfg ?? {
-        appKey,
+        apiKey,
         apiUrl,
         defaultCategory,
       },
-    [cfg, appKey, apiUrl, defaultCategory]
+    [cfg, apiKey, apiUrl, defaultCategory]
   );
   const track = useCallback<TrackFn<Categories>>(
     async (category, payload) => {
       await sendEvent({
         apiUrl: config.apiUrl, // defaults inside sendEvent
-        appKey: config.appKey,
+        apiKey: config.apiKey,
         category,
         action: payload.action,
         description: payload.description,
         fields: payload.fields,
       });
     },
-    [config.apiUrl, config.appKey]
+    [config.apiUrl, config.apiKey]
   );
 
   const value = useMemo<Ctx>(() => ({ track, config }), [track, config]);

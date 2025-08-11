@@ -106,7 +106,7 @@ export async function incrementQuota(userId: string) {
       kind: "EVENTS",
     })
     .onConflictDoUpdate({
-      target: [quotas.userId, quotas.month, quotas.year],
+      target: [quotas.userId, quotas.month, quotas.year, quotas.kind],
       set: {
         count: sql`${quotas.count} + 1`,
       },

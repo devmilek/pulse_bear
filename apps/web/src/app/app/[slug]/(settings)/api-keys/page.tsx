@@ -12,7 +12,11 @@ const Page = async () => {
   }
 
   return (
-    <DashboardPage title="API Keys" cta={<CreateApiKeyModal />}>
+    <DashboardPage>
+      <header className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">API Keys</h1>
+        <CreateApiKeyModal />
+      </header>
       <ApiKeysView />
     </DashboardPage>
   );

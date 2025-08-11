@@ -1,13 +1,13 @@
 import { Primitive } from "./types";
 
-const DEFAULT_API_URL = "https://localhost:3000/api/events" as const;
+const DEFAULT_API_URL = "http://localhost:3000/api/events" as const;
 
 const isInBrowser =
   typeof window !== "undefined" && typeof window.fetch !== "undefined";
 
 export async function sendEvent(opts: {
   apiUrl?: string;
-  appKey?: string;
+  apiKey?: string;
   category: string;
   action: string;
   description?: string;
@@ -20,7 +20,7 @@ export async function sendEvent(opts: {
     return;
   }
 
-  if (!opts.appKey) {
+  if (!opts.apiKey) {
     console.warn(
       `PulseBear: track() requires an apiKey. Event "${opts.category}" will be discarded.`
     );
@@ -33,7 +33,7 @@ export async function sendEvent(opts: {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${opts.appKey}`,
+        Authorization: `Bearer ${opts.apiKey}`,
       },
       body: JSON.stringify({
         category: opts.category,

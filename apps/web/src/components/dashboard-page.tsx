@@ -33,9 +33,6 @@ export const DashboardPage = ({
   items,
   rightActions,
 }: DashboardPageProps) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [open, setOpen] = useState(false);
-
   return (
     <section className="flex-1 h-full w-full flex flex-col">
       {/* <div className="w-full px-6 sm:px-8 py-6 border-b">

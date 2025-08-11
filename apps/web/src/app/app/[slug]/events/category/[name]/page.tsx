@@ -42,10 +42,13 @@ const CategoryDetailsPage = async ({ params }: CategoryDetailsPageProps) => {
   const hasEvents = eventsCount > 0;
 
   return (
-    <DashboardPage
-      title={`${category.emoji} ${category.name} events`}
-      cta={<CategoryTimeRangeTabs />}
-    >
+    <DashboardPage>
+      <header className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold mb-4">
+          {category.emoji} {category.name} events
+        </h1>
+        <CategoryTimeRangeTabs />
+      </header>
       <CategoryDetailsView hasEvents={hasEvents} category={category} />
     </DashboardPage>
   );
