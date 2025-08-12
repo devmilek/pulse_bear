@@ -1,6 +1,6 @@
 import { Primitive } from "./types";
 
-const DEFAULT_API_URL = "http://localhost:3000/api/events" as const;
+const DEFAULT_API_URL = "https://pulsebear.com/api/events" as const;
 
 const isInBrowser =
   typeof window !== "undefined" && typeof window.fetch !== "undefined";

@@ -5,7 +5,7 @@ import { BaseEventPayload } from "./types";
 import { sendEvent } from "./core";
 
 export type PulseBearConfig = {
-  apiUrl?: string; // defaults to 'https://pulsebear.com/api/events'
+  apiUrl?: string; // defaults to https://pulsebear.com/api/events
   apiKey?: string;
   defaultCategory?: string;
 };
