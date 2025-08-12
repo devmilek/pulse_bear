@@ -169,7 +169,11 @@ function getBatchEndpoint(): string {
   return endpoint.replace(/\/$/, "") + "/batch";
 }
 
-async function sendPayload(body: unknown, useBeacon: boolean) {
+// Returns true on success, false on failure so callers can decide whether to retry later.
+async function sendPayload(
+  body: unknown,
+  useBeacon: boolean
+): Promise<boolean> {
   const url = state.options.batch?.enabled
     ? getBatchEndpoint()
     : state.options.endpoint;
@@ -182,15 +186,15 @@ async function sendPayload(body: unknown, useBeacon: boolean) {
   if (useBeacon && isBrowser() && (navigator as any).sendBeacon) {
     try {
       const blob = new Blob([json], { type: "application/json" });
-      (navigator as any).sendBeacon(url, blob);
-      return;
+      const ok = (navigator as any).sendBeacon(url, blob);
+      return !!ok;
     } catch (e) {
       // fallthrough to fetch
     }
   }
 
   try {
-    await fetch(url, {
+    const res = await fetch(url, {
       method: "POST",
       body: json,
       headers: {
@@ -200,11 +204,21 @@ async function sendPayload(body: unknown, useBeacon: boolean) {
       keepalive: true,
       credentials: "omit",
     });
+    if (!res.ok) {
+      logDebug("send non-OK", res.status, res.statusText);
+      // Requeue on server error to retry later
+      if (Array.isArray(body))
+        state.queue.unshift(...(body as PulseBearEvent[]));
+      else state.queue.unshift(body as PulseBearEvent);
+      return false;
+    }
+    return true;
   } catch (e) {
     logDebug("send error", e);
     // If failed and we're online, keep events for the next attempt (basic retry on next flush)
     if (Array.isArray(body)) state.queue.unshift(...(body as PulseBearEvent[]));
     else state.queue.unshift(body as PulseBearEvent);
+    return false;
   }
 }
 
@@ -217,17 +231,18 @@ async function flushQueue(forceBeacon = false) {
   }
 
   const batchEnabled = !!state.options.batch?.enabled;
-  const items = state.queue.splice(
-    0,
-    batchEnabled ? (state.options.batch?.size ?? DEFAULT_BATCH_SIZE) : 1
-  );
+  const size = state.options.batch?.size ?? DEFAULT_BATCH_SIZE;
 
-  await sendPayload(batchEnabled ? items : items[0], forceBeacon);
+  // Drain queue; on failure, stop and retry later.
+  // When batching is disabled, we send one event at a time.
+  do {
+    const items = state.queue.splice(0, batchEnabled ? size : 1);
+    const ok = await sendPayload(batchEnabled ? items : items[0], forceBeacon);
+    if (!ok) break;
+  } while (batchEnabled && state.queue.length > 0);
 
-  // More in queue? Schedule another flush quickly
-  if (state.queue.length > 0) {
-    scheduleFlush();
-  }
+  // More left after a successful send? schedule next batch flush
+  if (batchEnabled && state.queue.length > 0) scheduleFlush();
 }
 
 function bindLifecycleListeners() {

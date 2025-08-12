@@ -69,7 +69,7 @@ export default function App() {
 
 ```ts
 interface InitOptions {
-  endpoint?: string; // default: https://pulsebear.com/vitals
+  endpoint?: string; // default: https://www.pulsebear.com/api/vitals
   projectId: string; // required
   sampling?: number; // 0..1, default 1
   headers?: Record<string, string>;

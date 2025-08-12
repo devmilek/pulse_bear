@@ -15,8 +15,9 @@ export function SpeedInsights(props: InitOptions) {
     import("./core").then(({ initPulseBearVitals }) => {
       void initPulseBearVitals(props);
     });
-  }, []);
+  }, [JSON.stringify(props)]);
   return null;
 }
 
 export default SpeedInsights;
+export { SpeedInsights as SpeedInsightsProvider };
