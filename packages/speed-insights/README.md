@@ -57,6 +57,30 @@ export default function App() {
 }
 ```
 
+## Usage (Astro)
+
+```astro
+---
+import { setupSpeedInsights } from "@pulsebear/speed-insights/astro";
+---
+<script>
+  setupSpeedInsights({ projectId: "YOUR_PROJECT_ID" });
+  // Optional: setContextProvider(() => ({ env: import.meta.env.MODE }))
+</script>
+```
+
+## Usage (SvelteKit)
+
+```svelte
+<script lang="ts">
+  import { onMount } from "svelte";
+  import { setupSpeedInsights } from "@pulsebear/speed-insights/sveltekit";
+  onMount(() => {
+    setupSpeedInsights({ projectId: "YOUR_PROJECT_ID" });
+  });
+</script>
+```
+
 ## API
 
 - `initPulseBearVitals(options)` – starts web-vitals listeners
